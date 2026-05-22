@@ -1,0 +1,31 @@
+<div class="hero">
+  <app-navbar [transparent]="true"></app-navbar>
+
+  <main class="hero__main">
+    <section class="hero__cta-primary" aria-label="Hauptaktion">
+      <p class="hero__subtitle">AI-Powered recipe generator</p>
+      <h1 class="hero__title">Code à Cuisine</h1>
+      <a routerLink="/generate" class="btn-primary hero__btn-start">Get started</a>
+    </section>
+
+    <section class="hero__cta-secondary" aria-label="Kochbuch">
+      <p class="hero__inspiration">Hungry for inspiration?</p>
+      <a routerLink="/cookbook" class="btn-secondary hero__btn-cookbook">
+        Go to cookbook
+        <span aria-hidden="true">→</span>
+      </a>
+    </section>
+  </main>
+
+  <aside class="hero__visuals" aria-hidden="true">
+    <div class="hero__circle hero__circle--top">
+      <img src="assets/images/visual03.png" alt="" />
+    </div>
+    <div class="hero__circle hero__circle--mid">
+      <img src="assets/images/visual02.png" alt="" />
+    </div>
+    <div class="hero__circle hero__circle--bot">
+      <img src="assets/images/visual01.png" alt="" />
+    </div>
+  </aside>
+</div>

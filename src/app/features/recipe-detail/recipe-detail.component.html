@@ -1,0 +1,133 @@
+<app-navbar></app-navbar>
+
+<main class="detail">
+  <!-- Loading -->
+  <div class="detail__loading" *ngIf="isLoading">
+    <div class="detail__spinner"></div>
+    <p>Rezept wird geladen…</p>
+  </div>
+
+  <!-- Error -->
+  <div class="detail__error" *ngIf="error && !isLoading" role="alert">
+    <p>{{ error }}</p>
+    <a routerLink="/cookbook" class="btn-green">Zum Kochbuch</a>
+  </div>
+
+  <!-- Recipe -->
+  <article class="detail__content" *ngIf="recipe && !isLoading">
+    <header class="detail__header">
+      <div class="detail__meta">
+        <span class="detail__badge">{{ styleLabel }}</span>
+        <span class="detail__badge detail__badge--time">{{ timeLabel }}</span>
+      </div>
+      <h1 class="detail__title">{{ recipe.title }}</h1>
+
+      <div class="detail__servings">
+        <span class="detail__servings-label">Portionen:</span>
+        <button type="button" class="detail__servings-btn" (click)="decreaseServings()" aria-label="Portionen verringern">−</button>
+        <span class="detail__servings-count">{{ currentServings }}</span>
+        <button type="button" class="detail__servings-btn" (click)="increaseServings()" aria-label="Portionen erhöhen">+</button>
+      </div>
+    </header>
+
+    <div class="detail__body">
+      <aside class="detail__sidebar">
+        <!-- Ingredients -->
+        <section class="detail__section">
+          <h2 class="detail__section-title">Zutaten</h2>
+          <ul class="detail__ingredient-list">
+            <li *ngFor="let ing of scaledIngredients" class="detail__ingredient">
+              <span class="detail__ingredient-amount">{{ ing.amount }} {{ ing.unit }}</span>
+              <span class="detail__ingredient-name">{{ ing.name }}</span>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Missing ingredients -->
+        <section class="detail__section" *ngIf="recipe.missingIngredients.length > 0">
+          <h2 class="detail__section-title detail__section-title--warning">Einkaufsliste</h2>
+          <ul class="detail__missing-list">
+            <li *ngFor="let name of recipe.missingIngredients" class="detail__missing-item">
+              🛒 {{ name }}
+            </li>
+          </ul>
+        </section>
+
+        <!-- Nutrition -->
+        <section class="detail__section">
+          <h2 class="detail__section-title">Nährwerte</h2>
+          <p class="detail__nutrition-note">Pro Portion / Gesamt ({{ currentServings }} Portionen)</p>
+          <ul class="detail__nutrition-list">
+            <li class="detail__nutrition-item">
+              <span>Kalorien</span>
+              <span>{{ recipe.nutrition.caloriesPerPortion }} / {{ totalCalories }} kcal</span>
+            </li>
+            <li class="detail__nutrition-item">
+              <span>Protein</span>
+              <span>{{ recipe.nutrition.proteinG }} g</span>
+            </li>
+            <li class="detail__nutrition-item">
+              <span>Kohlenhydrate</span>
+              <span>{{ recipe.nutrition.carbsG }} g</span>
+            </li>
+            <li class="detail__nutrition-item">
+              <span>Fett</span>
+              <span>{{ recipe.nutrition.fatG }} g</span>
+            </li>
+          </ul>
+        </section>
+      </aside>
+
+      <div class="detail__main">
+        <!-- Steps -->
+        <section class="detail__section">
+          <h2 class="detail__section-title">Zubereitung</h2>
+          <ol class="detail__steps">
+            <li
+              *ngFor="let step of recipe.steps"
+              class="detail__step"
+              [class.detail__step--parallel]="step.isParallel"
+            >
+              <div class="detail__step-num">{{ step.stepNumber }}</div>
+              <div class="detail__step-body">
+                <p class="detail__step-desc">{{ step.description }}</p>
+                <div class="detail__step-meta">
+                  <span *ngIf="step.durationMinutes" class="detail__step-duration">⏱ {{ step.durationMinutes }} Min</span>
+                  <span *ngIf="step.isParallel" class="detail__step-parallel-badge">⚡ Parallel</span>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <!-- Helper tabs -->
+        <section class="detail__section" *ngIf="helperTabs.length > 1">
+          <h2 class="detail__section-title">Aufgabenverteilung</h2>
+          <div class="detail__helper-tabs" role="tablist">
+            <button
+              *ngFor="let idx of helperTabs"
+              type="button"
+              role="tab"
+              class="detail__helper-tab"
+              [class.detail__helper-tab--active]="activeHelper === idx"
+              (click)="activeHelper = idx"
+              [attr.aria-selected]="activeHelper === idx"
+            >Person {{ idx + 1 }}</button>
+          </div>
+          <ul class="detail__helper-tasks" role="tabpanel">
+            <li *ngFor="let task of activeHelperTasks" class="detail__helper-task">
+              <span class="detail__helper-task-step">Schritt {{ task.stepNumber }}</span>
+              {{ task.description }}
+            </li>
+          </ul>
+        </section>
+      </div>
+    </div>
+
+    <div class="detail__back">
+      <a routerLink="/results" class="btn-green">← Zurück zur Auswahl</a>
+    </div>
+  </article>
+</main>
+
+<app-footer></app-footer>

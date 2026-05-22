@@ -1,0 +1,22 @@
+<app-navbar></app-navbar>
+
+<main class="results">
+  <section class="results__container">
+    <header class="results__header">
+      <h1 class="results__title">Deine Rezeptvorschläge</h1>
+      <p class="results__subtitle">Wähle ein Rezept aus, um die vollständige Anleitung zu sehen.</p>
+    </header>
+
+    <div class="results__grid">
+      <app-recipe-card *ngFor="let recipe of recipes" [recipe]="recipe"></app-recipe-card>
+    </div>
+
+    <div class="results__actions">
+      <button type="button" class="btn-green" (click)="startNewSearch()">
+        ← Neue Suche
+      </button>
+    </div>
+  </section>
+</main>
+
+<app-footer></app-footer>

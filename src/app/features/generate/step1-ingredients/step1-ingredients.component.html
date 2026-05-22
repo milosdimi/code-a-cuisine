@@ -1,0 +1,80 @@
+<app-navbar></app-navbar>
+
+<main class="step1">
+  <section class="step1__container">
+    <header class="step1__header">
+      <p class="step1__step-label">Schritt 1 von 2</p>
+      <h1 class="step1__title">Welche Zutaten hast du?</h1>
+      <p class="step1__desc">Gib deine verfügbaren Zutaten ein – wir generieren daraus 3 leckere Rezepte.</p>
+    </header>
+
+    <div class="step1__input-row">
+      <div class="step1__search-wrap">
+        <label for="ingredient-search" class="visually-hidden">Zutat suchen</label>
+        <input
+          id="ingredient-search"
+          type="text"
+          class="step1__input"
+          placeholder="Zutat eingeben…"
+          [(ngModel)]="searchTerm"
+          (input)="onSearchInput()"
+          (blur)="hideSuggestions()"
+          (keydown.enter)="addIngredient()"
+          autocomplete="off"
+        />
+        <ul class="step1__suggestions" *ngIf="showSuggestions" role="listbox">
+          <li
+            *ngFor="let s of suggestions"
+            class="step1__suggestion"
+            role="option"
+            (mousedown)="selectSuggestion(s)"
+          >{{ s }}</li>
+        </ul>
+      </div>
+
+      <div class="step1__amount-wrap">
+        <label for="ingredient-amount" class="visually-hidden">Menge</label>
+        <input
+          id="ingredient-amount"
+          type="number"
+          class="step1__input step1__input--amount"
+          [(ngModel)]="newAmount"
+          min="0.1"
+          step="0.1"
+        />
+        <label for="ingredient-unit" class="visually-hidden">Einheit</label>
+        <select id="ingredient-unit" class="step1__select" [(ngModel)]="newUnit">
+          <option *ngFor="let u of units" [value]="u">{{ u }}</option>
+        </select>
+      </div>
+
+      <button type="button" class="btn-green step1__btn-add" (click)="addIngredient()">
+        + Hinzufügen
+      </button>
+    </div>
+
+    <p class="step1__error" *ngIf="validationError" role="alert">{{ validationError }}</p>
+
+    <ul class="step1__chips" *ngIf="ingredients.length > 0" aria-label="Hinzugefügte Zutaten">
+      <li class="step1__chip" *ngFor="let ing of ingredients; let i = index">
+        <span class="step1__chip-name">{{ ing.name }}</span>
+        <span class="step1__chip-amount">{{ ing.amount }} {{ ing.unit }}</span>
+        <button
+          type="button"
+          class="step1__chip-remove"
+          (click)="removeIngredient(i)"
+          [attr.aria-label]="'Zutat entfernen: ' + ing.name"
+        >&times;</button>
+      </li>
+    </ul>
+
+    <div class="step1__actions">
+      <a routerLink="/" class="btn-secondary">← Zurück</a>
+      <button type="button" class="btn-green step1__btn-next" (click)="goToPreferences()">
+        Weiter zu Präferenzen →
+      </button>
+    </div>
+  </section>
+</main>
+
+<app-footer></app-footer>

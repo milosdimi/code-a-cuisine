@@ -1,0 +1,64 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 136px;
+  padding: 40px 40px 0 68px;
+  background: transparent;
+  position: relative;
+  z-index: 10;
+
+  &--transparent {
+    background: transparent;
+  }
+
+  &__logo {
+    flex-shrink: 0;
+
+    img {
+      width: 142px;
+      height: 48px;
+      object-fit: contain;
+    }
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+  }
+
+  &__link {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 600;
+    font-size: $font-size-base;
+    color: $color-creme;
+    text-decoration: none;
+    transition: opacity 200ms ease;
+
+    &:hover {
+      opacity: 0.8;
+    }
+
+    &--active {
+      border-bottom: 2px solid $color-creme;
+      padding-bottom: 2px;
+    }
+  }
+
+  @include mobile {
+    height: auto;
+    padding: 20px 24px;
+
+    &__nav {
+      gap: 20px;
+    }
+
+    &__link {
+      font-size: $font-size-small;
+    }
+  }
+}

@@ -1,0 +1,223 @@
+﻿@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+.step2 {
+  min-height: calc(100vh - 136px - 88px);
+  background: $color-creme;
+  padding: 60px 0;
+
+  &__container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  &__header {
+    margin-bottom: 48px;
+  }
+
+  &__step-label {
+    font-size: $font-size-small;
+    color: $color-primary;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  &__title {
+    font-family: 'Ubuntu', sans-serif;
+    font-weight: 700;
+    font-size: $font-size-h3;
+    color: $color-text-dark;
+    margin-bottom: 12px;
+  }
+
+  &__desc {
+    font-size: $font-size-body;
+    color: #636363;
+  }
+
+  &__field {
+    border: none;
+    margin-bottom: 40px;
+  }
+
+  &__field-label {
+    font-family: 'Ubuntu', sans-serif;
+    font-weight: 500;
+    font-size: 22px;
+    color: $color-text-dark;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  &__field-hint {
+    font-size: $font-size-small;
+    color: #737373;
+    margin-bottom: 12px;
+  }
+
+  // Stepper
+  &__stepper {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    width: fit-content;
+    border: 2px solid #d7bca2;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  &__stepper-btn {
+    width: 48px;
+    height: 48px;
+    background: $color-primary;
+    color: $color-creme;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    transition: background 150ms ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: #294529;
+    }
+  }
+
+  &__stepper-input {
+    width: 60px;
+    height: 48px;
+    text-align: center;
+    font-size: $font-size-body;
+    font-weight: 600;
+    border: none;
+    border-left: 2px solid #d7bca2;
+    border-right: 2px solid #d7bca2;
+    background: $color-white;
+    color: $color-text-dark;
+    -moz-appearance: textfield;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button { appearance: none; }
+  }
+
+  // Radio group
+  &__radio-group {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  &__radio-label {
+    padding: 12px 20px;
+    border: 2px solid #d7bca2;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: $font-size-base;
+    font-weight: 600;
+    color: $color-text-dark;
+    background: $color-white;
+    transition: all 150ms ease;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+
+    &:hover {
+      border-color: $color-primary;
+    }
+
+    &--active {
+      background: $color-primary;
+      color: $color-creme;
+      border-color: $color-primary;
+    }
+  }
+
+  // Style grid
+  &__style-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  &__style-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 20px 12px;
+    border: 2px solid #d7bca2;
+    border-radius: 12px;
+    background: $color-white;
+    cursor: pointer;
+    transition: all 150ms ease;
+
+    &:hover {
+      border-color: $color-primary;
+    }
+
+    &--active {
+      background: $color-primary;
+      border-color: $color-primary;
+
+      .step2__style-name {
+        color: $color-creme;
+      }
+    }
+  }
+
+  &__style-emoji {
+    font-size: 32px;
+  }
+
+  &__style-name {
+    font-size: $font-size-small;
+    font-weight: 600;
+    color: $color-text-dark;
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  &__quota-error {
+    color: $color-error;
+    font-size: $font-size-base;
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    background: rgba(211, 47, 47, 0.08);
+    border-radius: 8px;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 48px;
+    flex-wrap: wrap;
+  }
+
+  &__btn-generate {
+    font-size: $font-size-btn;
+    padding: 16px 32px;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  @include mobile {
+    &__style-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    &__actions {
+      flex-direction: column-reverse;
+
+      a, button { width: 100%; justify-content: center; }
+    }
+  }
+}

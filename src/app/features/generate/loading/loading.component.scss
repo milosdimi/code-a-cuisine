@@ -1,0 +1,88 @@
+@use '../../../../styles/variables' as *;
+
+.loading {
+  min-height: 100vh;
+  background: $color-primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    padding: 24px;
+    text-align: center;
+  }
+
+  // ===== CSS Spinner =====
+  &__spinner {
+    position: relative;
+    width: 120px;
+    height: 120px;
+  }
+
+  &__ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 6px solid transparent;
+    border-top-color: $color-creme;
+    animation: spin 1.2s linear infinite;
+
+    &--inner {
+      inset: 18px;
+      border-top-color: $color-beige;
+      animation-duration: 0.8s;
+      animation-direction: reverse;
+    }
+  }
+
+  &__message {
+    font-family: 'Ubuntu', sans-serif;
+    font-weight: 500;
+    font-size: $font-size-h3;
+    color: $color-creme;
+    min-height: 2em;
+    transition: opacity 400ms ease;
+  }
+
+  &__hint {
+    font-size: $font-size-base;
+    color: $color-beige;
+    opacity: 0.7;
+  }
+
+  // ===== Error state =====
+  &__error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 24px;
+    text-align: center;
+    max-width: 480px;
+  }
+
+  &__error-icon {
+    font-size: 48px;
+  }
+
+  &__error-title {
+    font-family: 'Ubuntu', sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    color: $color-creme;
+  }
+
+  &__error-msg {
+    font-size: $font-size-body;
+    color: $color-beige;
+    line-height: 1.5;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

@@ -1,0 +1,56 @@
+﻿@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.results {
+  min-height: calc(100vh - 136px - 88px);
+  background: $color-creme;
+  padding: 60px 0;
+
+  &__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  &__header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  &__title {
+    font-family: 'Ubuntu', sans-serif;
+    font-weight: 700;
+    font-size: $font-size-h3;
+    color: $color-text-dark;
+    margin-bottom: 12px;
+  }
+
+  &__subtitle {
+    font-size: $font-size-body;
+    color: #636363;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: center;
+  }
+
+  @include tablet {
+    &__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @include mobile {
+    &__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}

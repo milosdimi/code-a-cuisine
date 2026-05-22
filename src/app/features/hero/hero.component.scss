@@ -1,0 +1,191 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.hero {
+  position: relative;
+  min-height: 100vh;
+  background-color: $color-primary;
+  overflow: hidden;
+
+  &__main {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  // ===== Primary CTA =====
+  &__cta-primary {
+    position: absolute;
+    top: 240px;
+    left: 65px;
+    pointer-events: all;
+    z-index: 2;
+  }
+
+  &__subtitle {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 600;
+    font-size: $font-size-h2;
+    color: $color-beige;
+    margin-bottom: 8px;
+  }
+
+  &__title {
+    font-family: 'Ubuntu', sans-serif;
+    font-weight: 700;
+    font-size: $font-size-h1;
+    color: $color-creme;
+    line-height: 1;
+    margin-bottom: 40px;
+  }
+
+  &__btn-start {
+    display: inline-block;
+  }
+
+  // ===== Secondary CTA =====
+  &__cta-secondary {
+    position: absolute;
+    top: 846px;
+    left: 65px;
+    pointer-events: all;
+    z-index: 2;
+  }
+
+  &__inspiration {
+    font-family: 'Ubuntu', sans-serif;
+    font-weight: 500;
+    font-size: $font-size-h3;
+    color: $color-creme;
+    margin-bottom: 20px;
+  }
+
+  // ===== Visuals =====
+  &__visuals {
+    position: absolute;
+    width: 480px;
+    top: -42px;
+    left: 911px;
+    z-index: 1;
+  }
+
+  &__circle {
+    position: absolute;
+    border-radius: 50%;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    &--top {
+      width: 470px;
+      height: 470px;
+      top: 0;
+      left: 0;
+    }
+
+    &--mid {
+      width: 484px;
+      height: 484px;
+      top: 280px;
+      left: 40px;
+      box-shadow: 6px -2px 4px 0 rgba(0, 0, 0, 0.25);
+    }
+
+    &--bot {
+      width: 480px;
+      height: 505px;
+      top: 580px;
+      left: 20px;
+      transform: rotate(-18.91deg);
+      box-shadow: 6px -2px 4px 0 rgba(0, 0, 0, 0.25);
+    }
+  }
+
+  // ===== RESPONSIVE =====
+  @include tablet {
+    &__visuals {
+      width: 320px;
+      left: auto;
+      right: 20px;
+      top: 80px;
+    }
+
+    &__circle {
+      &--top  { width: 300px; height: 300px; }
+      &--mid  { width: 310px; height: 310px; top: 180px; }
+      &--bot  { width: 305px; height: 320px; top: 370px; }
+    }
+
+    &__cta-primary {
+      top: 160px;
+      left: 30px;
+    }
+
+    &__cta-secondary {
+      top: auto;
+      bottom: 60px;
+      left: 30px;
+    }
+  }
+
+  @include mobile {
+    overflow-y: auto;
+
+    &__main {
+      position: relative;
+      height: auto;
+      padding-bottom: 60px;
+    }
+
+    &__cta-primary {
+      position: relative;
+      top: auto;
+      left: auto;
+      padding: 100px 24px 40px;
+      pointer-events: all;
+    }
+
+    &__subtitle {
+      font-size: 28px;
+    }
+
+    &__title {
+      font-size: 48px;
+      margin-bottom: 28px;
+    }
+
+    &__cta-secondary {
+      position: relative;
+      top: auto;
+      left: auto;
+      padding: 0 24px;
+      pointer-events: all;
+    }
+
+    &__inspiration {
+      font-size: 24px;
+    }
+
+    &__visuals {
+      position: relative;
+      top: auto;
+      left: auto;
+      width: 100%;
+      height: 280px;
+      margin-top: 40px;
+    }
+
+    &__circle {
+      &--top  { width: 200px; height: 200px; left: 50%; transform: translateX(-80%); }
+      &--mid  { width: 210px; height: 210px; top: 60px; left: 50%; transform: translateX(-20%); }
+      &--bot  { display: none; }
+    }
+  }
+}

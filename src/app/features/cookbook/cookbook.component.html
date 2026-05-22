@@ -1,0 +1,52 @@
+<app-navbar></app-navbar>
+
+<main class="cookbook">
+  <section class="cookbook__container">
+    <header class="cookbook__header">
+      <h1 class="cookbook__title">Kochbuch</h1>
+      <p class="cookbook__subtitle">Alle von der Community generierten Rezepte</p>
+    </header>
+
+    <app-cuisine-filter [active]="activeFilter" (filterChange)="onFilterChange($event)"></app-cuisine-filter>
+
+    <div class="cookbook__loading" *ngIf="isLoading && recipes.length === 0" aria-busy="true">
+      <div class="cookbook__spinner"></div>
+      <p>Rezepte werden geladen…</p>
+    </div>
+
+    <p class="cookbook__error" *ngIf="error" role="alert">{{ error }}</p>
+
+    <p class="cookbook__empty" *ngIf="!isLoading && recipes.length === 0 && !error">
+      Noch keine Rezepte für diesen Küchenstil vorhanden.
+    </p>
+
+    <div class="cookbook__grid">
+      <article
+        *ngFor="let recipe of recipes"
+        class="cookbook__card"
+        [routerLink]="['/recipe', recipe.id]"
+      >
+        <header class="cookbook__card-header">
+          <div class="cookbook__card-badges">
+            <span class="cookbook__badge">{{ styleLabel(recipe.cookingStyle) }}</span>
+          </div>
+          <h2 class="cookbook__card-title">{{ recipe.title }}</h2>
+        </header>
+        <footer class="cookbook__card-footer">
+          <span class="cookbook__card-time">
+            {{ recipe.cookingTime === 'quick' ? '⚡ Schnell' : recipe.cookingTime === 'medium' ? '🕐 Mittel' : '🍳 Aufwendig' }}
+          </span>
+          <span class="cookbook__card-cta">Ansehen →</span>
+        </footer>
+      </article>
+    </div>
+
+    <div class="cookbook__more" *ngIf="hasMore">
+      <button type="button" class="btn-green" (click)="loadMore()" [disabled]="isLoading">
+        Weitere Rezepte laden
+      </button>
+    </div>
+  </section>
+</main>
+
+<app-footer></app-footer>

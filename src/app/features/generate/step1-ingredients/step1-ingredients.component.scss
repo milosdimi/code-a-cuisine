@@ -1,0 +1,217 @@
+﻿@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+.step1 {
+  min-height: calc(100vh - 136px - 88px);
+  background: $color-creme;
+  padding: 60px 0;
+
+  &__container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  &__header {
+    margin-bottom: 48px;
+  }
+
+  &__step-label {
+    font-size: $font-size-small;
+    color: $color-primary;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  &__title {
+    font-family: 'Ubuntu', sans-serif;
+    font-weight: 700;
+    font-size: $font-size-h3;
+    color: $color-text-dark;
+    margin-bottom: 12px;
+  }
+
+  &__desc {
+    font-size: $font-size-body;
+    color: #636363;
+    line-height: 1.5;
+  }
+
+  &__input-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+
+  &__search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+  }
+
+  &__input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #d7bca2;
+    border-radius: 8px;
+    font-size: $font-size-base;
+    background: $color-white;
+    color: $color-text-dark;
+    transition: border-color 200ms ease;
+
+    &:focus {
+      border-color: $color-primary;
+      outline: none;
+    }
+
+    &--amount {
+      width: 90px;
+    }
+  }
+
+  &__select {
+    padding: 14px 12px;
+    border: 2px solid #d7bca2;
+    border-radius: 8px;
+    font-size: $font-size-base;
+    background: $color-white;
+    color: $color-text-dark;
+    cursor: pointer;
+    transition: border-color 200ms ease;
+
+    &:focus {
+      border-color: $color-primary;
+      outline: none;
+    }
+  }
+
+  &__amount-wrap {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  &__suggestions {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: $color-white;
+    border: 1px solid #d7bca2;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    overflow: hidden;
+  }
+
+  &__suggestion {
+    padding: 12px 16px;
+    cursor: pointer;
+    font-size: $font-size-base;
+    transition: background 150ms ease;
+
+    &:hover {
+      background: $color-creme;
+    }
+  }
+
+  &__error {
+    color: $color-error;
+    font-size: $font-size-small;
+    margin-bottom: 16px;
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 48px;
+  }
+
+  &__chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: $color-primary;
+    color: $color-creme;
+    border-radius: 24px;
+    padding: 8px 14px;
+    font-size: $font-size-small;
+  }
+
+  &__chip-name {
+    font-weight: 600;
+  }
+
+  &__chip-amount {
+    opacity: 0.8;
+    font-size: 13px;
+  }
+
+  &__chip-remove {
+    background: none;
+    border: none;
+    color: $color-creme;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0 2px;
+    opacity: 0.7;
+    transition: opacity 150ms ease;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &__btn-add {
+    white-space: nowrap;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  &__btn-next {
+    font-size: $font-size-btn-sm;
+    padding: 16px 28px;
+  }
+
+  @include mobile {
+    padding: 32px 0;
+
+    &__input-row {
+      flex-direction: column;
+    }
+
+    &__amount-wrap {
+      width: 100%;
+    }
+
+    &__input--amount {
+      width: 100%;
+    }
+
+    &__actions {
+      flex-direction: column-reverse;
+
+      .btn-secondary, &__btn-next {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+}

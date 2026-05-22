@@ -1,0 +1,11 @@
+<header class="navbar" [class.navbar--transparent]="transparent">
+  <a routerLink="/" class="navbar__logo" aria-label="Code à Cuisine – Startseite">
+    <img src="assets/images/logo-cuisine.png" alt="Code à Cuisine" width="142" height="48" />
+  </a>
+
+  <nav class="navbar__nav" aria-label="Hauptnavigation">
+    <a routerLink="/generate"  routerLinkActive="navbar__link--active" class="navbar__link">Rezept erstellen</a>
+    <a routerLink="/cookbook"  routerLinkActive="navbar__link--active" class="navbar__link">Kochbuch</a>
+    <a routerLink="/impressum" routerLinkActive="navbar__link--active" class="navbar__link">Impressum</a>
+  </nav>
+</header>

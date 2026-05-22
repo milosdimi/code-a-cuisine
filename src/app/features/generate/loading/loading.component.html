@@ -1,0 +1,17 @@
+<main class="loading">
+  <div class="loading__content" *ngIf="!errorMessage">
+    <div class="loading__spinner" aria-hidden="true">
+      <div class="loading__ring"></div>
+      <div class="loading__ring loading__ring--inner"></div>
+    </div>
+    <p class="loading__message" role="status" aria-live="polite">{{ currentMessage }}</p>
+    <p class="loading__hint">Claude AI generiert deine persönlichen Rezepte</p>
+  </div>
+
+  <div class="loading__error" *ngIf="errorMessage" role="alert">
+    <p class="loading__error-icon" aria-hidden="true">⚠️</p>
+    <p class="loading__error-title">Etwas ist schiefgelaufen</p>
+    <p class="loading__error-msg">{{ errorMessage }}</p>
+    <button type="button" class="btn-green" (click)="retry()">Erneut versuchen</button>
+  </div>
+</main>

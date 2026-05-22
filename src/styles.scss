@@ -1,0 +1,108 @@
+// ===== IMPORTS (must be first) =====
+@use 'styles/reset';
+@use 'styles/variables' as *;
+
+// ===== FONT FACES =====
+@font-face {
+  font-family: 'Quicksand';
+  src: url('./assets/fonts/Quicksand-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Ubuntu';
+  src: url('./assets/fonts/Ubuntu-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Ubuntu';
+  src: url('./assets/fonts/Ubuntu-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-display: swap;
+}
+
+// ===== GLOBAL BASE =====
+body {
+  font-family: 'Quicksand', sans-serif;
+  font-size: $font-size-base;
+  color: $color-text-dark;
+  background-color: $color-creme;
+}
+
+// ===== GLOBAL BUTTON CLASSES =====
+.btn-primary {
+  background: $color-creme;
+  color: $color-primary-btn;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
+  font-size: $font-size-btn;
+  padding: 16px 26px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all ease-out 300ms;
+
+  &:hover {
+    background: #EDE3D9;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.btn-secondary {
+  background: transparent;
+  color: $color-creme;
+  border: 2px solid $color-creme;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
+  font-size: $font-size-btn-sm;
+  padding: 16px 26px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all ease-out 300ms;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  &:hover {
+    background: rgba(250, 240, 230, 0.1);
+    transform: translateY(-1px);
+  }
+}
+
+.btn-green {
+  background: $color-primary;
+  color: $color-creme;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
+  font-size: $font-size-btn-sm;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all ease-out 300ms;
+
+  &:hover {
+    background: #2a472a;
+    transform: translateY(-1px);
+  }
+}
+
+// ===== UTILITY =====
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

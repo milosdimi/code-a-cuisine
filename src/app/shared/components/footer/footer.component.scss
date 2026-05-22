@@ -1,0 +1,39 @@
+@use '../../../../styles/variables' as *;
+
+.footer {
+  background: $color-primary;
+  color: $color-creme;
+  padding: 32px 68px;
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  &__copy {
+    font-family: 'Quicksand', sans-serif;
+    font-size: $font-size-small;
+    opacity: 0.8;
+  }
+
+  &__nav {
+    display: flex;
+    gap: 32px;
+  }
+
+  &__link {
+    font-family: 'Quicksand', sans-serif;
+    font-size: $font-size-small;
+    color: $color-creme;
+    opacity: 0.8;
+    text-decoration: none;
+    transition: opacity 200ms ease;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
