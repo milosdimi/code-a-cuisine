@@ -1,9 +1,26 @@
 <footer class="footer">
   <div class="footer__inner">
-    <p class="footer__copy">&copy; {{ year }} Code à Cuisine</p>
+
+    <!-- Brand -->
+    <div class="footer__brand">
+      <a routerLink="/" class="footer__logo-link" aria-label="Startseite">
+        <img src="assets/images/logo-cuisine.png" alt="Code à Cuisine" class="footer__logo" />
+      </a>
+      <p class="footer__tagline">KI-gestützte Rezeptgenerierung</p>
+    </div>
+
+    <!-- Navigation -->
     <nav class="footer__nav" aria-label="Footer Navigation">
-      <a routerLink="/impressum" class="footer__link">Impressum</a>
-      <a routerLink="/cookbook"  class="footer__link">Kochbuch</a>
+      <a routerLink="/generate"   class="footer__link">Rezept erstellen</a>
+      <a routerLink="/cookbook"   class="footer__link">Kochbuch</a>
+      <a routerLink="/impressum"  class="footer__link">Impressum</a>
+      <a routerLink="/datenschutz" class="footer__link">Datenschutz</a>
     </nav>
+
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="footer__bottom">
+    <p class="footer__copy">&copy; {{ year }} Code à Cuisine &mdash; Powered by Claude AI</p>
   </div>
 </footer>

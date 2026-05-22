@@ -1,31 +1,46 @@
 <div class="hero">
-  <app-navbar [transparent]="true"></app-navbar>
 
+  <!-- Header: nur Logo -->
+  <header class="hero__header">
+    <a routerLink="/" class="hero__logo-link" aria-label="Code à Cuisine – Startseite">
+      <img src="assets/images/logo-cuisine.png" alt="Code à Cuisine" class="hero__logo" />
+    </a>
+  </header>
+
+  <!-- Linker Content-Bereich -->
   <main class="hero__main">
-    <section class="hero__cta-primary" aria-label="Hauptaktion">
+
+    <!-- Primärer CTA -->
+    <div class="hero__cta">
       <p class="hero__subtitle">AI-Powered recipe generator</p>
       <h1 class="hero__title">Code à Cuisine</h1>
-      <a routerLink="/generate" class="btn-primary hero__btn-start">Get started</a>
-    </section>
-
-    <section class="hero__cta-secondary" aria-label="Kochbuch">
-      <p class="hero__inspiration">Hungry for inspiration?</p>
-      <a routerLink="/cookbook" class="btn-secondary hero__btn-cookbook">
-        Go to cookbook
-        <span aria-hidden="true">→</span>
+      <a routerLink="/generate" class="hero__btn-start">
+        <span>Get started</span>
       </a>
-    </section>
+    </div>
+
+    <!-- Sekundärer CTA: Text + Button in einer Reihe -->
+    <div class="hero__secondary">
+      <p class="hero__inspiration">Hungry for inspiration?</p>
+      <a routerLink="/cookbook" class="hero__btn-cookbook">
+        <span>Go to cookbook</span>
+        <span class="hero__arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+
   </main>
 
-  <aside class="hero__visuals" aria-hidden="true">
-    <div class="hero__circle hero__circle--top">
+  <!-- Rechte Seite: 3 Kreise vertikal überlappend (absolut positioniert) -->
+  <aside class="hero__right" aria-hidden="true">
+    <div class="hero__circle hero__circle--1">
       <img src="assets/images/visual03.png" alt="" />
     </div>
-    <div class="hero__circle hero__circle--mid">
+    <div class="hero__circle hero__circle--2">
       <img src="assets/images/visual02.png" alt="" />
     </div>
-    <div class="hero__circle hero__circle--bot">
+    <div class="hero__circle hero__circle--3">
       <img src="assets/images/visual01.png" alt="" />
     </div>
   </aside>
+
 </div>
