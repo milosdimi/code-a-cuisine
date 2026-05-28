@@ -2,9 +2,8 @@
 @use '../../../styles/mixins' as *;
 
 // ============================================================
-// HERO – passt exakt in den Viewport, kein Scroll
-// Referenz-Viewport aus Figma: 1440 × 1024
-// Alle Positionen/Größen skalieren mit clamp(min, vw/vh, max)
+// HERO – 100svh, kein Scroll
+
 // ============================================================
 .hero {
   position: relative;
@@ -16,10 +15,9 @@
   flex-direction: column;
 }
 
-// ===== HEADER (Logo only) =====
+// ===== HEADER =====
 .hero__header {
   flex-shrink: 0;
-  // 40px / 1024vh = 3.9vh   |   68px / 1440vw = 4.7vw
   padding: clamp(24px, 3.9vh, 50px) 0 0 clamp(40px, 4.7vw, 80px);
   position: relative;
   z-index: 2;
@@ -29,7 +27,6 @@
   display: inline-block;
   img {
     display: block;
-    // 142px / 1440 = 9.9vw   |   48px / 1024 = 4.7vh
     width: clamp(100px, 9.9vw, 142px);
     height: clamp(34px, 4.7vh, 48px);
     object-fit: contain;
@@ -42,7 +39,6 @@
 }
 
 // ===== PRIMARY CTA =====
-// 300px / 1024 = 29.3vh   |   65px / 1440 = 4.5vw
 .hero__cta {
   position: absolute;
   top: clamp(150px, 29.3vh, 360px);
@@ -87,7 +83,10 @@
   text-decoration: none;
   position: relative;
   overflow: hidden;
-  transition: transform 300ms ease, box-shadow 300ms ease, color 300ms ease;
+  transition:
+    transform 300ms ease,
+    box-shadow 300ms ease,
+    color 300ms ease;
 
   &::before {
     content: '';
@@ -96,7 +95,7 @@
     left: -120%;
     width: 60%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
     transform: skewX(-20deg);
     transition: left 550ms ease;
   }
@@ -105,14 +104,17 @@
     transform: translateY(-3px);
     box-shadow: 0 10px 32px rgba(0, 0, 0, 0.3);
     color: $color-primary;
-    &::before { left: 160%; }
+    &::before {
+      left: 160%;
+    }
   }
 
-  &:active { transform: translateY(-1px); }
+  &:active {
+    transform: translateY(-1px);
+  }
 }
 
-// ===== SECONDARY CTA – absolut unten links =====
-// 72px / 1024 = 7vh   |   68px / 1440 = 4.7vw
+// ===== SECONDARY CTA =====
 .hero__secondary {
   position: absolute;
   bottom: clamp(40px, 7vh, 90px);
@@ -132,7 +134,7 @@
   white-space: nowrap;
 }
 
-// ===== GO TO COOKBOOK BUTTON – reiner Textlink =====
+// ===== GO TO COOKBOOK – Textlink =====
 .hero__btn-cookbook {
   display: inline-flex;
   align-items: center;
@@ -150,7 +152,9 @@
 
   &:hover {
     opacity: 0.75;
-    .hero__arrow { transform: translateX(6px); }
+    .hero__arrow {
+      transform: translateX(6px);
+    }
   }
 }
 
@@ -161,24 +165,21 @@
 }
 
 // ============================================================
-// CIRCLES – skalieren mit vw, Positionen mit vh
-// Referenz: container 480×1145, top -42px  (Figma 1440×1024)
-// vw-Formel: px / 1440 * 100   |   vh-Formel: px / 1024 * 100
+// CIRCLES
 // ============================================================
 .hero__right {
   position: absolute;
-  // 480px / 1440 = 33.3vw
+  top: 24px;
+  right: clamp(0px, 1.7vw, 24px);
   width: clamp(240px, 33.3vw, 520px);
-  top: -16px;
-  bottom: 0;
-  // 24px / 1440 = 1.7vw
-  right: clamp(0px, 1.7vw, 30px);
   z-index: 1;
   pointer-events: none;
 }
 
 .hero__circle {
-  position: absolute;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
   overflow: hidden;
   pointer-events: all;
@@ -191,39 +192,32 @@
     display: block;
   }
 
-  // Ellipse 29 – oben, 470×470
-  // 470px / 1440 = 32.6vw
   &--1 {
-    width: clamp(220px, 32.6vw, 510px);
-    height: clamp(220px, 32.6vw, 510px);
-    top: 5px;
-    left: 5px;
     box-shadow: 6px -2px 4px 0px rgba(0, 0, 0, 0.25);
     animation: rollInFromRight 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
-    &:hover { transform: scale(1.04); }
+    &:hover {
+      transform: scale(1.04);
+    }
   }
 
-  // Ellipse 30 – mitte, 484×484
-  // 484px / 1440 = 33.6vw   |   bottom 377px / 1024 = 36.8vh
+  // Ellipse 30 – mitte
   &--2 {
-    width: clamp(230px, 33.6vw, 520px);
-    height: clamp(230px, 33.6vw, 520px);
-    bottom: clamp(180px, 36.8vh, 430px);
-    left: -8px;
+    margin-top: -20%;
     animation: rollInFromLeft 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
-    &:hover { transform: scale(1.04); }
+    &:hover {
+      transform: scale(1.04);
+    }
   }
 
-  // Ellipse 31 – unten, 480×505, -18.91 deg
-  // 480px / 1440 = 33.3vw   |   505px / 1440 = 35.1vw (leicht höher als breit)
+  // Ellipse 31 – unten,
   &--3 {
-    width: clamp(240px, 33.3vw, 520px);
-    height: clamp(252px, 35.1vw, 548px);
-    bottom: -24px;
-    left: 0;
+    aspect-ratio: 480 / 505;
+    margin-top: -26%;
     transform: rotate(-18.91deg);
     animation: rollInFromRightRotated 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.65s both;
-    &:hover { transform: rotate(-18.91deg) scale(1.04); }
+    &:hover {
+      transform: rotate(-18.91deg) scale(1.04);
+    }
   }
 }
 
@@ -242,42 +236,65 @@
 }
 
 @keyframes rollInFromRight {
-  from { opacity: 0; transform: translateX(120px) rotate(18deg) scale(0.88); }
-  to   { opacity: 1; transform: translateX(0) rotate(0deg) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateX(120px) rotate(18deg) scale(0.88);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) rotate(0deg) scale(1);
+  }
 }
 
 @keyframes rollInFromLeft {
-  from { opacity: 0; transform: translateX(-120px) rotate(-18deg) scale(0.88); }
-  to   { opacity: 1; transform: translateX(0) rotate(0deg) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateX(-120px) rotate(-18deg) scale(0.88);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) rotate(0deg) scale(1);
+  }
 }
 
 @keyframes rollInFromRightRotated {
-  from { opacity: 0; transform: translateX(120px) rotate(0deg) scale(0.88); }
-  to   { opacity: 1; transform: translateX(0) rotate(-18.91deg) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateX(120px) rotate(0deg) scale(0.88);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) rotate(-18.91deg) scale(1);
+  }
 }
 
 // ============================================================
 // RESPONSIVE – TABLET
 // ============================================================
 @include tablet {
-  .hero__header { padding: 28px 0 0 32px; }
+  .hero__header {
+    padding: 28px 0 0 32px;
+  }
+  .hero__cta {
+    top: 180px;
+    left: 32px;
+    gap: 20px;
+  }
+  .hero__secondary {
+    gap: 20px;
+    left: 32px;
+    bottom: 48px;
+  }
 
-  .hero__cta { top: 180px; left: 32px; gap: 20px; }
-
-  .hero__inspiration { font-size: 22px; }
-  .hero__secondary   { gap: 20px; left: 32px; bottom: 48px; }
-
-  .hero__right { width: 340px; right: 0; }
-
-  .hero__circle {
-    &--1 { width: 310px; height: 310px; top: 0;    left: 4px; }
-    &--2 { width: 320px; height: 320px; bottom: 260px; left: -6px; }
-    &--3 { width: 316px; height: 333px; bottom: -20px; left: -20px; }
+  .hero__right {
+    width: clamp(200px, 44vw, 340px);
+    right: 0;
   }
 }
 
 // ============================================================
 // RESPONSIVE – MOBILE
+
 // ============================================================
 @include mobile {
   .hero {
@@ -285,7 +302,9 @@
     overflow: hidden;
   }
 
-  .hero__header { padding: 20px 0 0 24px; }
+  .hero__header {
+    padding: 20px 0 0 24px;
+  }
 
   .hero__cta {
     top: 120px;
@@ -293,9 +312,16 @@
     gap: 16px;
   }
 
-  .hero__subtitle { font-size: 18px; }
-  .hero__inspiration { font-size: 18px; }
-  .hero__btn-start { font-size: 18px; padding: 12px 22px; }
+  .hero__subtitle {
+    font-size: 18px;
+  }
+  .hero__inspiration {
+    font-size: 18px;
+  }
+  .hero__btn-start {
+    font-size: 18px;
+    padding: 12px 22px;
+  }
 
   .hero__secondary {
     flex-direction: column;
@@ -305,7 +331,6 @@
     bottom: 32px;
   }
 
-  // Circles auf Mobile: 3 nebeneinander unten rechts (geclippt)
   .hero__right {
     width: 100%;
     top: auto;
@@ -316,14 +341,35 @@
 
   .hero__circle {
     position: absolute;
+    aspect-ratio: unset;
+    margin-top: 0;
     transform: none;
     box-shadow: none;
-    width: auto;
-    height: auto;
 
-    &--1 { width: 150px; height: 150px; top: 0;    right: 310px; bottom: auto; animation-name: rollInFromLeft; }
-    &--2 { width: 165px; height: 165px; top: 0;    right: 150px; bottom: auto; animation-name: rollInFromRight; }
-    &--3 { width: 150px; height: 150px; top: 10px; right: 0;     bottom: auto; transform: none; animation-name: rollInFromLeft;
-           &:hover { transform: scale(1.04); } }
+    &--1 {
+      width: 150px;
+      height: 150px;
+      top: 0;
+      right: 310px;
+      animation-name: rollInFromLeft;
+    }
+    &--2 {
+      width: 165px;
+      height: 165px;
+      top: 0;
+      right: 150px;
+      animation-name: rollInFromRight;
+    }
+    &--3 {
+      width: 150px;
+      height: 150px;
+      top: 10px;
+      right: 0;
+      transform: none;
+      animation-name: rollInFromLeft;
+      &:hover {
+        transform: scale(1.04);
+      }
+    }
   }
 }
