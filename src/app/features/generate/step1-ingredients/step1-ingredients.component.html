@@ -95,33 +95,41 @@
 
                   @if (editingIndex === i) {
                     <div class="step1__chip-edit">
-                      <input
-                        type="text"
-                        class="step1__chip-edit-name"
-                        [(ngModel)]="editName"
-                        maxlength="50"
-                        (keydown.enter)="saveEdit(i)"
-                        (keydown.escape)="editingIndex = null"
-                      />
-                      <input
-                        type="number"
-                        class="step1__chip-edit-amount"
-                        [(ngModel)]="editAmount"
-                        min="0.1"
-                        max="9999"
-                        step="0.1"
-                      />
-                      <select class="step1__chip-edit-unit" [(ngModel)]="editUnit">
-                        @for (u of units; track u) {
-                          <option [value]="u">{{ u }}</option>
-                        }
-                      </select>
-                    </div>
-                    <div class="step1__chip-actions">
-                      <button type="button" class="step1__chip-btn step1__chip-btn--save" (click)="saveEdit(i)" aria-label="Save">✓</button>
-                      <button type="button" class="step1__chip-btn" (click)="removeIngredient(i)" [attr.aria-label]="'Delete: ' + ing.name">
-                        <img src="assets/images/icons/delete.png" alt="" />
-                      </button>
+                      <div class="step1__chip-edit-name-wrap">
+                        <input
+                          type="text"
+                          class="step1__input"
+                          [class.step1__input--error]="editNameError"
+                          [(ngModel)]="editName"
+                          maxlength="50"
+                          (focus)="editNameError = false"
+                          (keydown.enter)="saveEdit(i)"
+                          (keydown.escape)="editingIndex = null"
+                        />
+                      </div>
+                      <div class="step1__chip-edit-controls">
+                        <div class="step1__amount-pill">
+                          <input
+                            type="number"
+                            [(ngModel)]="editAmount"
+                            min="0.1"
+                            max="9999"
+                            step="0.1"
+                            aria-label="Amount"
+                          />
+                        </div>
+                        <div class="step1__chip-edit-unit-wrap">
+                          <select class="step1__chip-edit-unit" [(ngModel)]="editUnit">
+                            @for (u of units; track u) {
+                              <option [value]="u">{{ u }}</option>
+                            }
+                          </select>
+                        </div>
+                        <button type="button" class="step1__chip-btn step1__chip-btn--save" (click)="saveEdit(i)" aria-label="Save">✓</button>
+                        <button type="button" class="step1__chip-btn" (click)="removeIngredient(i)" [attr.aria-label]="'Delete: ' + ing.name">
+                          <img src="assets/images/icons/delete.png" alt="" />
+                        </button>
+                      </div>
                     </div>
                   } @else {
                     <div class="step1__chip-info">

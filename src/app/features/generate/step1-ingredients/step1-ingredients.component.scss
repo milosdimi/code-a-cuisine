@@ -114,6 +114,11 @@
     background: $color-creme;
     box-shadow: 0 0 0 2px rgba(57, 96, 57, 0.5);
   }
+
+  &--error {
+    background: rgba(211, 47, 47, 0.12);
+    box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.35);
+  }
 }
 
 .step1__suggestions {
@@ -329,78 +334,58 @@
 .step1__chip-edit {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   flex: 1;
   min-width: 0;
 }
 
-.step1__chip-edit-name {
+.step1__chip-edit-name-wrap {
   flex: 1;
   min-width: 0;
-  height: 28px;
-  padding: 4px 10px;
-  border-radius: 14px;
-  background: rgba(57, 96, 57, 0.12);
-  border: none;
-  font-family: 'Quicksand', sans-serif;
-  font-size: 15px;
-  color: #10310b;
-  outline: none;
-
-  &:focus { box-shadow: 0 0 0 2px rgba(57, 96, 57, 0.4); }
 }
 
-.step1__chip-edit-amount {
-  width: 52px;
-  height: 28px;
-  padding: 4px 6px;
-  border-radius: 14px;
-  background: rgba(57, 96, 57, 0.12);
-  border: none;
-  font-family: 'Quicksand', sans-serif;
-  font-size: 15px;
-  color: #10310b;
-  outline: none;
-  text-align: center;
-  appearance: textfield;
-  -moz-appearance: textfield;
+.step1__chip-edit-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
 
-  &::-webkit-outer-spin-button,
-  &::-webkit-inner-spin-button { -webkit-appearance: none; }
+.step1__chip-edit-unit-wrap {
+  position: relative;
 
-  &:focus { box-shadow: 0 0 0 2px rgba(57, 96, 57, 0.4); }
+  &::after {
+    content: '';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #10310b;
+    pointer-events: none;
+  }
 }
 
 .step1__chip-edit-unit {
-  height: 28px;
-  padding: 2px 6px;
-  border-radius: 14px;
-  background: rgba(57, 96, 57, 0.12);
+  height: 36px;
+  min-width: 90px;
+  padding: 6px 30px 6px 12px;
+  border-radius: 48px;
+  background: $color-creme;
   border: none;
   font-family: 'Quicksand', sans-serif;
-  font-size: 14px;
+  font-weight: 500;
+  font-size: 16px;
   color: #10310b;
   outline: none;
   cursor: pointer;
-
-  &:focus { box-shadow: 0 0 0 2px rgba(57, 96, 57, 0.4); }
+  appearance: none;
+  -webkit-appearance: none;
 }
 
-.step1__chip-btn--save {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: $color-primary;
-  color: $color-creme;
-  font-size: 13px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 1;
-
-  &:hover { background: #2d4d2d; opacity: 1; }
-}
 
 .step1__chip-info {
   display: flex;
@@ -451,8 +436,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0.65;
-  transition: opacity 150ms ease;
+  opacity: 0.55;
+  transition: opacity 150ms ease, background 150ms ease;
 
   img {
     width: 24px;
@@ -461,6 +446,20 @@
   }
 
   &:hover { opacity: 1; }
+
+  &--save {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: $color-primary;
+    color: $color-creme;
+    font-size: 16px;
+    font-weight: 700;
+    opacity: 1;
+    flex-shrink: 0;
+
+    &:hover { background: #2d4d2d; }
+  }
 }
 
 // ===== FOOTER (Next step outside cards) =====
@@ -547,6 +546,22 @@
 
   .step1__chip-actions {
     gap: 12px;
+  }
+
+  .step1__chip-edit {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+
+  .step1__chip-edit-name-wrap {
+    flex: none;
+    width: 100%;
+  }
+
+  .step1__chip-edit-controls {
+    width: 100%;
+    justify-content: flex-start;
   }
 
   .step1__btn-next {

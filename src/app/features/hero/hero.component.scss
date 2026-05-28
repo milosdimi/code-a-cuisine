@@ -303,10 +303,10 @@
     &--3 {
       width: clamp(190px, 80.3vw, 301px);
       height: clamp(200px, 84.3vw, 316px);
-      top: 462px;
-      left: -19.7%;
+      top: 434px;
+
       transform: rotate(-39.46deg);
-      box-shadow: -6px 2px 4px 0px rgba(0, 0, 0, 0.25);
+
       animation: none;
       &:hover { transform: rotate(-39.46deg) scale(1.04); }
     }

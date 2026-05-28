@@ -39,6 +39,7 @@ export class Step1IngredientsComponent implements OnInit {
   editName = '';
   editAmount = 1;
   editUnit: IngredientUnit = 'Stück';
+  editNameError = false;
 
   constructor(
     private recipeService: RecipeService,
@@ -113,10 +114,14 @@ export class Step1IngredientsComponent implements OnInit {
 
   saveEdit(index: number): void {
     const name = this.editName.trim();
-    if (!name) return;
+    if (!name) {
+      this.editNameError = true;
+      return;
+    }
     const amount = Math.min(Math.max(0.1, this.editAmount), 9999);
     this.ingredients[index] = { name, amount, unit: this.editUnit };
     this.editingIndex = null;
+    this.editNameError = false;
   }
 
   /** Validates the form and navigates to the preferences step. */
