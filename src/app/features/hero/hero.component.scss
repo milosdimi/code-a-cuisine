@@ -1,10 +1,7 @@
 @use '../../../styles/variables' as *;
 @use '../../../styles/mixins' as *;
 
-// ============================================================
-// HERO – 100svh, kein Scroll
-
-// ============================================================
+// ===== HERO =====
 .hero {
   position: relative;
   height: 100vh;
@@ -33,7 +30,7 @@
   }
 }
 
-// ===== MAIN LAYOUT =====
+// ===== MAIN =====
 .hero__main {
   flex: 1;
 }
@@ -83,10 +80,7 @@
   text-decoration: none;
   position: relative;
   overflow: hidden;
-  transition:
-    transform 300ms ease,
-    box-shadow 300ms ease,
-    color 300ms ease;
+  transition: transform 300ms ease, box-shadow 300ms ease, color 300ms ease;
 
   &::before {
     content: '';
@@ -104,14 +98,10 @@
     transform: translateY(-3px);
     box-shadow: 0 10px 32px rgba(0, 0, 0, 0.3);
     color: $color-primary;
-    &::before {
-      left: 160%;
-    }
+    &::before { left: 160%; }
   }
 
-  &:active {
-    transform: translateY(-1px);
-  }
+  &:active { transform: translateY(-1px); }
 }
 
 // ===== SECONDARY CTA =====
@@ -134,7 +124,7 @@
   white-space: nowrap;
 }
 
-// ===== GO TO COOKBOOK – Textlink =====
+// ===== GO TO COOKBOOK =====
 .hero__btn-cookbook {
   display: inline-flex;
   align-items: center;
@@ -152,9 +142,7 @@
 
   &:hover {
     opacity: 0.75;
-    .hero__arrow {
-      transform: translateX(6px);
-    }
+    .hero__arrow { transform: translateX(6px); }
   }
 }
 
@@ -164,9 +152,7 @@
   transition: transform 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-// ============================================================
-// CIRCLES
-// ============================================================
+// ===== CIRCLES =====
 .hero__right {
   position: absolute;
   top: -24px;
@@ -195,88 +181,46 @@
   &--1 {
     box-shadow: 6px -2px 4px 0px rgba(0, 0, 0, 0.25);
     animation: rollInFromRight 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
-    &:hover {
-      transform: scale(1.04);
-    }
+    &:hover { transform: scale(1.04); }
   }
 
-  // Ellipse 30 – mitte
   &--2 {
     margin-top: -20%;
     animation: rollInFromLeft 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
-    &:hover {
-      transform: scale(1.04);
-    }
+    &:hover { transform: scale(1.04); }
   }
 
-  // Ellipse 31 – unten,
   &--3 {
     aspect-ratio: 480 / 505;
     margin-top: -26%;
     transform: rotate(-18.91deg);
     animation: rollInFromRightRotated 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.65s both;
-    &:hover {
-      transform: rotate(-18.91deg) scale(1.04);
-    }
+    &:hover { transform: rotate(-18.91deg) scale(1.04); }
   }
 }
 
-// ============================================================
-// ANIMATIONEN
-// ============================================================
+// ===== ANIMATIONS =====
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes rollInFromRight {
-  from {
-    opacity: 0;
-    transform: translateX(120px) rotate(18deg) scale(0.88);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0) rotate(0deg) scale(1);
-  }
+  from { opacity: 0; transform: translateX(120px) rotate(18deg) scale(0.88); }
+  to   { opacity: 1; transform: translateX(0) rotate(0deg) scale(1); }
 }
 
 @keyframes rollInFromLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-120px) rotate(-18deg) scale(0.88);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0) rotate(0deg) scale(1);
-  }
+  from { opacity: 0; transform: translateX(-120px) rotate(-18deg) scale(0.88); }
+  to   { opacity: 1; transform: translateX(0) rotate(0deg) scale(1); }
 }
 
 @keyframes rollInFromRightRotated {
-  from {
-    opacity: 0;
-    transform: translateX(120px) rotate(0deg) scale(0.88);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0) rotate(-18.91deg) scale(1);
-  }
+  from { opacity: 0; transform: translateX(120px) rotate(0deg) scale(0.88); }
+  to   { opacity: 1; transform: translateX(0) rotate(-18.91deg) scale(1); }
 }
 
-
-// ============================================================
-// RESPONSIVE – MOBILE  (Referenz: Figma 375 × 812)
-//
-// Skalierungsformel:
-//   Container: left: 63.5% (= 238px / 375px aus Figma)
-//   Kreise: clamp(min, Xvw, max) wo X = px/375 * 100
-//   → alles skaliert proportional von 768px bis 320px
-// ============================================================
+// ===== MOBILE =====
 @include mobile {
   .hero {
     height: 100svh;
@@ -287,7 +231,6 @@
     padding: 12px 16px 8px;
   }
 
-  // max-width: 62% damit Text vor den Kreisen endet (Container bei 63.5%)
   .hero__cta {
     top: clamp(80px, 11.8vh, 110px);
     left: 16px;
@@ -324,14 +267,12 @@
     white-space: normal;
   }
 
-  // Container startet bei 63.5% vom linken Rand (238/375 = 63.5%)
-  // Auf 320px: 203px | 375px: 238px | 480px: 305px | 768px: 488px
   .hero__right {
     top: 23px;
     left: 63.5%;
     right: auto;
     bottom: auto;
-    width: 99vw;  // gross genug, hero overflow:hidden clippt rechts
+    width: 99vw;
     height: auto;
   }
 
@@ -340,36 +281,32 @@
     margin-top: 0;
     aspect-ratio: unset;
 
-    // 295px / 375px = 78.7vw → skaliert mit Viewport, max 295px
     &--1 {
       width: clamp(190px, 78.7vw, 295px);
       height: clamp(190px, 78.7vw, 295px);
       top: 0;
-      left: 1.6%;  // 6px / 375px
+      left: 1.6%;
       transform: none;
       box-shadow: 6px -2px 4px 0px rgba(0, 0, 0, 0.25);
       animation: rollInFromRight 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
     }
 
-    // 303px / 375px = 80.8vw
-    // animation: none – sonst überschreibt fill-mode das rotate(-135deg)
     &--2 {
       width: clamp(195px, 80.8vw, 303px);
       height: clamp(195px, 80.8vw, 303px);
       top: 203px;
-      left: -15.5%;  // -58px / 375px
+      left: -15.5%;
       transform: rotate(-135deg);
       animation: none;
     }
 
-    // 301px / 375px = 80.3vw, Höhe 316px / 375px = 84.3vw
     &--3 {
       width: clamp(190px, 80.3vw, 301px);
       height: clamp(200px, 84.3vw, 316px);
-      top: 444px;
-      left: 0px;  // -74px / 375px
+      top: 462px;
+      left: -19.7%;
       transform: rotate(-39.46deg);
-
+      box-shadow: -6px 2px 4px 0px rgba(0, 0, 0, 0.25);
       animation: none;
       &:hover { transform: rotate(-39.46deg) scale(1.04); }
     }
