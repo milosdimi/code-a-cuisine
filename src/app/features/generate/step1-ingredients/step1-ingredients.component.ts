@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
@@ -21,7 +20,7 @@ const UNITS: IngredientUnit[] = ['g', 'kg', 'ml', 'l', 'Stück', 'TL', 'EL'];
 @Component({
   selector: 'app-step1-ingredients',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, NavbarComponent, FooterComponent],
+  imports: [FormsModule, RouterLink, NavbarComponent, FooterComponent],
   templateUrl: './step1-ingredients.component.html',
   styleUrl: './step1-ingredients.component.scss'
 })
@@ -30,10 +29,16 @@ export class Step1IngredientsComponent implements OnInit {
   searchTerm = '';
   suggestions: string[] = [];
   showSuggestions = false;
+  showUnitDropdown = false;
   newAmount = 1;
   newUnit: IngredientUnit = 'Stück';
   units = UNITS;
   validationError = '';
+
+  editingIndex: number | null = null;
+  editName = '';
+  editAmount = 1;
+  editUnit: IngredientUnit = 'Stück';
 
   constructor(
     private recipeService: RecipeService,
@@ -75,12 +80,16 @@ export class Step1IngredientsComponent implements OnInit {
   /** Adds the current input as a new ingredient if valid. */
   addIngredient(): void {
     const name = this.searchTerm.trim();
-    if (!name) return;
-    if (this.ingredients.some(i => i.name.toLowerCase() === name.toLowerCase())) {
-      this.validationError = 'Diese Zutat wurde bereits hinzugefügt.';
+    if (!name) {
+      this.validationError = 'Please enter an ingredient name.';
       return;
     }
-    this.ingredients.push({ name, amount: this.newAmount, unit: this.newUnit });
+    if (this.ingredients.some(i => i.name.toLowerCase() === name.toLowerCase())) {
+      this.validationError = 'This ingredient has already been added.';
+      return;
+    }
+    const amount = Math.min(Math.max(0.1, this.newAmount), 9999);
+    this.ingredients.push({ name, amount, unit: this.newUnit });
     this.searchTerm = '';
     this.newAmount = 1;
     this.newUnit = 'Stück';
@@ -91,19 +100,60 @@ export class Step1IngredientsComponent implements OnInit {
   /** Removes an ingredient by index. */
   removeIngredient(index: number): void {
     this.ingredients.splice(index, 1);
+    if (this.editingIndex === index) this.editingIndex = null;
+  }
+
+  startEdit(index: number, ing: UserIngredient): void {
+    this.editingIndex = index;
+    this.editName = ing.name;
+    this.editAmount = ing.amount;
+    this.editUnit = ing.unit;
+    this.validationError = '';
+  }
+
+  saveEdit(index: number): void {
+    const name = this.editName.trim();
+    if (!name) return;
+    const amount = Math.min(Math.max(0.1, this.editAmount), 9999);
+    this.ingredients[index] = { name, amount, unit: this.editUnit };
+    this.editingIndex = null;
   }
 
   /** Validates the form and navigates to the preferences step. */
   goToPreferences(): void {
     if (this.ingredients.length === 0) {
-      this.validationError = 'Bitte füge mindestens eine Zutat hinzu.';
+      this.validationError = 'Please add at least one ingredient.';
       return;
     }
     this.recipeService.updatePreferences({ ingredients: this.ingredients });
     this.router.navigate(['/preferences']);
   }
 
+  clearError(): void {
+    this.validationError = '';
+  }
+
   hideSuggestions(): void {
     setTimeout(() => { this.showSuggestions = false; }, 150);
+  }
+
+  selectUnit(unit: IngredientUnit): void {
+    this.newUnit = unit;
+    this.showUnitDropdown = false;
+  }
+
+  hideUnitDropdown(): void {
+    setTimeout(() => { this.showUnitDropdown = false; }, 150);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.step1__search-wrap')) {
+      this.showSuggestions = false;
+    }
+    if (!target.closest('.step1__unit-wrap')) {
+      this.showUnitDropdown = false;
+    }
   }
 }
