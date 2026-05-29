@@ -14,17 +14,12 @@
   width: 429px;
 }
 
-.spinner-placeholder {
+.loading__spinner {
   width: 253px;
-  height: 309px;
+  height: 291px;
   background: #C4D0C4;
   border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Quicksand', sans-serif;
-  font-size: 16px;
-  color: #396039;
+  display: block;
 }
 
 .loading__text {
