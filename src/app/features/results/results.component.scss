@@ -1,56 +1,188 @@
-﻿@use '../../../styles/variables' as *;
-@use '../../../styles/mixins' as *;
+@use '../../../styles/variables' as *;
 
+// ===== PAGE =====
 .results {
+  background: #396039;
   min-height: calc(100vh - 136px - 88px);
-  background: $color-creme;
-  padding: 60px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+  padding: 64px 0 80px;
+}
 
-  &__container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 24px;
-  }
+// ===== TOP SECTION =====
+.results__top {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0 40px 0 80px;
+  gap: 96px;
+}
 
-  &__header {
-    text-align: center;
-    margin-bottom: 48px;
-  }
+.results__text-block {
+  width: 610px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
 
-  &__title {
-    font-family: 'Ubuntu', sans-serif;
-    font-weight: 700;
-    font-size: $font-size-h3;
-    color: $color-text-dark;
-    margin-bottom: 12px;
-  }
+.results__title {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
+  font-size: 54px;
+  line-height: 65px;
+  color: #FAF0E6;
+  margin: 0;
+}
 
-  &__subtitle {
-    font-size: $font-size-body;
-    color: #636363;
-  }
+.results__subtitle {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 30px;
+  color: #FAF0E6;
+  margin: 0;
+}
 
-  &__grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-    margin-bottom: 48px;
-  }
+.results__tags {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  flex-wrap: wrap;
+}
 
-  &__actions {
-    display: flex;
-    justify-content: center;
-  }
+.results__tag {
+  background: #FAF0E6;
+  border-radius: 30px;
+  padding: 6px 12px;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  color: #1E5515;
+}
 
-  @include tablet {
-    &__grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
+.results__hero-img {
+  width: 574px;
+  height: 222px;
+  border-radius: 20px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
 
-  @include mobile {
-    &__grid {
-      grid-template-columns: 1fr;
-    }
-  }
+// ===== CARDS ROW =====
+.results__cards {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  padding: 0 0 0 80px;
+}
+
+// ===== SINGLE CARD =====
+.results__card {
+  width: 411px;
+  height: 338px;
+  flex-shrink: 0;
+  background: #DBE0DB;
+  border-radius: 20px;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.results__card-top {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.results__card-number-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.results__card-label {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+  color: #1E5515;
+}
+
+.results__card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.results__card-title {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 40px;
+  color: #10310B;
+  margin: 0;
+  height: 80px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.results__card-time {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  color: #396039;
+}
+
+// ===== CARD BOTTOM =====
+.results__card-bottom {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.results__card-btn {
+  background: #FAF0E6;
+  padding: 16px 26px;
+  border-radius: 5px;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+  color: #008000;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: background 150ms ease;
+
+  &:hover { background: #EDE3D9; }
+}
+
+// ===== BOTTOM CTA =====
+.results__cta {
+  padding: 0 0 0 80px;
+}
+
+.results__cta-btn {
+  padding: 16px 26px;
+  border-radius: 5px;
+  border: 2px solid #FAF0E6;
+  background: transparent;
+  color: #FAF0E6;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 150ms ease;
+
+  &:hover { background: rgba(250, 240, 230, 0.08); }
 }

@@ -1,22 +1,70 @@
 <app-navbar></app-navbar>
 
 <main class="results">
-  <section class="results__container">
-    <header class="results__header">
-      <h1 class="results__title">Deine Rezeptvorschläge</h1>
-      <p class="results__subtitle">Wähle ein Rezept aus, um die vollständige Anleitung zu sehen.</p>
-    </header>
 
-    <div class="results__grid">
-      <app-recipe-card *ngFor="let recipe of recipes" [recipe]="recipe"></app-recipe-card>
+  <!-- TOP SECTION: text left, image right -->
+  <div class="results__top">
+    <div class="results__text-block">
+      <h1 class="results__title">The recipe results</h1>
+      <p class="results__subtitle">
+        We took what you have and let our AI do the thinking.
+        Here are 3 easy recipes you can make right now!
+      </p>
+      @if (preferences) {
+        <div class="results__tags">
+          <span class="results__tag">{{ timeTag }}</span>
+          <span class="results__tag">{{ styleTag }}</span>
+        </div>
+      }
     </div>
 
-    <div class="results__actions">
-      <button type="button" class="btn-green" (click)="startNewSearch()">
-        ← Neue Suche
-      </button>
-    </div>
-  </section>
+    <img
+      src="assets/images/img/result-img.png"
+      alt=""
+      class="results__hero-img"
+      aria-hidden="true"
+    />
+  </div>
+
+  <!-- 3 RECIPE CARDS -->
+  <div class="results__cards">
+    @for (recipe of displayRecipes; track recipe.title; let i = $index) {
+      <div class="results__card">
+
+        <div class="results__card-top">
+          <div class="results__card-number-row">
+            <img src="assets/images/icons/deckel.png" width="40" height="28" alt="" aria-hidden="true" />
+            <span class="results__card-label">Recipe {{ i + 1 }}</span>
+          </div>
+
+          <div class="results__card-text">
+            <h2 class="results__card-title">{{ recipe.title }}</h2>
+            <div class="results__card-time">
+              <img src="assets/images/icons/clock.png" width="24" height="24" alt="" aria-hidden="true" />
+              <span>Cooking time: {{ cookingTimeLabel(recipe.cookingTime) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="results__card-bottom">
+          <a
+            class="results__card-btn"
+            [routerLink]="['/recipe', recipe.id]"
+            role="button"
+          >View</a>
+        </div>
+
+      </div>
+    }
+  </div>
+
+  <!-- BOTTOM CTA -->
+  <div class="results__cta">
+    <button type="button" class="results__cta-btn" (click)="startNewSearch()">
+      Generate new recipe →
+    </button>
+  </div>
+
 </main>
 
 <app-footer></app-footer>

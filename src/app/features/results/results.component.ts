@@ -1,21 +1,85 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
-import { RecipeCardComponent } from './recipe-card/recipe-card.component';
 import { RecipeService } from '../../core/services/recipe.service';
-import { Recipe } from '../../core/models/recipe.model';
+import { Recipe, CookingTime, CookingStyle } from '../../core/models/recipe.model';
+import { UserPreferences } from '../../core/models/preferences.model';
+
+const TIME_LABELS: Record<CookingTime, string> = {
+  quick:     'Quick',
+  medium:    'Medium',
+  elaborate: 'Complex'
+};
+
+const STYLE_LABELS: Record<CookingStyle, string> = {
+  german:   'German',
+  italian:  'Italian',
+  japanese: 'Japanese',
+  indian:   'Indian',
+  gourmet:  'Gourmet',
+  fusion:   'Fusion'
+};
+
+const TIME_MINUTES: Record<CookingTime, string> = {
+  quick:     'up to 20min',
+  medium:    '25-40min',
+  elaborate: '45+ min'
+};
+
+const MOCK_RECIPES: Recipe[] = [
+  {
+    id: 'mock-1',
+    title: 'Spaghetti Carbonara',
+    cookingStyle: 'italian', cookingTime: 'quick', servings: 2,
+    ingredients: [], missingIngredients: [], steps: [],
+    nutrition: { caloriesPerPortion: 0, proteinG: 0, carbsG: 0, fatG: 0 },
+    helpers: [], createdAt: new Date()
+  },
+  {
+    id: 'mock-2',
+    title: 'Classic Potato Soup',
+    cookingStyle: 'german', cookingTime: 'medium', servings: 2,
+    ingredients: [], missingIngredients: [], steps: [],
+    nutrition: { caloriesPerPortion: 0, proteinG: 0, carbsG: 0, fatG: 0 },
+    helpers: [], createdAt: new Date()
+  },
+  {
+    id: 'mock-3',
+    title: 'Vegetable Miso Ramen',
+    cookingStyle: 'japanese', cookingTime: 'elaborate', servings: 2,
+    ingredients: [], missingIngredients: [], steps: [],
+    nutrition: { caloriesPerPortion: 0, proteinG: 0, carbsG: 0, fatG: 0 },
+    helpers: [], createdAt: new Date()
+  }
+];
 
 @Component({
   selector: 'app-results',
   standalone: true,
-  imports: [CommonModule, NavbarComponent, FooterComponent, RecipeCardComponent],
+  imports: [NavbarComponent, FooterComponent, RouterLink],
   templateUrl: './results.component.html',
   styleUrl: './results.component.scss'
 })
 export class ResultsComponent implements OnInit {
   recipes: Recipe[] = [];
+  preferences: UserPreferences | null = null;
+
+  get displayRecipes(): Recipe[] {
+    return this.recipes.length > 0 ? this.recipes : MOCK_RECIPES;
+  }
+
+  get timeTag(): string {
+    return this.preferences ? (TIME_LABELS[this.preferences.cookingTime] ?? this.preferences.cookingTime) : '';
+  }
+
+  get styleTag(): string {
+    return this.preferences ? (STYLE_LABELS[this.preferences.cookingStyle] ?? this.preferences.cookingStyle) : '';
+  }
+
+  cookingTimeLabel(t: CookingTime): string {
+    return TIME_MINUTES[t] ?? t;
+  }
 
   constructor(
     private recipeService: RecipeService,
@@ -29,6 +93,10 @@ export class ResultsComponent implements OnInit {
       } else {
         this.recipes = recipes;
       }
+    });
+
+    this.recipeService.preferences$.subscribe(prefs => {
+      this.preferences = prefs;
     });
   }
 
