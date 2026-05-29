@@ -1,25 +1,35 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
 import { FirebaseService } from '../../core/services/firebase.service';
 import { RecipeService } from '../../core/services/recipe.service';
-import { Recipe, RecipeIngredient, HelperTask } from '../../core/models/recipe.model';
+import { Recipe, RecipeIngredient, CookingStep } from '../../core/models/recipe.model';
 
 const STYLE_LABELS: Record<string, string> = {
-  german:   'Deutsche Küche',  italian:  'Italienische Küche',
-  japanese: 'Japanische Küche', indian:   'Indische Küche',
-  gourmet:  'Gourmet',          fusion:   'Fusion'
+  german: 'German',   italian: 'Italian',  japanese: 'Japanese',
+  indian: 'Indian',   gourmet: 'Gourmet',  fusion:   'Fusion'
 };
+
 const TIME_LABELS: Record<string, string> = {
-  quick: 'Schnell (< 20 Min)', medium: 'Mittel (20–45 Min)', elaborate: 'Aufwendig (45+ Min)'
+  quick: 'Quick', medium: 'Medium', elaborate: 'Complex'
 };
+
+const TIME_MINUTES: Record<string, string> = {
+  quick: 'up to 20min', medium: '25-40min', elaborate: '45+ min'
+};
+
+const CHEF_COLORS  = ['#D7DFD7', '#FFD9B3', '#B3D9FF'];
+const CHEF_ICONS   = [
+  'assets/images/icons/cook-01.png',
+  'assets/images/icons/cook-02.png',
+  'assets/images/icons/cook-03.png'
+];
 
 @Component({
   selector: 'app-recipe-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, NavbarComponent, FooterComponent],
+  imports: [RouterLink, NavbarComponent, FooterComponent],
   templateUrl: './recipe-detail.component.html',
   styleUrl: './recipe-detail.component.scss'
 })
@@ -27,12 +37,17 @@ export class RecipeDetailComponent implements OnInit {
   recipe: Recipe | null = null;
   isLoading = true;
   error = '';
-  activeHelper = 0;
-  servingsMultiplier = 1;
-  baseServings = 1;
+  heartCount = 0;
+
+  readonly chefColors = CHEF_COLORS;
+  readonly chefIcons  = CHEF_ICONS;
+
+  private servingsMultiplier = 1;
+  private baseServings = 1;
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private firebase: FirebaseService,
     private recipeService: RecipeService
   ) {}
@@ -57,24 +72,25 @@ export class RecipeDetailComponent implements OnInit {
         if (recipe) {
           this.setRecipe(recipe);
         } else {
-          this.error = 'Rezept nicht gefunden.';
+          this.error = 'Recipe not found.';
           this.isLoading = false;
         }
       },
       error: () => {
-        this.error = 'Rezept konnte nicht geladen werden.';
+        this.error = 'Recipe could not be loaded.';
         this.isLoading = false;
       }
     });
   }
 
   private setRecipe(recipe: Recipe): void {
-    this.recipe = recipe;
+    this.recipe    = recipe;
     this.baseServings = recipe.servings;
     this.isLoading = false;
   }
 
-  /** Returns ingredients scaled to the current portion multiplier. */
+  // ── Computed data ──────────────────────────────────────────────
+
   get scaledIngredients(): RecipeIngredient[] {
     if (!this.recipe) return [];
     return this.recipe.ingredients.map(ing => ({
@@ -83,35 +99,56 @@ export class RecipeDetailComponent implements OnInit {
     }));
   }
 
-  /** Current portion count after scaling. */
   get currentServings(): number {
     return Math.round(this.baseServings * this.servingsMultiplier);
   }
 
-  increaseServings(): void {
-    this.servingsMultiplier = Math.round((this.servingsMultiplier + 0.5) * 10) / 10;
+  get chefCount(): number {
+    return this.recipe?.helpers?.length ?? 0;
   }
 
-  decreaseServings(): void {
-    if (this.servingsMultiplier > 0.5) {
-      this.servingsMultiplier = Math.round((this.servingsMultiplier - 0.5) * 10) / 10;
-    }
+  get chefRange(): number[] {
+    return Array.from({ length: this.chefCount }, (_, i) => i);
   }
 
-  /** Helper tasks for the active tab. */
-  get activeHelperTasks(): HelperTask[] {
-    return this.recipe?.helpers?.[this.activeHelper] ?? [];
+  // Steps split into left (odd positions) and right (even positions)
+  get leftSteps(): CookingStep[] {
+    return this.recipe?.steps?.filter((_, i) => i % 2 === 0) ?? [];
   }
 
-  get helperTabs(): number[] {
-    return Array.from({ length: this.recipe?.helpers?.length ?? 0 }, (_, i) => i);
+  get rightSteps(): CookingStep[] {
+    return this.recipe?.steps?.filter((_, i) => i % 2 === 1) ?? [];
   }
 
-  get styleLabel(): string { return STYLE_LABELS[this.recipe?.cookingStyle ?? ''] ?? ''; }
-  get timeLabel():  string { return TIME_LABELS[this.recipe?.cookingTime ?? '']   ?? ''; }
+  get styleLabel():  string { return STYLE_LABELS[this.recipe?.cookingStyle ?? ''] ?? ''; }
+  get timeLabel():   string { return TIME_LABELS[this.recipe?.cookingTime   ?? ''] ?? ''; }
+  get timeMinutes(): string { return TIME_MINUTES[this.recipe?.cookingTime  ?? ''] ?? ''; }
 
-  get totalCalories(): number {
-    if (!this.recipe) return 0;
-    return Math.round(this.recipe.nutrition.caloriesPerPortion * this.currentServings);
+  // ── Chef helpers ───────────────────────────────────────────────
+
+  chefColor(stepOriginalIndex: number): string {
+    const c = this.chefCount;
+    return c > 0 ? (CHEF_COLORS[stepOriginalIndex % c] ?? CHEF_COLORS[0]) : CHEF_COLORS[0];
+  }
+
+  chefIcon(stepOriginalIndex: number): string {
+    const c = this.chefCount;
+    return c > 0 ? (CHEF_ICONS[stepOriginalIndex % c] ?? CHEF_ICONS[0]) : CHEF_ICONS[0];
+  }
+
+  chefNumber(stepOriginalIndex: number): number {
+    const c = this.chefCount;
+    return c > 0 ? (stepOriginalIndex % c) + 1 : 1;
+  }
+
+  // ── Actions ────────────────────────────────────────────────────
+
+  incrementHeart(): void { this.heartCount++; }
+
+  goToCookbook(): void { this.router.navigate(['/cookbook']); }
+
+  startNewSearch(): void {
+    this.recipeService.resetState();
+    this.router.navigate(['/generate']);
   }
 }

@@ -99,11 +99,6 @@ export class RecipeService {
         cookingStyle: prefs.cookingStyle,
         diet:         prefs.diet,
         helpers:      prefs.helpers
-      },
-      meta: {
-        ipAddress: 'CLIENT_IP',
-        timestamp: new Date().toISOString(),
-        language:  'de'
       }
     };
   }

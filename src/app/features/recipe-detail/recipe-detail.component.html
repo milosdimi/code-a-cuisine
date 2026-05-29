@@ -1,133 +1,189 @@
 <app-navbar></app-navbar>
 
 <main class="detail">
-  <!-- Loading -->
-  <div class="detail__loading" *ngIf="isLoading">
-    <div class="detail__spinner"></div>
-    <p>Rezept wird geladen…</p>
-  </div>
+  <div class="detail__wrapper">
 
-  <!-- Error -->
-  <div class="detail__error" *ngIf="error && !isLoading" role="alert">
-    <p>{{ error }}</p>
-    <a routerLink="/cookbook" class="btn-green">Zum Kochbuch</a>
-  </div>
+    <!-- BACK LINK -->
+    <a routerLink="/results" class="detail__back-link">
+      <span class="detail__back-arrow">←</span>
+      Recipe results
+    </a>
 
-  <!-- Recipe -->
-  <article class="detail__content" *ngIf="recipe && !isLoading">
-    <header class="detail__header">
-      <div class="detail__meta">
-        <span class="detail__badge">{{ styleLabel }}</span>
-        <span class="detail__badge detail__badge--time">{{ timeLabel }}</span>
+    <!-- LOADING -->
+    @if (isLoading) {
+      <div class="detail__loading">
+        <p>Loading recipe…</p>
       </div>
-      <h1 class="detail__title">{{ recipe.title }}</h1>
+    }
 
-      <div class="detail__servings">
-        <span class="detail__servings-label">Portionen:</span>
-        <button type="button" class="detail__servings-btn" (click)="decreaseServings()" aria-label="Portionen verringern">−</button>
-        <span class="detail__servings-count">{{ currentServings }}</span>
-        <button type="button" class="detail__servings-btn" (click)="increaseServings()" aria-label="Portionen erhöhen">+</button>
+    <!-- ERROR / NOT FOUND -->
+    @if (error && !isLoading) {
+      <div class="detail__error" role="alert">
+        <p class="detail__error-msg">{{ error }}</p>
+        <a routerLink="/results" class="detail__error-back">← Back to results</a>
       </div>
-    </header>
+    }
 
-    <div class="detail__body">
-      <aside class="detail__sidebar">
-        <!-- Ingredients -->
-        <section class="detail__section">
-          <h2 class="detail__section-title">Zutaten</h2>
-          <ul class="detail__ingredient-list">
-            <li *ngFor="let ing of scaledIngredients" class="detail__ingredient">
-              <span class="detail__ingredient-amount">{{ ing.amount }} {{ ing.unit }}</span>
-              <span class="detail__ingredient-name">{{ ing.name }}</span>
-            </li>
-          </ul>
-        </section>
+    <!-- ═══ MAIN RECIPE BOX ═══ -->
+    @if (recipe && !isLoading) {
+      <div class="detail__box">
 
-        <!-- Missing ingredients -->
-        <section class="detail__section" *ngIf="recipe.missingIngredients.length > 0">
-          <h2 class="detail__section-title detail__section-title--warning">Einkaufsliste</h2>
-          <ul class="detail__missing-list">
-            <li *ngFor="let name of recipe.missingIngredients" class="detail__missing-item">
-              🛒 {{ name }}
-            </li>
-          </ul>
-        </section>
+        <!-- ── SECTION 1: Name + Nutrition ── -->
+        <div class="detail__section1">
 
-        <!-- Nutrition -->
-        <section class="detail__section">
-          <h2 class="detail__section-title">Nährwerte</h2>
-          <p class="detail__nutrition-note">Pro Portion / Gesamt ({{ currentServings }} Portionen)</p>
-          <ul class="detail__nutrition-list">
-            <li class="detail__nutrition-item">
-              <span>Kalorien</span>
-              <span>{{ recipe.nutrition.caloriesPerPortion }} / {{ totalCalories }} kcal</span>
-            </li>
-            <li class="detail__nutrition-item">
-              <span>Protein</span>
-              <span>{{ recipe.nutrition.proteinG }} g</span>
-            </li>
-            <li class="detail__nutrition-item">
-              <span>Kohlenhydrate</span>
-              <span>{{ recipe.nutrition.carbsG }} g</span>
-            </li>
-            <li class="detail__nutrition-item">
-              <span>Fett</span>
-              <span>{{ recipe.nutrition.fatG }} g</span>
-            </li>
-          </ul>
-        </section>
-      </aside>
+          <div class="detail__left">
+            <div class="detail__time-row">
+              <img src="assets/images/icons/clock.png" width="24" height="24" alt="" aria-hidden="true" />
+              <span>Cooking time: {{ timeMinutes }}</span>
+            </div>
+            <h1 class="detail__title">{{ recipe.title }}</h1>
+            <div class="detail__persons-row">
+              <span class="detail__persons-text">Cooking person: {{ chefCount }}</span>
+              @for (i of chefRange; track i) {
+                <span class="detail__chef-label" [style.background]="chefColors[i]">
+                  <img [src]="chefIcons[i]" width="27" height="22" alt="" aria-hidden="true" />
+                  Chef {{ i + 1 }}
+                </span>
+              }
+            </div>
+          </div>
 
-      <div class="detail__main">
-        <!-- Steps -->
-        <section class="detail__section">
-          <h2 class="detail__section-title">Zubereitung</h2>
-          <ol class="detail__steps">
-            <li
-              *ngFor="let step of recipe.steps"
-              class="detail__step"
-              [class.detail__step--parallel]="step.isParallel"
-            >
-              <div class="detail__step-num">{{ step.stepNumber }}</div>
-              <div class="detail__step-body">
-                <p class="detail__step-desc">{{ step.description }}</p>
-                <div class="detail__step-meta">
-                  <span *ngIf="step.durationMinutes" class="detail__step-duration">⏱ {{ step.durationMinutes }} Min</span>
-                  <span *ngIf="step.isParallel" class="detail__step-parallel-badge">⚡ Parallel</span>
+          <div class="detail__right">
+            <div class="detail__tags-row">
+              <span class="detail__tag">{{ timeLabel }}</span>
+              <span class="detail__tag">{{ styleLabel }}</span>
+              <div class="detail__heart-pill">
+                <img src="assets/images/icons/hearth.png" width="20" height="20" alt="" aria-hidden="true" />
+                <span>{{ heartCount }}</span>
+              </div>
+            </div>
+
+            <div class="detail__nutrition">
+              <p class="detail__nutrition-label">Nutritional information</p>
+              <div class="detail__nutrition-cols">
+                <div class="detail__nutrition-col">
+                  <span class="detail__nutrition-key">Energie</span>
+                  <span class="detail__nutrition-val">{{ recipe.nutrition.caloriesPerPortion }} kcal</span>
+                </div>
+                <div class="detail__nutrition-col">
+                  <span class="detail__nutrition-key">Protein</span>
+                  <span class="detail__nutrition-val">{{ recipe.nutrition.proteinG }}g</span>
+                </div>
+                <div class="detail__nutrition-col">
+                  <span class="detail__nutrition-key">Fat</span>
+                  <span class="detail__nutrition-val">{{ recipe.nutrition.fatG }}g</span>
+                </div>
+                <div class="detail__nutrition-col">
+                  <span class="detail__nutrition-key">Carbs</span>
+                  <span class="detail__nutrition-val">{{ recipe.nutrition.carbsG }}g</span>
                 </div>
               </div>
-            </li>
-          </ol>
-        </section>
-
-        <!-- Helper tabs -->
-        <section class="detail__section" *ngIf="helperTabs.length > 1">
-          <h2 class="detail__section-title">Aufgabenverteilung</h2>
-          <div class="detail__helper-tabs" role="tablist">
-            <button
-              *ngFor="let idx of helperTabs"
-              type="button"
-              role="tab"
-              class="detail__helper-tab"
-              [class.detail__helper-tab--active]="activeHelper === idx"
-              (click)="activeHelper = idx"
-              [attr.aria-selected]="activeHelper === idx"
-            >Person {{ idx + 1 }}</button>
+            </div>
           </div>
-          <ul class="detail__helper-tasks" role="tabpanel">
-            <li *ngFor="let task of activeHelperTasks" class="detail__helper-task">
-              <span class="detail__helper-task-step">Schritt {{ task.stepNumber }}</span>
-              {{ task.description }}
-            </li>
-          </ul>
-        </section>
-      </div>
-    </div>
 
-    <div class="detail__back">
-      <a routerLink="/results" class="btn-green">← Zurück zur Auswahl</a>
-    </div>
-  </article>
+        </div>
+
+        <!-- ── SECTION 2: Ingredients ── -->
+        <div class="detail__section">
+          <div class="detail__section-header">
+            <img src="assets/images/icons/ingredients-bg.png" class="detail__section-bg" alt="" aria-hidden="true" />
+            <h2 class="detail__section-title">Ingredients</h2>
+          </div>
+
+          <div class="detail__ingredients-cols">
+            <div class="detail__ingredients-col">
+              <h3 class="detail__ingredients-subtitle">Your ingredients</h3>
+              @for (ing of scaledIngredients; track ing.name) {
+                <p class="detail__ingredient">{{ ing.amount }}{{ ing.unit }} {{ ing.name }}</p>
+              }
+            </div>
+            <div class="detail__ingredients-col">
+              <h3 class="detail__ingredients-subtitle">Extra ingredients</h3>
+              @if (recipe.missingIngredients.length > 0) {
+                @for (name of recipe.missingIngredients; track name) {
+                  <p class="detail__ingredient">{{ name }}</p>
+                }
+              } @else {
+                <p class="detail__ingredient">You have everything! 🎉</p>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SECTION 3: Directions ── -->
+        <div class="detail__section">
+          <div class="detail__section-header">
+            <img src="assets/images/icons/directions-bg.png" class="detail__section-bg" alt="" aria-hidden="true" />
+            <h2 class="detail__section-title">Directions</h2>
+          </div>
+
+          <div class="detail__steps-grid">
+            <div class="detail__steps-col">
+              @for (step of leftSteps; track step.stepNumber; let i = $index) {
+                <div class="detail__step">
+                  <div class="detail__step-header">
+                    <span class="detail__step-num">{{ step.stepNumber }}</span>
+                    <span class="detail__step-lbl">Step</span>
+                    @if (chefCount > 1) {
+                      <span class="detail__chef-tag" [style.background]="chefColor(i * 2)">
+                        <img [src]="chefIcon(i * 2)" width="20" height="17" alt="" aria-hidden="true" />
+                        Chef {{ chefNumber(i * 2) }}
+                      </span>
+                    }
+                  </div>
+                  <p class="detail__step-desc">{{ step.description }}</p>
+                </div>
+              }
+            </div>
+            <div class="detail__steps-col">
+              @for (step of rightSteps; track step.stepNumber; let i = $index) {
+                <div class="detail__step">
+                  <div class="detail__step-header">
+                    <span class="detail__step-num">{{ step.stepNumber }}</span>
+                    <span class="detail__step-lbl">Step</span>
+                    @if (chefCount > 1) {
+                      <span class="detail__chef-tag" [style.background]="chefColor(i * 2 + 1)">
+                        <img [src]="chefIcon(i * 2 + 1)" width="20" height="17" alt="" aria-hidden="true" />
+                        Chef {{ chefNumber(i * 2 + 1) }}
+                      </span>
+                    }
+                  </div>
+                  <p class="detail__step-desc">{{ step.description }}</p>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- ── HEART CTA ROW ── -->
+        <div class="detail__heart-row">
+          <div class="detail__heart-texts">
+            <p class="detail__heart-main">Just finished this meal?</p>
+            <p class="detail__heart-sub">Give it a heart, so that the others know this is delicious.</p>
+          </div>
+          <button type="button" class="detail__heart-btn" (click)="incrementHeart()" aria-label="Give a heart">
+            <img src="assets/images/icons/hearth.png" width="40" height="35" alt="" aria-hidden="true" />
+          </button>
+        </div>
+
+      </div><!-- /.detail__box -->
+
+      <!-- ── COOKBOOK CTA BOX ── -->
+      <div class="detail__cookbook">
+        <p class="detail__cookbook-text">Find inspiration for your next culinary adventure!</p>
+        <button type="button" class="detail__cookbook-btn" (click)="goToCookbook()">Cookbook</button>
+      </div>
+
+      <!-- ── GENERATE NEW RECIPE CTA ── -->
+      <div class="detail__generate-cta">
+        <button type="button" class="detail__generate-btn" (click)="startNewSearch()">
+          Generate new recipe →
+        </button>
+      </div>
+
+    }<!-- /@if recipe -->
+
+  </div><!-- /.detail__wrapper -->
 </main>
 
 <app-footer></app-footer>

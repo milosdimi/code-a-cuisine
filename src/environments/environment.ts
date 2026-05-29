@@ -9,5 +9,5 @@ export const environment = {
     appId: '1:901367086054:web:192814acef7cb8405d2b427',
     databaseURL: 'https://code-a-cuisine-a14a8-default-rtdb.europe-west1.firebasedatabase.app'
   },
-  n8nWebhookUrl: 'HIER_N8N_WEBHOOK_URL_EINTRAGEN'
+  n8nWebhookUrl: 'http://localhost:5678/webhook/code-a-cuisine'
 };
