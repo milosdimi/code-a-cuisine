@@ -16,17 +16,18 @@
 
 .loading__spinner {
   width: 253px;
-  height: 291px;
-  background: #C4D0C4;
+  height: 309px;
+  background: #c4d0c4;
   border-radius: 20px;
   display: block;
+  padding: 0px 0px 16px 0px;
 }
 
 .loading__text {
   font-family: 'Ubuntu', sans-serif;
   font-weight: 700;
   font-size: 48px;
-  color: #FAF0E6;
+  color: #faf0e6;
   text-align: center;
   width: 429px;
   margin: 0;
