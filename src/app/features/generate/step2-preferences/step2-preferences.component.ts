@@ -10,7 +10,7 @@ import { UserPreferences } from '../../../core/models/preferences.model';
 import { CookingStyle, CookingTime, DietType } from '../../../core/models/recipe.model';
 
 interface StyleOption { value: CookingStyle; label: string; emoji: string; }
-interface TimeOption  { value: CookingTime;  label: string; }
+interface TimeOption  { value: CookingTime;  label: string; subtitle: string; }
 interface DietOption  { value: DietType;     label: string; }
 
 @Component({
@@ -30,25 +30,25 @@ export class Step2PreferencesComponent implements OnInit {
   quotaError = '';
 
   readonly styleOptions: StyleOption[] = [
-    { value: 'german',   label: 'Deutsche Küche',      emoji: '🥨' },
-    { value: 'italian',  label: 'Italienische Küche',  emoji: '🍕' },
-    { value: 'japanese', label: 'Japanische Küche',    emoji: '🍜' },
-    { value: 'indian',   label: 'Indische Küche',      emoji: '🍛' },
-    { value: 'gourmet',  label: 'Gourmet / Fine Dining', emoji: '⭐' },
+    { value: 'german',   label: 'German',              emoji: '🥨' },
+    { value: 'italian',  label: 'Italian',             emoji: '🍕' },
+    { value: 'japanese', label: 'Japanese',            emoji: '🍜' },
+    { value: 'indian',   label: 'Indian',              emoji: '🍛' },
+    { value: 'gourmet',  label: 'Gourmet', emoji: '⭐' },
     { value: 'fusion',   label: 'Fusion',              emoji: '🌍' }
   ];
 
   readonly timeOptions: TimeOption[] = [
-    { value: 'quick',     label: 'Schnell (bis 20 Min)'  },
-    { value: 'medium',    label: 'Mittel (20–45 Min)'    },
-    { value: 'elaborate', label: 'Aufwendig (45+ Min)'   }
+    { value: 'quick',     label: 'Quick',   subtitle: 'up to 20min' },
+    { value: 'medium',    label: 'Medium',  subtitle: '25-40min'    },
+    { value: 'elaborate', label: 'Complex', subtitle: 'over 45min'  }
   ];
 
   readonly dietOptions: DietOption[] = [
-    { value: 'none',        label: 'Keine Einschränkung' },
-    { value: 'vegetarian',  label: 'Vegetarisch'         },
-    { value: 'vegan',       label: 'Vegan'               },
-    { value: 'keto',        label: 'Keto'                }
+    { value: 'none',        label: 'No restriction' },
+    { value: 'vegetarian',  label: 'Vegetarian'     },
+    { value: 'vegan',       label: 'Vegan'          },
+    { value: 'keto',        label: 'Keto'           }
   ];
 
   constructor(

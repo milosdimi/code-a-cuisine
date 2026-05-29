@@ -6,83 +6,122 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 
   &__content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 32px;
+    gap: 20px;
     padding: 24px;
     text-align: center;
   }
 
-  // ===== CSS Spinner =====
-  &__spinner {
-    position: relative;
-    width: 120px;
-    height: 120px;
-  }
-
-  &__ring {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    border: 6px solid transparent;
-    border-top-color: $color-creme;
-    animation: spin 1.2s linear infinite;
-
-    &--inner {
-      inset: 18px;
-      border-top-color: $color-beige;
-      animation-duration: 0.8s;
-      animation-direction: reverse;
-    }
-  }
-
-  &__message {
-    font-family: 'Ubuntu', sans-serif;
+  &__text {
+    font-family: 'Quicksand', sans-serif;
     font-weight: 500;
-    font-size: $font-size-h3;
+    font-size: 32px;
     color: $color-creme;
-    min-height: 2em;
-    transition: opacity 400ms ease;
+    line-height: 1.3;
+  }
+
+  // Animated dots
+  &__dot {
+    display: inline-block;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+
+    &--1 { animation-name: dot1-fade; }
+    &--2 { animation-name: dot2-fade; }
+    &--3 { animation-name: dot3-fade; }
   }
 
   &__hint {
+    font-family: 'Quicksand', sans-serif;
     font-size: $font-size-base;
     color: $color-beige;
-    opacity: 0.7;
+    opacity: 0.75;
   }
 
-  // ===== Error state =====
-  &__error {
+  // Error pop-up overlay
+  &__overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 24px;
+  }
+
+  &__popup {
+    background: $color-creme;
+    border-radius: 20px;
+    padding: 40px 32px;
+    max-width: 480px;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 16px;
-    padding: 24px;
     text-align: center;
-    max-width: 480px;
   }
 
-  &__error-icon {
+  &__popup-icon {
     font-size: 48px;
+    line-height: 1;
   }
 
-  &__error-title {
-    font-family: 'Ubuntu', sans-serif;
+  &__popup-title {
+    font-family: 'Quicksand', sans-serif;
     font-weight: 700;
-    font-size: 28px;
-    color: $color-creme;
+    font-size: 24px;
+    color: #10310B;
   }
 
-  &__error-msg {
+  &__popup-msg {
     font-size: $font-size-body;
-    color: $color-beige;
-    line-height: 1.5;
+    color: #636363;
+    line-height: 1.6;
+  }
+
+  &__popup-btn {
+    background: #396039;
+    color: $color-creme;
+    padding: 14px 32px;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 600;
+    font-size: $font-size-btn;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 150ms ease;
+
+    &:hover { background: #294529; }
   }
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
+// Dot animation sequence over 3 s (each phase = ~0.5 s = ~17%):
+//   0%  → ...   1 (17%) → ..   2 (33%) → .   3 (50%) → (empty)
+//   4 (67%) → .   5 (83%) → ..   6 (100%) → ...
+
+@keyframes dot1-fade {
+  0%, 50%    { opacity: 1; }
+  51%, 67%   { opacity: 0; }
+  68%, 100%  { opacity: 1; }
+}
+
+@keyframes dot2-fade {
+  0%, 33%    { opacity: 1; }
+  34%, 83%   { opacity: 0; }
+  84%, 100%  { opacity: 1; }
+}
+
+@keyframes dot3-fade {
+  0%, 17%    { opacity: 1; }
+  18%, 99%   { opacity: 0; }
+  100%       { opacity: 1; }
 }

@@ -3,78 +3,100 @@
 <main class="step2">
   <section class="step2__container">
     <header class="step2__header">
-      <p class="step2__step-label">Schritt 2 von 2</p>
-      <h1 class="step2__title">Deine Präferenzen</h1>
-      <p class="step2__desc">Passe die Rezeptgenerierung an deine Wünsche an.</p>
+      <p class="step2__step-label">Step 2 of 2</p>
+      <h1 class="step2__title">Your Preferences</h1>
+      <p class="step2__desc">Customize the recipe generation to your wishes.</p>
     </header>
 
-    <!-- Portionen -->
-    <fieldset class="step2__field">
-      <legend class="step2__field-label">Portionen</legend>
-      <div class="step2__stepper">
-        <button type="button" class="step2__stepper-btn" (click)="clampServings(servings - 1)" aria-label="Weniger Portionen">−</button>
-        <input type="number" class="step2__stepper-input" [(ngModel)]="servings" min="1" max="12" (change)="clampServings(servings)" />
-        <button type="button" class="step2__stepper-btn" (click)="clampServings(servings + 1)" aria-label="Mehr Portionen">+</button>
+    <!-- Portions + Chefs Row (outside the green box) -->
+    <div class="step2__counters-row">
+      <div class="step2__counter">
+        <p class="step2__counter-label">How many portions you need?</p>
+        <div class="step2__stepper">
+          <button type="button" class="step2__stepper-btn" (click)="clampServings(servings - 1)" aria-label="Fewer portions">−</button>
+          <input type="number" class="step2__stepper-input" [(ngModel)]="servings" min="1" max="12" (change)="clampServings(servings)" />
+          <button type="button" class="step2__stepper-btn" (click)="clampServings(servings + 1)" aria-label="More portions">+</button>
+        </div>
       </div>
-    </fieldset>
 
-    <!-- Kochzeit -->
-    <fieldset class="step2__field">
-      <legend class="step2__field-label">Kochzeit</legend>
-      <div class="step2__radio-group">
-        <label *ngFor="let opt of timeOptions" class="step2__radio-label" [class.step2__radio-label--active]="cookingTime === opt.value">
-          <input type="radio" name="cookingTime" [value]="opt.value" [(ngModel)]="cookingTime" class="visually-hidden" />
-          {{ opt.label }}
-        </label>
+      <div class="step2__counter">
+        <p class="step2__counter-label">How many are cooking?</p>
+        <div class="step2__stepper">
+          <button type="button" class="step2__stepper-btn" (click)="clampHelpers(helpers - 1)" aria-label="Fewer helpers">−</button>
+          <input type="number" class="step2__stepper-input" [(ngModel)]="helpers" min="1" max="3" (change)="clampHelpers(helpers)" />
+          <button type="button" class="step2__stepper-btn" (click)="clampHelpers(helpers + 1)" aria-label="More helpers">+</button>
+        </div>
       </div>
-    </fieldset>
+    </div>
 
-    <!-- Kochstil -->
-    <fieldset class="step2__field">
-      <legend class="step2__field-label">Kochstil</legend>
-      <div class="step2__style-grid">
-        <button
-          *ngFor="let opt of styleOptions"
-          type="button"
-          class="step2__style-card"
-          [class.step2__style-card--active]="cookingStyle === opt.value"
-          (click)="cookingStyle = opt.value"
-        >
-          <span class="step2__style-emoji" aria-hidden="true">{{ opt.emoji }}</span>
-          <span class="step2__style-name">{{ opt.label }}</span>
-        </button>
-      </div>
-    </fieldset>
+    <!-- Green Form Box -->
+    <div class="step2__form-box">
 
-    <!-- Ernährung -->
-    <fieldset class="step2__field">
-      <legend class="step2__field-label">Ernährungsweise</legend>
-      <div class="step2__radio-group">
-        <label *ngFor="let opt of dietOptions" class="step2__radio-label" [class.step2__radio-label--active]="diet === opt.value">
-          <input type="radio" name="diet" [value]="opt.value" [(ngModel)]="diet" class="visually-hidden" />
-          {{ opt.label }}
-        </label>
-      </div>
-    </fieldset>
+      <!-- Cooking Time -->
+      <fieldset class="step2__field">
+        <legend class="step2__field-legend">
+          <img src="assets/images/icons/clock.png" width="24" height="24" alt="" aria-hidden="true" class="step2__field-icon" />
+          Cooking time
+        </legend>
+        <div class="step2__tags-group">
+          <label
+            *ngFor="let opt of timeOptions"
+            class="step2__time-tag"
+            [class.step2__time-tag--active]="cookingTime === opt.value"
+          >
+            <input type="radio" name="cookingTime" [value]="opt.value" [(ngModel)]="cookingTime" class="visually-hidden" />
+            <span class="step2__tag-pill">{{ opt.label }}</span>
+            <span class="step2__tag-sub">{{ opt.subtitle }}</span>
+          </label>
+        </div>
+      </fieldset>
 
-    <!-- Kochhelfer -->
-    <fieldset class="step2__field">
-      <legend class="step2__field-label">Kochhelfer</legend>
-      <p class="step2__field-hint">Wie viele Personen kochen mit? (Schritte werden aufgeteilt)</p>
-      <div class="step2__stepper">
-        <button type="button" class="step2__stepper-btn" (click)="clampHelpers(helpers - 1)" aria-label="Weniger Helfer">−</button>
-        <input type="number" class="step2__stepper-input" [(ngModel)]="helpers" min="1" max="3" (change)="clampHelpers(helpers)" />
-        <button type="button" class="step2__stepper-btn" (click)="clampHelpers(helpers + 1)" aria-label="Mehr Helfer">+</button>
-      </div>
-    </fieldset>
+      <!-- Cuisine -->
+      <fieldset class="step2__field">
+        <legend class="step2__field-legend">
+          <img src="assets/images/icons/public.png" width="24" height="24" alt="" aria-hidden="true" class="step2__field-icon" />
+          Cuisine
+        </legend>
+        <div class="step2__tags-group">
+          <button
+            *ngFor="let opt of styleOptions"
+            type="button"
+            class="step2__tag-pill"
+            [class.step2__tag-pill--active]="cookingStyle === opt.value"
+            (click)="cookingStyle = opt.value"
+          >
+            {{ opt.label }}
+          </button>
+        </div>
+      </fieldset>
+
+      <!-- Diet Preferences -->
+      <fieldset class="step2__field">
+        <legend class="step2__field-legend">
+          <img src="assets/images/icons/fork_spoon.png" width="24" height="24" alt="" aria-hidden="true" class="step2__field-icon" />
+          Diet preferences
+        </legend>
+        <div class="step2__tags-group">
+          <label
+            *ngFor="let opt of dietOptions"
+            class="step2__tag-pill"
+            [class.step2__tag-pill--active]="diet === opt.value"
+          >
+            <input type="radio" name="diet" [value]="opt.value" [(ngModel)]="diet" class="visually-hidden" />
+            {{ opt.label }}
+          </label>
+        </div>
+      </fieldset>
+
+    </div>
 
     <p class="step2__quota-error" *ngIf="quotaError" role="alert">{{ quotaError }}</p>
 
     <div class="step2__actions">
-      <a routerLink="/generate" class="btn-secondary">← Zurück</a>
-      <button type="button" class="btn-green step2__btn-generate" (click)="generateRecipes()" [disabled]="isLoading">
-        <span *ngIf="!isLoading">Rezepte generieren ✨</span>
-        <span *ngIf="isLoading">Wird geprüft…</span>
+      <a routerLink="/generate" class="btn-secondary">← Back</a>
+      <button type="button" class="step2__btn-generate" (click)="generateRecipes()" [disabled]="isLoading">
+        <span *ngIf="!isLoading">Generate a recipe</span>
+        <span *ngIf="isLoading">Checking…</span>
       </button>
     </div>
   </section>
