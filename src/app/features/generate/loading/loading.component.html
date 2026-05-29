@@ -1,22 +1,8 @@
 <main class="loading">
-
   <div class="loading__content">
-    <p class="loading__text">
-      Generating your recipe<span class="loading__dots" aria-hidden="true"><span class="loading__dot loading__dot--1">.</span><span class="loading__dot loading__dot--2">.</span><span class="loading__dot loading__dot--3">.</span></span>
-    </p>
-    <p class="loading__hint">Claude AI is creating your personal recipes</p>
+    <div class="spinner-placeholder">Loading Animation</div>
+    <p class="loading__text">Generating ...</p>
   </div>
 
-  <!-- Error pop-up overlays the loading screen -->
-  @if (errorMessage) {
-  <div class="loading__overlay" role="dialog" aria-modal="true">
-    <div class="loading__popup">
-      <span class="loading__popup-icon" aria-hidden="true">⚠️</span>
-      <h2 class="loading__popup-title">Something went wrong</h2>
-      <p class="loading__popup-msg" role="alert">{{ errorMessage }}</p>
-      <button type="button" class="loading__popup-btn" (click)="retry()">Try again</button>
-    </div>
-  </div>
-  }
-
+  <app-loading-popup [show]="showPopup" (closed)="onPopupClosed()" />
 </main>

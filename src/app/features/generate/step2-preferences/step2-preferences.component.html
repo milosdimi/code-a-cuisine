@@ -5,13 +5,12 @@
     <header class="step2__header">
       <p class="step2__step-label">Step 2 of 2</p>
       <h1 class="step2__title">Your Preferences</h1>
-      <p class="step2__desc">Customize the recipe generation to your wishes.</p>
     </header>
 
     <!-- Portions + Chefs Row (outside the green box) -->
     <div class="step2__counters-row">
       <div class="step2__counter">
-        <p class="step2__counter-label">How many portions you need?</p>
+        <p class="step2__counter-label">How many portions?</p>
         <div class="step2__stepper">
           <button type="button" class="step2__stepper-btn" (click)="clampServings(servings - 1)" aria-label="Fewer portions">−</button>
           <input type="number" class="step2__stepper-input" [(ngModel)]="servings" min="1" max="12" (change)="clampServings(servings)" />
@@ -35,71 +34,77 @@
       <!-- Cooking Time -->
       <fieldset class="step2__field">
         <legend class="step2__field-legend">
-          <img src="assets/images/icons/clock.png" width="24" height="24" alt="" aria-hidden="true" class="step2__field-icon" />
+          <img src="assets/images/icons/clock.png" width="20" height="20" alt="" aria-hidden="true" class="step2__field-icon" />
           Cooking time
         </legend>
         <div class="step2__tags-group">
-          <label
-            *ngFor="let opt of timeOptions"
-            class="step2__time-tag"
-            [class.step2__time-tag--active]="cookingTime === opt.value"
-          >
-            <input type="radio" name="cookingTime" [value]="opt.value" [(ngModel)]="cookingTime" class="visually-hidden" />
-            <span class="step2__tag-pill">{{ opt.label }}</span>
-            <span class="step2__tag-sub">{{ opt.subtitle }}</span>
-          </label>
+          @for (opt of timeOptions; track opt.value) {
+            <label
+              class="step2__time-tag"
+              [class.step2__time-tag--active]="cookingTime === opt.value"
+            >
+              <input type="radio" name="cookingTime" [value]="opt.value" [(ngModel)]="cookingTime" class="visually-hidden" />
+              <span class="step2__tag-pill">{{ opt.label }}</span>
+              <span class="step2__tag-sub">{{ opt.subtitle }}</span>
+            </label>
+          }
         </div>
       </fieldset>
 
       <!-- Cuisine -->
       <fieldset class="step2__field">
         <legend class="step2__field-legend">
-          <img src="assets/images/icons/public.png" width="24" height="24" alt="" aria-hidden="true" class="step2__field-icon" />
+          <img src="assets/images/icons/public.png" width="20" height="20" alt="" aria-hidden="true" class="step2__field-icon" />
           Cuisine
         </legend>
         <div class="step2__tags-group">
-          <button
-            *ngFor="let opt of styleOptions"
-            type="button"
-            class="step2__tag-pill"
-            [class.step2__tag-pill--active]="cookingStyle === opt.value"
-            (click)="cookingStyle = opt.value"
-          >
-            {{ opt.label }}
-          </button>
+          @for (opt of styleOptions; track opt.value) {
+            <button
+              type="button"
+              class="step2__tag-pill"
+              [class.step2__tag-pill--active]="cookingStyle === opt.value"
+              (click)="cookingStyle = opt.value"
+            >
+              {{ opt.label }}
+            </button>
+          }
         </div>
       </fieldset>
 
       <!-- Diet Preferences -->
       <fieldset class="step2__field">
         <legend class="step2__field-legend">
-          <img src="assets/images/icons/fork_spoon.png" width="24" height="24" alt="" aria-hidden="true" class="step2__field-icon" />
+          <img src="assets/images/icons/fork_spoon.png" width="20" height="20" alt="" aria-hidden="true" class="step2__field-icon" />
           Diet preferences
         </legend>
         <div class="step2__tags-group">
-          <label
-            *ngFor="let opt of dietOptions"
-            class="step2__tag-pill"
-            [class.step2__tag-pill--active]="diet === opt.value"
-          >
-            <input type="radio" name="diet" [value]="opt.value" [(ngModel)]="diet" class="visually-hidden" />
-            {{ opt.label }}
-          </label>
+          @for (opt of dietOptions; track opt.value) {
+            <label
+              class="step2__tag-pill"
+              [class.step2__tag-pill--active]="diet === opt.value"
+            >
+              <input type="radio" name="diet" [value]="opt.value" [(ngModel)]="diet" class="visually-hidden" />
+              {{ opt.label }}
+            </label>
+          }
         </div>
       </fieldset>
 
     </div>
 
-    <p class="step2__quota-error" *ngIf="quotaError" role="alert">{{ quotaError }}</p>
+    @if (quotaError) {
+      <p class="step2__quota-error" role="alert">{{ quotaError }}</p>
+    }
 
-    <div class="step2__actions">
-      <a routerLink="/generate" class="btn-secondary">← Back</a>
-      <button type="button" class="step2__btn-generate" (click)="generateRecipes()" [disabled]="isLoading">
-        <span *ngIf="!isLoading">Generate a recipe</span>
-        <span *ngIf="isLoading">Checking…</span>
-      </button>
-    </div>
   </section>
+
+  <!-- Footer pinned to bottom — mirrors step1 pattern -->
+  <div class="step2__footer">
+    <a routerLink="/generate" class="step2__btn-back">← Back</a>
+    <button type="button" class="step2__btn-generate" (click)="generateRecipes()" [disabled]="isLoading">
+      @if (!isLoading) { Generate a recipe } @else { Checking… }
+    </button>
+  </div>
 </main>
 
 <app-footer></app-footer>

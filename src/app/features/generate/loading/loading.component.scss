@@ -1,127 +1,38 @@
-@use '../../../../styles/variables' as *;
-
 .loading {
   min-height: 100vh;
-  background: $color-primary;
+  background: #396039;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-
-  &__content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    padding: 24px;
-    text-align: center;
-  }
-
-  &__text {
-    font-family: 'Quicksand', sans-serif;
-    font-weight: 500;
-    font-size: 32px;
-    color: $color-creme;
-    line-height: 1.3;
-  }
-
-  // Animated dots
-  &__dot {
-    display: inline-block;
-    animation-duration: 3s;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
-
-    &--1 { animation-name: dot1-fade; }
-    &--2 { animation-name: dot2-fade; }
-    &--3 { animation-name: dot3-fade; }
-  }
-
-  &__hint {
-    font-family: 'Quicksand', sans-serif;
-    font-size: $font-size-base;
-    color: $color-beige;
-    opacity: 0.75;
-  }
-
-  // Error pop-up overlay
-  &__overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-    padding: 24px;
-  }
-
-  &__popup {
-    background: $color-creme;
-    border-radius: 20px;
-    padding: 40px 32px;
-    max-width: 480px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    text-align: center;
-  }
-
-  &__popup-icon {
-    font-size: 48px;
-    line-height: 1;
-  }
-
-  &__popup-title {
-    font-family: 'Quicksand', sans-serif;
-    font-weight: 700;
-    font-size: 24px;
-    color: #10310B;
-  }
-
-  &__popup-msg {
-    font-size: $font-size-body;
-    color: #636363;
-    line-height: 1.6;
-  }
-
-  &__popup-btn {
-    background: #396039;
-    color: $color-creme;
-    padding: 14px 32px;
-    font-family: 'Quicksand', sans-serif;
-    font-weight: 600;
-    font-size: $font-size-btn;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 8px;
-    transition: background 150ms ease;
-
-    &:hover { background: #294529; }
-  }
 }
 
-// Dot animation sequence over 3 s (each phase = ~0.5 s = ~17%):
-//   0%  → ...   1 (17%) → ..   2 (33%) → .   3 (50%) → (empty)
-//   4 (67%) → .   5 (83%) → ..   6 (100%) → ...
-
-@keyframes dot1-fade {
-  0%, 50%    { opacity: 1; }
-  51%, 67%   { opacity: 0; }
-  68%, 100%  { opacity: 1; }
+.loading__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  width: 429px;
 }
 
-@keyframes dot2-fade {
-  0%, 33%    { opacity: 1; }
-  34%, 83%   { opacity: 0; }
-  84%, 100%  { opacity: 1; }
+.spinner-placeholder {
+  width: 253px;
+  height: 309px;
+  background: #C4D0C4;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 16px;
+  color: #396039;
 }
 
-@keyframes dot3-fade {
-  0%, 17%    { opacity: 1; }
-  18%, 99%   { opacity: 0; }
-  100%       { opacity: 1; }
+.loading__text {
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 700;
+  font-size: 48px;
+  color: #FAF0E6;
+  text-align: center;
+  width: 429px;
+  margin: 0;
 }

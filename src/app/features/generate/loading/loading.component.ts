@@ -1,19 +1,19 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { RecipeService } from '../../../core/services/recipe.service';
 import { UserPreferences } from '../../../core/models/preferences.model';
+import { LoadingPopupComponent } from './loading-popup/loading-popup.component';
 
 @Component({
   selector: 'app-loading',
   standalone: true,
-  imports: [CommonModule],
+  imports: [LoadingPopupComponent],
   templateUrl: './loading.component.html',
   styleUrl: './loading.component.scss'
 })
 export class LoadingComponent implements OnInit, OnDestroy {
-  errorMessage = '';
+  showPopup = false;
   private subs = new Subscription();
 
   constructor(
@@ -37,15 +37,14 @@ export class LoadingComponent implements OnInit, OnDestroy {
     this.subs.add(
       this.recipeService.generateRecipes(prefs).subscribe({
         next: () => this.router.navigate(['/results']),
-        error: (err: Error) => {
-          this.errorMessage = err.message;
+        error: () => {
+          this.showPopup = true;
         }
       })
     );
   }
 
-  retry(): void {
-    this.errorMessage = '';
-    this.router.navigate(['/preferences']);
+  onPopupClosed(): void {
+    this.showPopup = false;
   }
 }

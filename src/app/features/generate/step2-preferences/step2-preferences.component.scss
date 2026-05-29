@@ -1,240 +1,270 @@
 @use '../../../../styles/variables' as *;
 @use '../../../../styles/mixins' as *;
 
+// ===== STEP 2 =====
 .step2 {
-  min-height: calc(100vh - 136px - 88px);
+  min-height: calc(89vh - 136px - 88px);
   background: $color-creme;
-  padding: 60px 0;
+  padding: 40px 40px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-  &__container {
-    max-width: 774px;
-    margin: 0 auto;
-    padding: 0 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 56px;
+// ===== CONTAINER =====
+.step2__container {
+  width: 100%;
+  max-width: 780px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+// ===== HEADER =====
+.step2__step-label {
+  font-size: 13px;
+  color: $color-primary;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.step2__title {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: 28px;
+  color: #10310B;
+}
+
+// ===== COUNTERS ROW =====
+.step2__counters-row {
+  display: flex;
+  flex-direction: row;
+  gap: 80px;
+}
+
+.step2__counter {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.step2__counter-label {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
+  font-size: 17px;
+  color: #10310B;
+}
+
+// ===== STEPPER =====
+.step2__stepper {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  border: 2px solid #d7bca2;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.step2__stepper-btn {
+  width: 38px;
+  height: 38px;
+  background: $color-primary;
+  color: $color-creme;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 150ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover { background: #294529; }
+}
+
+.step2__stepper-input {
+  width: 52px;
+  height: 38px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-left: 2px solid #d7bca2;
+  border-right: 2px solid #d7bca2;
+  background: $color-white;
+  color: $color-text-dark;
+  -moz-appearance: textfield;
+
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button { appearance: none; }
+}
+
+// ===== GREEN FORM BOX =====
+.step2__form-box {
+  background: rgba(57, 96, 57, 0.2);
+  border-radius: 20px;
+  padding: 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.step2__field {
+  border: none;
+  padding: 24px;
+  margin: 0;
+}
+
+.step2__field-legend {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  color: #10310B;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  float: left;
+  width: 100%;
+}
+
+.step2__field-icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+// ===== TAGS =====
+.step2__tags-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  clear: left;
+}
+
+.step2__tag-pill {
+  background: #FAF0E6;
+  border-radius: 30px;
+  padding: 6px 14px;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #1E5515;
+  cursor: pointer;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  transition: background 150ms ease, color 150ms ease;
+
+  &--active {
+    background: #396039;
+    color: #FAF0E6;
+  }
+}
+
+// Cooking time: pill + subtitle stacked
+.step2__time-tag {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+
+  .step2__tag-pill { pointer-events: none; }
+
+  &--active .step2__tag-pill {
+    background: #396039;
+    color: #FAF0E6;
+  }
+}
+
+.step2__tag-sub {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  color: #1E5515;
+}
+
+// ===== QUOTA ERROR =====
+.step2__quota-error {
+  color: $color-error;
+  font-size: $font-size-base;
+  padding: 10px 14px;
+  background: rgba(211, 47, 47, 0.08);
+  border-radius: 8px;
+}
+
+// ===== FOOTER (Back + Generate — mirrors step1 pattern) =====
+.step2__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 780px;
+  margin-top: auto;
+  padding-top: 24px;
+  flex-shrink: 0;
+}
+
+.step2__btn-back {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: rgba(16, 49, 11, 0.65);
+  text-decoration: none;
+  transition: opacity 200ms ease;
+
+  &:hover { opacity: 0.8; }
+}
+
+.step2__btn-generate {
+  height: 54px;
+  padding: 14px 26px;
+  border-radius: 5px;
+  background: #396039;
+  border: none;
+  color: #FAF0E6;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 200ms ease, transform 200ms ease;
+
+  &:hover { background: #294529; transform: translateY(-2px); }
+  &:active { transform: translateY(0); }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+// ===== MOBILE =====
+@include mobile {
+  .step2 {
+    padding: 24px 20px 24px;
   }
 
-  &__step-label {
-    font-size: $font-size-small;
-    color: $color-primary;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 12px;
+  .step2__counters-row {
+    gap: 32px;
   }
 
-  &__title {
-    font-family: 'Ubuntu', sans-serif;
-    font-weight: 700;
-    font-size: $font-size-h3;
-    color: $color-text-dark;
-    margin-bottom: 12px;
+  .step2__footer {
+    flex-direction: column-reverse;
+    gap: 12px;
+    align-items: stretch;
   }
 
-  &__desc {
-    font-size: $font-size-body;
-    color: #636363;
-  }
-
-  // Portions + Chefs row
-  &__counters-row {
-    display: flex;
-    flex-direction: row;
-    gap: 120px;
-  }
-
-  &__counter {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  &__counter-label {
-    font-family: 'Quicksand', sans-serif;
-    font-weight: 500;
-    font-size: 20px;
-    color: #10310B;
-  }
-
-  // Stepper
-  &__stepper {
-    display: flex;
-    align-items: center;
-    width: fit-content;
-    border: 2px solid #d7bca2;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-
-  &__stepper-btn {
-    width: 48px;
-    height: 48px;
-    background: $color-primary;
-    color: $color-creme;
-    border: none;
-    font-size: 22px;
-    cursor: pointer;
-    transition: background 150ms ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    &:hover { background: #294529; }
-  }
-
-  &__stepper-input {
-    width: 60px;
-    height: 48px;
+  .step2__btn-generate {
     text-align: center;
-    font-size: $font-size-body;
-    font-weight: 600;
-    border: none;
-    border-left: 2px solid #d7bca2;
-    border-right: 2px solid #d7bca2;
-    background: $color-white;
-    color: $color-text-dark;
-    -moz-appearance: textfield;
-
-    &::-webkit-inner-spin-button,
-    &::-webkit-outer-spin-button { appearance: none; }
-  }
-
-  // Green form box
-  &__form-box {
-    background: rgba(57, 96, 57, 0.2);
-    border-radius: 20px;
-    padding: 32px 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-  }
-
-  &__field {
-    border: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  &__field-legend {
-    font-family: 'Quicksand', sans-serif;
-    font-weight: 500;
-    font-size: 24px;
-    color: #10310B;
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    margin-bottom: 16px;
-    float: left;
     width: 100%;
   }
 
-  &__field-icon {
-    width: 24px;
-    height: 24px;
-    flex-shrink: 0;
-  }
-
-  // Tags row
-  &__tags-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    clear: left;
-  }
-
-  // Shared pill style (used by cuisine buttons and diet labels)
-  &__tag-pill {
-    background: #FAF0E6;
-    border-radius: 30px;
-    padding: 6px 12px;
-    font-family: 'Quicksand', sans-serif;
-    font-weight: 500;
-    font-size: 20px;
-    color: #1E5515;
-    cursor: pointer;
-    border: none;
-    display: inline-flex;
-    align-items: center;
-    transition: background 150ms ease, color 150ms ease;
-
-    &--active {
-      background: #396039;
-      color: #FAF0E6;
-    }
-  }
-
-  // Cooking time tag wrapper (pill + subtitle stacked)
-  &__time-tag {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    cursor: pointer;
-
-    .step2__tag-pill { pointer-events: none; }
-
-    &--active .step2__tag-pill {
-      background: #396039;
-      color: #FAF0E6;
-    }
-  }
-
-  &__tag-sub {
-    font-family: 'Quicksand', sans-serif;
-    font-weight: 500;
-    font-size: 14px;
-    color: #1E5515;
-  }
-
-  // Quota error
-  &__quota-error {
-    color: $color-error;
-    font-size: $font-size-base;
-    padding: 12px 16px;
-    background: rgba(211, 47, 47, 0.08);
-    border-radius: 8px;
-  }
-
-  // Actions
-  &__actions {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-
-  // Generate button
-  &__btn-generate {
-    background: #396039;
-    color: #FAF0E6;
-    padding: 16px 26px;
-    font-family: 'Quicksand', sans-serif;
-    font-weight: 600;
-    font-size: $font-size-btn;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 150ms ease;
-
-    &:hover { background: #294529; }
-
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-  }
-
-  @include mobile {
-    &__counters-row {
-      flex-direction: column;
-      gap: 32px;
-    }
-
-    &__actions {
-      flex-direction: column;
-      a, button { width: 100%; justify-content: center; }
-    }
+  .step2__btn-back {
+    text-align: center;
   }
 }
