@@ -1,0 +1,296 @@
+@use '../../../styles/variables' as *;
+
+// ── PAGE ─────────────────────────────────────────────────────────
+.cr {
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  padding-bottom: 80px;
+}
+
+// ── TOP SECTION ───────────────────────────────────────────────────
+.cr__top {
+  position: relative;
+  width: 1440px;
+  height: 144px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Header image container (1143×144px, centered)
+.cr__header-wrap {
+  width: 1143px;
+  height: 144px;
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.cr__header-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+// Title overlaid on image
+.cr__header-title {
+  position: absolute;
+  top: 51px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 104%;
+  color: #10310b;
+  white-space: nowrap;
+  margin: 0;
+}
+
+// Generate button (absolute on .cr__top, top-right)
+.cr__generate-btn {
+  position: absolute;
+  right: 146px;
+  top: 0;
+  background: $color-primary;
+  color: $color-creme;
+  padding: 16px 26px;
+  border-radius: 5px;
+  border: none;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 150ms ease;
+
+  &:hover { background: #294529; }
+}
+
+// ── BACK LINK ────────────────────────────────────────────────────
+.cr__back-row {
+  width: 1440px;
+  padding-left: 146px;
+  box-sizing: border-box;
+}
+
+.cr__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: #1e5515;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 150ms ease;
+
+  &:hover { opacity: 0.75; }
+}
+
+.cr__back-arrow {
+  font-size: 20px;
+  line-height: 1;
+  border-bottom: 2px solid #1e5515;
+}
+
+// ── STATUS / EMPTY ────────────────────────────────────────────────
+.cr__status {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 20px;
+  color: #636363;
+  padding: 60px 0;
+}
+
+.cr__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 80px 0;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 20px;
+  color: #10310b;
+  text-align: center;
+}
+
+.cr__empty-btn {
+  background: $color-primary;
+  color: $color-creme;
+  padding: 16px 26px;
+  border: none;
+  border-radius: 5px;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 150ms ease;
+
+  &:hover { background: #294529; }
+}
+
+// ── RECIPE LIST ───────────────────────────────────────────────────
+.cr__list {
+  width: 900px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cr__row {
+  width: 900px;
+  height: 66px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 16px;
+  gap: 8px;
+  cursor: pointer;
+  background: transparent;
+  box-sizing: border-box;
+  transition: filter 100ms ease;
+
+  &--odd { background: rgba(219, 224, 219, 0.3); }
+
+  &:hover { filter: brightness(0.95); }
+}
+
+// Left side: number circle + recipe info
+.cr__left {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 8px;
+  width: 520px;
+}
+
+.cr__num {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #f6e3cf;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  color: #1e5515;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.cr__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 482px;
+  min-width: 0;
+}
+
+.cr__clock-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #396039;
+  line-height: 1.2;
+}
+
+.cr__recipe-title {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
+  font-size: 24px;
+  color: #1e5515;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Right side: time tag + heart pill
+.cr__right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.cr__time-tag {
+  background: rgba(57, 96, 57, 0.2);
+  border-radius: 30px;
+  padding: 6px 12px;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  color: #10310b;
+  white-space: nowrap;
+}
+
+.cr__pill {
+  background: rgba(57, 96, 57, 0.3);
+  border-radius: 30px;
+  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Mulish', 'Quicksand', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #10310b;
+  white-space: nowrap;
+}
+
+// ── PAGINATION ────────────────────────────────────────────────────
+.cr__pagination {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.cr__pag-btn {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 8px;
+  border: none;
+  background: transparent;
+  border-radius: 2px;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  color: #10310b;
+  cursor: pointer;
+  transition: background 150ms ease;
+
+  &:hover:not(:disabled) { background: rgba(57, 96, 57, 0.1); }
+
+  &--active {
+    background: rgba(57, 96, 57, 0.2);
+    padding: 0 8px;
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+}
+
+.cr__pag-ellipsis {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 18px;
+  color: #10310b;
+}

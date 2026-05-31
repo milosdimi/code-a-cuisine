@@ -1,7 +1,7 @@
-@use '../../../styles/variables' as *;
+@use '../../../../styles/variables' as *;
 
-.datenschutz {
-  min-height: calc(100vh - 100px - 160px);
+.impressum {
+  min-height: calc(100vh - 136px - 88px);
   background: $color-creme;
   padding: 60px 0;
 

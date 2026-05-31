@@ -1,3 +1,111 @@
 <app-navbar></app-navbar>
-<main></main>
+
+<main class="cr">
+
+  <!-- ── TOP SECTION: header image + generate button ── -->
+  <div class="cr__top">
+    <div class="cr__header-wrap">
+      <img [src]="cuisineImage" [alt]="cuisineTitle" class="cr__header-img" />
+      <h1 class="cr__header-title">{{ cuisineTitle }}</h1>
+    </div>
+    <button type="button" class="cr__generate-btn" (click)="startNewSearch()">
+      Generate a new recipe
+    </button>
+  </div>
+
+  <!-- ── BACK LINK (below header, left aligned) ── -->
+  <div class="cr__back-row">
+    <a class="cr__back" (click)="goToCookbook()" role="button" tabindex="0">
+      <span class="cr__back-arrow">←</span>
+      Back to Cookbook
+    </a>
+  </div>
+
+  <!-- ── LOADING ── -->
+  @if (isLoading) {
+    <p class="cr__status">Loading recipes…</p>
+  }
+
+  <!-- ── EMPTY STATE ── -->
+  @else if (allRecipes.length === 0) {
+    <div class="cr__empty">
+      <p>No recipes yet for this cuisine. Be the first!</p>
+      <button type="button" class="cr__empty-btn" (click)="startNewSearch()">
+        Generate a recipe →
+      </button>
+    </div>
+  }
+
+  <!-- ── RECIPE LIST ── -->
+  @else {
+    <div class="cr__list">
+      @for (recipe of pagedRecipes; track recipe.id; let i = $index) {
+        <div
+          class="cr__row"
+          [class.cr__row--odd]="i % 2 === 0"
+          (click)="viewRecipe(recipe)"
+          role="button"
+          tabindex="0"
+        >
+          <!-- Left: number circle + recipe info -->
+          <div class="cr__left">
+            <span class="cr__num">{{ (page - 1) * pageSize + i + 1 }}</span>
+            <div class="cr__info">
+              <div class="cr__clock-row">
+                <img src="assets/images/icons/clock.png" width="24" height="24" alt="" aria-hidden="true" />
+                <span>Cooking time: {{ timeDisplay(recipe.cookingTime) }}</span>
+              </div>
+              <p class="cr__recipe-title">{{ recipe.title }}</p>
+            </div>
+          </div>
+
+          <!-- Right: time tag + heart pill -->
+          <div class="cr__right">
+            <span class="cr__time-tag">{{ timeTag(recipe.cookingTime) }}</span>
+            <div class="cr__pill">
+              <img src="assets/images/icons/heart.png" width="20" height="20" alt="" aria-hidden="true" />
+              <span>{{ heartCount(recipe) }}</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- ── PAGINATION ── -->
+    @if (totalPages > 1) {
+      <div class="cr__pagination">
+        <button
+          type="button"
+          class="cr__pag-btn"
+          (click)="prevPage()"
+          [disabled]="page === 1"
+          aria-label="Previous page"
+        >←</button>
+
+        @for (p of paginationPages; track $index) {
+          @if (p === '...') {
+            <span class="cr__pag-ellipsis">…</span>
+          } @else {
+            <button
+              type="button"
+              class="cr__pag-btn"
+              [class.cr__pag-btn--active]="page === p"
+              (click)="goToPage(+p)"
+            >{{ p }}</button>
+          }
+        }
+
+        <button
+          type="button"
+          class="cr__pag-btn"
+          (click)="nextPage()"
+          [disabled]="page === totalPages"
+          aria-label="Next page"
+        >→</button>
+      </div>
+    }
+  }
+
+</main>
+
 <app-footer></app-footer>
