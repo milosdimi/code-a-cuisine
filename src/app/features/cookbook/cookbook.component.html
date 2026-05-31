@@ -1,52 +1,76 @@
 <app-navbar></app-navbar>
 
 <main class="cookbook">
-  <section class="cookbook__container">
-    <header class="cookbook__header">
-      <h1 class="cookbook__title">Kochbuch</h1>
-      <p class="cookbook__subtitle">Alle von der Community generierten Rezepte</p>
-    </header>
 
-    <app-cuisine-filter [active]="activeFilter" (filterChange)="onFilterChange($event)"></app-cuisine-filter>
+  <!-- BACK LINK -->
+  <a class="cookbook__back" (click)="goBack()" role="button" tabindex="0">
+    <span class="cookbook__back-arrow">←</span>
+    Back
+  </a>
 
-    <div class="cookbook__loading" *ngIf="isLoading && recipes.length === 0" aria-busy="true">
-      <div class="cookbook__spinner"></div>
-      <p>Rezepte werden geladen…</p>
+  <div class="cookbook__content">
+
+    <!-- ── UPPER PART: text left + most liked right ── -->
+    <div class="cookbook__upper">
+
+      <div class="cookbook__text-block">
+        <h1 class="cookbook__title">Cookbook</h1>
+        <p class="cookbook__subtitle">
+          Explore recipes created by our community.
+          Find inspiration and discover new flavors!
+        </p>
+      </div>
+
+      <div class="cookbook__liked">
+        <div class="cookbook__liked-headline">
+          <span>Most liked recipes</span>
+          <img src="assets/images/icons/heart.png" width="30" height="26" alt="" aria-hidden="true" />
+        </div>
+        <div class="cookbook__liked-scroll">
+          @for (recipe of likedRecipes; track recipe.id) {
+            <div class="cookbook__liked-card" [routerLink]="['/recipe', recipe.id]">
+              <div class="cookbook__liked-info">
+                <div class="cookbook__liked-clock">
+                  <img src="assets/images/icons/clock.png" width="24" height="24" alt="" aria-hidden="true" />
+                  <span>Cooking time: {{ cookingTimeLabel(recipe.cookingTime) }}</span>
+                </div>
+                <p class="cookbook__liked-title">{{ recipe.title }}</p>
+              </div>
+              <div class="cookbook__liked-pill">
+                <img src="assets/images/icons/heart.png" width="20" height="20" alt="" aria-hidden="true" />
+                <span>{{ recipe.heartCount }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
     </div>
 
-    <p class="cookbook__error" *ngIf="error" role="alert">{{ error }}</p>
-
-    <p class="cookbook__empty" *ngIf="!isLoading && recipes.length === 0 && !error">
-      Noch keine Rezepte für diesen Küchenstil vorhanden.
-    </p>
-
-    <div class="cookbook__grid">
-      <article
-        *ngFor="let recipe of recipes"
-        class="cookbook__card"
-        [routerLink]="['/recipe', recipe.id]"
-      >
-        <header class="cookbook__card-header">
-          <div class="cookbook__card-badges">
-            <span class="cookbook__badge">{{ styleLabel(recipe.cookingStyle) }}</span>
+    <!-- ── CUISINE GRID (2 × 3) ── -->
+    <div class="cookbook__cuisines">
+      @for (c of cuisines; track c.style) {
+        <div class="cookbook__cuisine-card" (click)="navigateToCuisine(c.style)" role="button" tabindex="0">
+          <div class="cookbook__cuisine-header">
+            <span class="cookbook__cuisine-name">{{ c.label }}</span>
+            <span class="cookbook__cuisine-emoji" aria-hidden="true">{{ c.emoji }}</span>
           </div>
-          <h2 class="cookbook__card-title">{{ recipe.title }}</h2>
-        </header>
-        <footer class="cookbook__card-footer">
-          <span class="cookbook__card-time">
-            {{ recipe.cookingTime === 'quick' ? '⚡ Schnell' : recipe.cookingTime === 'medium' ? '🕐 Mittel' : '🍳 Aufwendig' }}
-          </span>
-          <span class="cookbook__card-cta">Ansehen →</span>
-        </footer>
-      </article>
+          <div class="cookbook__cuisine-img-wrap">
+            <img [src]="c.image" [alt]="c.label + ' cuisine'" class="cookbook__cuisine-img" />
+          </div>
+        </div>
+      }
     </div>
 
-    <div class="cookbook__more" *ngIf="hasMore">
-      <button type="button" class="btn-green" (click)="loadMore()" [disabled]="isLoading">
-        Weitere Rezepte laden
+    <!-- ── BOTTOM CTA ── -->
+    <div class="cookbook__cta">
+      <button type="button" class="cookbook__cta-btn" (click)="startNewSearch()">
+        Generate new recipe →
       </button>
     </div>
-  </section>
+
+  </div><!-- /.cookbook__content -->
+
 </main>
 
 <app-footer></app-footer>
