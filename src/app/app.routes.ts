@@ -6,6 +6,7 @@ import { LoadingComponent }           from './features/generate/loading/loading.
 import { ResultsComponent }           from './features/results/results.component';
 import { RecipeDetailComponent }      from './features/recipe-detail/recipe-detail.component';
 import { CookbookComponent }          from './features/cookbook/cookbook.component';
+import { CuisineRecipesComponent }    from './features/cuisine-recipes/cuisine-recipes.component';
 import { ImpressumComponent }         from './features/impressum/impressum.component';
 import { DatenschutzComponent }       from './features/datenschutz/datenschutz.component';
 
@@ -17,7 +18,7 @@ export const routes: Routes = [
   { path: 'results',         component: ResultsComponent           },
   { path: 'recipe/:id',      component: RecipeDetailComponent      },
   { path: 'cookbook',        component: CookbookComponent          },
-  { path: 'cookbook/:style', component: CookbookComponent          },
+  { path: 'cookbook/:style', component: CuisineRecipesComponent     },
   { path: 'impressum',       component: ImpressumComponent         },
   { path: 'datenschutz',    component: DatenschutzComponent       },
   { path: '**',              redirectTo: ''                        }

@@ -2,74 +2,187 @@
 
 <main class="cookbook">
 
-  <!-- BACK LINK -->
-  <a class="cookbook__back" (click)="goBack()" role="button" tabindex="0">
-    <span class="cookbook__back-arrow">←</span>
-    Back
-  </a>
+  <!-- ══════════════════════════════════════════
+       LANDING VIEW  (/cookbook)
+  ══════════════════════════════════════════ -->
+  @if (!isDetailView) {
 
-  <div class="cookbook__content">
+    <a class="cookbook__back" (click)="goBack()" role="button" tabindex="0">
+      <span class="cookbook__back-arrow">←</span>
+      Back
+    </a>
 
-    <!-- ── UPPER PART: text left + most liked right ── -->
-    <div class="cookbook__upper">
+    <div class="cookbook__content">
 
-      <div class="cookbook__text-block">
-        <h1 class="cookbook__title">Cookbook</h1>
-        <p class="cookbook__subtitle">
-          Explore recipes created by our community.
-          Find inspiration and discover new flavors!
-        </p>
+      <!-- Upper part: text left + most liked right -->
+      <div class="cookbook__upper">
+        <div class="cookbook__text-block">
+          <h1 class="cookbook__title">Cookbook</h1>
+          <p class="cookbook__subtitle">
+            Explore recipes created by our community.
+            Find inspiration and discover new flavors!
+          </p>
+        </div>
+
+        <div class="cookbook__liked">
+          <div class="cookbook__liked-headline">
+            <span>Most liked recipes</span>
+            <img src="assets/images/icons/heart.png" width="30" height="26" alt="" aria-hidden="true" />
+          </div>
+          <div class="cookbook__liked-scroll">
+            @for (recipe of likedRecipes; track recipe.id) {
+              <div class="cookbook__liked-card" [routerLink]="['/recipe', recipe.id]">
+                <div class="cookbook__liked-info">
+                  <div class="cookbook__liked-clock">
+                    <img src="assets/images/icons/clock.png" width="24" height="24" alt="" aria-hidden="true" />
+                    <span>Cooking time: {{ cookingTimeLabel(recipe.cookingTime) }}</span>
+                  </div>
+                  <p class="cookbook__liked-title">{{ recipe.title }}</p>
+                </div>
+                <div class="cookbook__liked-pill">
+                  <img src="assets/images/icons/heart.png" width="20" height="20" alt="" aria-hidden="true" />
+                  <span>{{ recipe.heartCount }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
       </div>
 
-      <div class="cookbook__liked">
-        <div class="cookbook__liked-headline">
-          <span>Most liked recipes</span>
-          <img src="assets/images/icons/heart.png" width="30" height="26" alt="" aria-hidden="true" />
+      <!-- Cuisine grid -->
+      <div class="cookbook__cuisines">
+        @for (c of cuisines; track c.style) {
+          <div class="cookbook__cuisine-card" (click)="navigateToCuisine(c.style)" role="button" tabindex="0">
+            <div class="cookbook__cuisine-header">
+              <span class="cookbook__cuisine-name">{{ c.label }}</span>
+              <span class="cookbook__cuisine-emoji" aria-hidden="true">{{ c.emoji }}</span>
+            </div>
+            <div class="cookbook__cuisine-img-wrap">
+              <img [src]="c.image" [alt]="c.label + ' cuisine'" class="cookbook__cuisine-img" />
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Bottom CTA -->
+      <div class="cookbook__cta">
+        <button type="button" class="cookbook__cta-btn" (click)="startNewSearch()">
+          Generate new recipe →
+        </button>
+      </div>
+
+    </div>
+
+  }
+
+  <!-- ══════════════════════════════════════════
+       CUISINE DETAIL VIEW  (/cookbook/:style)
+  ══════════════════════════════════════════ -->
+  @if (isDetailView) {
+
+    <!-- TOP SECTION -->
+    <div class="cbd__top">
+      <a class="cbd__back" (click)="goToCookbook()" role="button" tabindex="0">← Back to Cookbook</a>
+      <div class="cbd__header-wrap">
+        <img [src]="cuisineImage" class="cbd__header-img" [alt]="cuisineTitle" />
+        <h1 class="cbd__header-title">{{ cuisineTitle }}</h1>
+      </div>
+      <button type="button" class="cbd__generate-btn" (click)="startNewSearch()">Generate a new recipe</button>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="cbd__content">
+
+      @if (isLoading) {
+        <p class="cbd__status">Loading recipes…</p>
+      }
+
+      @else if (error) {
+        <p class="cbd__status cbd__status--error">{{ error }}</p>
+      }
+
+      @else if (pagedRecipes.length === 0) {
+        <div class="cbd__empty">
+          <p>No recipes yet for this cuisine. Be the first to generate one!</p>
+          <button type="button" class="cbd__generate-btn" (click)="startNewSearch()">
+            Generate a recipe →
+          </button>
         </div>
-        <div class="cookbook__liked-scroll">
-          @for (recipe of likedRecipes; track recipe.id) {
-            <div class="cookbook__liked-card" [routerLink]="['/recipe', recipe.id]">
-              <div class="cookbook__liked-info">
-                <div class="cookbook__liked-clock">
-                  <img src="assets/images/icons/clock.png" width="24" height="24" alt="" aria-hidden="true" />
-                  <span>Cooking time: {{ cookingTimeLabel(recipe.cookingTime) }}</span>
+      }
+
+      @else {
+        <div class="cbd__list">
+          @for (recipe of pagedRecipes; track recipe.id; let i = $index) {
+            <div
+              class="cbd__row"
+              [class.cbd__row--odd]="i % 2 === 0"
+              (click)="viewRecipe(recipe)"
+              role="button"
+              tabindex="0"
+            >
+              <!-- LEFT: number + info -->
+              <div class="cbd__left">
+                <span class="cbd__num">{{ (page - 1) * pageSize + i + 1 }}</span>
+                <div class="cbd__info">
+                  <div class="cbd__clock-row">
+                    <img src="assets/images/icons/clock.png" width="24" height="24" alt="" aria-hidden="true" />
+                    <span>Cooking time: {{ timeLabel(recipe.cookingTime) }}</span>
+                  </div>
+                  <p class="cbd__recipe-title">{{ recipe.title }}</p>
                 </div>
-                <p class="cookbook__liked-title">{{ recipe.title }}</p>
               </div>
-              <div class="cookbook__liked-pill">
-                <img src="assets/images/icons/heart.png" width="20" height="20" alt="" aria-hidden="true" />
-                <span>{{ recipe.heartCount }}</span>
+
+              <!-- RIGHT: tags + heart pill -->
+              <div class="cbd__right">
+                <span class="cbd__tag">{{ timeTag(recipe.cookingTime) }}</span>
+                <span class="cbd__tag">{{ styleTag(recipe.cookingStyle) }}</span>
+                <div class="cbd__pill">
+                  <img src="assets/images/icons/heart.png" width="20" height="20" alt="" aria-hidden="true" />
+                  <span>{{ getHeartCount(recipe) }}</span>
+                </div>
               </div>
             </div>
           }
         </div>
-      </div>
 
-    </div>
+        <!-- PAGINATION -->
+        @if (totalPages > 1) {
+          <div class="cbd__pagination">
+            <button
+              type="button"
+              class="cbd__pag-btn"
+              (click)="prevPage()"
+              [disabled]="page === 1"
+              aria-label="Previous page"
+            >←</button>
 
-    <!-- ── CUISINE GRID (2 × 3) ── -->
-    <div class="cookbook__cuisines">
-      @for (c of cuisines; track c.style) {
-        <div class="cookbook__cuisine-card" (click)="navigateToCuisine(c.style)" role="button" tabindex="0">
-          <div class="cookbook__cuisine-header">
-            <span class="cookbook__cuisine-name">{{ c.label }}</span>
-            <span class="cookbook__cuisine-emoji" aria-hidden="true">{{ c.emoji }}</span>
+            @for (p of paginationPages; track $index) {
+              @if (p === '...') {
+                <span class="cbd__pag-ellipsis">…</span>
+              } @else {
+                <button
+                  type="button"
+                  class="cbd__pag-btn"
+                  [class.cbd__pag-btn--active]="page === p"
+                  (click)="goToPage(+p)"
+                >{{ p }}</button>
+              }
+            }
+
+            <button
+              type="button"
+              class="cbd__pag-btn"
+              (click)="nextPage()"
+              [disabled]="page === totalPages"
+              aria-label="Next page"
+            >→</button>
           </div>
-          <div class="cookbook__cuisine-img-wrap">
-            <img [src]="c.image" [alt]="c.label + ' cuisine'" class="cookbook__cuisine-img" />
-          </div>
-        </div>
+        }
       }
+
     </div>
 
-    <!-- ── BOTTOM CTA ── -->
-    <div class="cookbook__cta">
-      <button type="button" class="cookbook__cta-btn" (click)="startNewSearch()">
-        Generate new recipe →
-      </button>
-    </div>
-
-  </div><!-- /.cookbook__content -->
+  }
 
 </main>
 
