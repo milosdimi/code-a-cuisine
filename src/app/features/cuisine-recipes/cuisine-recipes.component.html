@@ -2,23 +2,23 @@
 
 <main class="cr">
 
-  <!-- ── TOP SECTION: header image + generate button ── -->
-  <div class="cr__top">
-    <div class="cr__header-wrap">
-      <img [src]="cuisineImage" [alt]="cuisineTitle" class="cr__header-img" />
-      <h1 class="cr__header-title">{{ cuisineTitle }}</h1>
-    </div>
+  <!-- 1. ACTIONS ROW: back link left, generate button right ── -->
+  <div class="cr__actions">
+    <a class="cr__back" (click)="goToCookbook()" role="button" tabindex="0">
+      <span class="cr__back-arrow">←</span>
+      Back to Cookbook
+    </a>
     <button type="button" class="cr__generate-btn" (click)="startNewSearch()">
       Generate a new recipe
     </button>
   </div>
 
-  <!-- ── BACK LINK (below header, left aligned) ── -->
-  <div class="cr__back-row">
-    <a class="cr__back" (click)="goToCookbook()" role="button" tabindex="0">
-      <span class="cr__back-arrow">←</span>
-      Back to Cookbook
-    </a>
+  <!-- 2. HEADER IMAGE ── -->
+  <div class="cr__top">
+    <div class="cr__header-wrap">
+      <img [src]="cuisineImage" [alt]="cuisineTitle" class="cr__header-img" />
+      <h1 class="cr__header-title">{{ cuisineTitle }}</h1>
+    </div>
   </div>
 
   <!-- ── LOADING ── -->
@@ -53,14 +53,17 @@
             <div class="cr__info">
               <div class="cr__clock-row">
                 <img src="assets/images/icons/clock.png" width="24" height="24" alt="" aria-hidden="true" />
-                <span>Cooking time: {{ timeDisplay(recipe.cookingTime) }}</span>
+                <span>Cooking time: {{ timeDisplay(recipe) }}</span>
               </div>
               <p class="cr__recipe-title">{{ recipe.title }}</p>
             </div>
           </div>
 
-          <!-- Right: time tag + heart pill -->
+          <!-- Right: diet tag (if set) + time tag + heart pill -->
           <div class="cr__right">
+            @if (recipe.diet && recipe.diet !== 'none') {
+              <span class="cr__time-tag">{{ recipe.diet | titlecase }}</span>
+            }
             <span class="cr__time-tag">{{ timeTag(recipe.cookingTime) }}</span>
             <div class="cr__pill">
               <img src="assets/images/icons/heart.png" width="20" height="20" alt="" aria-hidden="true" />

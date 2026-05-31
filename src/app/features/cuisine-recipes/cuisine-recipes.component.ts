@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { TitleCasePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
@@ -27,16 +28,24 @@ const TIME_TAG: Record<string, string> = {
 @Component({
   selector: 'app-cuisine-recipes',
   standalone: true,
-  imports: [NavbarComponent, FooterComponent],
+  imports: [NavbarComponent, FooterComponent, TitleCasePipe],
   templateUrl: './cuisine-recipes.component.html',
   styleUrl: './cuisine-recipes.component.scss'
 })
 export class CuisineRecipesComponent implements OnInit {
   style = '';
-  allRecipes: Recipe[] = [];
-  isLoading = true;
+  allRecipes: any[] = [];
+  isLoading = false;
   page = 1;
-  readonly pageSize = 20;
+  readonly pageSize = 15;
+
+  private readonly mockRecipes = [
+    { id: 'r1', title: 'Pasta with spinach and cherry tomatoes', cookingStyle: 'italian', cookingTimeMinutes: 20, cookingTime: 'quick',    heartCount: 66, diet: 'vegetarian' },
+    { id: 'r2', title: 'Creamy garlic shrimp pasta',             cookingStyle: 'italian', cookingTimeMinutes: 22, cookingTime: 'quick',    heartCount: 32, diet: 'none'       },
+    { id: 'r3', title: 'Funghi salami pizza',                    cookingStyle: 'italian', cookingTimeMinutes: 16, cookingTime: 'quick',    heartCount: 42, diet: 'none'       },
+    { id: 'r4', title: 'Spaghetti Carbonara',                    cookingStyle: 'italian', cookingTimeMinutes: 25, cookingTime: 'quick',    heartCount: 88, diet: 'none'       },
+    { id: 'r5', title: 'Risotto ai funghi',                      cookingStyle: 'italian', cookingTimeMinutes: 40, cookingTime: 'medium',   heartCount: 54, diet: 'vegetarian' },
+  ];
 
   constructor(
     private route: ActivatedRoute,
@@ -47,39 +56,28 @@ export class CuisineRecipesComponent implements OnInit {
 
   ngOnInit(): void {
     this.style = this.route.snapshot.params['style'] ?? '';
-    this.loadRecipes();
+    // Show mock data immediately, then override with Firebase if available
+    this.allRecipes = this.mockRecipes.filter(r => r.cookingStyle === this.style);
+    this.loadFromFirebase();
   }
 
-  private loadRecipes(): void {
+  private loadFromFirebase(): void {
     const style = this.style as CookingStyle;
 
     this.firebase.getRecipes(100, undefined, style).subscribe({
       next: recipes => {
         if (recipes.length > 0) {
           this.allRecipes = this.sortByDate(recipes);
-        } else {
-          // Fall back to any in-memory recipes from RecipeService filtered by style
-          this.recipeService.generatedRecipes$.subscribe(generated => {
-            this.allRecipes = this.sortByDate(
-              generated.filter(r => r.cookingStyle === style)
-            );
-          });
         }
-        this.isLoading = false;
+        // If empty, keep the mock data already shown
       },
       error: () => {
-        // Fall back to RecipeService in-memory data
-        this.recipeService.generatedRecipes$.subscribe(generated => {
-          this.allRecipes = this.sortByDate(
-            generated.filter(r => r.cookingStyle === style)
-          );
-        });
-        this.isLoading = false;
+        // Keep mock data on error
       }
     });
   }
 
-  private sortByDate(recipes: Recipe[]): Recipe[] {
+  private sortByDate(recipes: any[]): any[] {
     return [...recipes].sort((a, b) =>
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
@@ -94,7 +92,7 @@ export class CuisineRecipesComponent implements OnInit {
     return Math.max(1, Math.ceil(this.allRecipes.length / this.pageSize));
   }
 
-  get pagedRecipes(): Recipe[] {
+  get pagedRecipes(): any[] {
     const start = (this.page - 1) * this.pageSize;
     return this.allRecipes.slice(start, start + this.pageSize);
   }
@@ -118,12 +116,15 @@ export class CuisineRecipesComponent implements OnInit {
   nextPage(): void           { if (this.page < this.totalPages) this.page++; }
 
   // ── Display helpers ───────────────────────────────────────────
-  timeDisplay(t: string): string { return TIME_DISPLAY[t] ?? t; }
-  timeTag(t: string): string     { return TIME_TAG[t] ?? t; }
-  heartCount(r: Recipe): number  { return (r as any)['heartCount'] ?? 0; }
+  timeDisplay(r: any): string {
+    const mins = r['cookingTimeMinutes'];
+    return mins != null ? `${mins}min` : (TIME_DISPLAY[r['cookingTime']] ?? r['cookingTime']);
+  }
+  timeTag(t: string): string { return TIME_TAG[t] ?? t; }
+  heartCount(r: any): number  { return r['heartCount'] ?? 0; }
 
   // ── Navigation ────────────────────────────────────────────────
-  viewRecipe(recipe: Recipe): void    { this.router.navigate(['/recipe', recipe.id]); }
+  viewRecipe(recipe: any): void    { this.router.navigate(['/recipe', recipe.id]); }
   goToCookbook(): void                { this.router.navigate(['/cookbook']); }
   startNewSearch(): void              { this.router.navigate(['/generate']); }
 }

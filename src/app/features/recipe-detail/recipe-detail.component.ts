@@ -62,9 +62,10 @@ export class RecipeDetailComponent implements OnInit {
       if (prefs) this.prefsHelpers = prefs.helpers;
     });
 
-    // Try in-memory first (faster), fall back to Firestore
+    // Try in-memory first, then mock fallback, then Firestore
     this.recipeService.generatedRecipes$.subscribe(recipes => {
-      const found = recipes.find(r => r.id === id);
+      const found = recipes.find(r => r.id === id)
+                 ?? this.recipeService.getMockRecipeById(id);
       if (found) {
         this.setRecipe(found);
       } else {

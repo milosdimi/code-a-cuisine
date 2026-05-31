@@ -1,7 +1,15 @@
 @use '../../../styles/variables' as *;
 
+// ── HOST: push footer to bottom ───────────────────────────────────
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 // ── PAGE ─────────────────────────────────────────────────────────
 .cr {
+  flex: 1;
   background: #ffffff;
   display: flex;
   flex-direction: column;
@@ -12,11 +20,8 @@
 
 // ── TOP SECTION ───────────────────────────────────────────────────
 .cr__top {
-  position: relative;
   width: 1440px;
-  height: 144px;
   display: flex;
-  align-items: center;
   justify-content: center;
 }
 
@@ -52,11 +57,8 @@
   margin: 0;
 }
 
-// Generate button (absolute on .cr__top, top-right)
+// Generate button
 .cr__generate-btn {
-  position: absolute;
-  right: 146px;
-  top: 0;
   background: $color-primary;
   color: $color-creme;
   padding: 16px 26px;
@@ -72,11 +74,14 @@
   &:hover { background: #294529; }
 }
 
-// ── BACK LINK ────────────────────────────────────────────────────
-.cr__back-row {
-  width: 1440px;
-  padding-left: 146px;
-  box-sizing: border-box;
+// ── ACTIONS ROW (back link left, generate button right) ──────────
+.cr__actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 1143px;
+  margin: 0 auto;
+  padding: 16px 0;
 }
 
 .cr__back {
@@ -97,7 +102,7 @@
 .cr__back-arrow {
   font-size: 20px;
   line-height: 1;
-  border-bottom: 2px solid #1e5515;
+
 }
 
 // ── STATUS / EMPTY ────────────────────────────────────────────────
