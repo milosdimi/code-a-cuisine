@@ -41,8 +41,7 @@
               <span class="detail__persons-text">Cooking person: {{ chefCount }}</span>
               @for (i of chefRange; track i) {
                 <span class="detail__chef-label" [style.background]="chefColors[i]">
-                  <img [src]="chefIcons[i]" width="27" height="22" alt="" aria-hidden="true" />
-                  Chef {{ i + 1 }}
+                  <img [src]="chefIcons[i]" width="82" height="22" alt="Chef {{ i + 1 }}" />
                 </span>
               }
             </div>
@@ -53,7 +52,7 @@
               <span class="detail__tag">{{ timeLabel }}</span>
               <span class="detail__tag">{{ styleLabel }}</span>
               <div class="detail__heart-pill">
-                <img src="assets/images/icons/hearth.png" width="20" height="20" alt="" aria-hidden="true" />
+                <img src="assets/images/icons/heart.png" width="20" height="20" alt="" aria-hidden="true" />
                 <span>{{ heartCount }}</span>
               </div>
             </div>
@@ -104,14 +103,14 @@
                   <p class="detail__ingredient">{{ name }}</p>
                 }
               } @else {
-                <p class="detail__ingredient">You have everything! 🎉</p>
+                <p class="detail__ingredient">You have everything!</p>
               }
             </div>
           </div>
         </div>
 
         <!-- ── SECTION 3: Directions ── -->
-        <div class="detail__section">
+        <div class="detail__section detail__section--directions">
           <div class="detail__section-header">
             <img src="assets/images/icons/directions-bg.png" class="detail__section-bg" alt="" aria-hidden="true" />
             <h2 class="detail__section-title">Directions</h2>
@@ -119,34 +118,28 @@
 
           <div class="detail__steps-grid">
             <div class="detail__steps-col">
-              @for (step of leftSteps; track step.stepNumber; let i = $index) {
+              @for (step of leftSteps; track step.stepNumber) {
                 <div class="detail__step">
                   <div class="detail__step-header">
                     <span class="detail__step-num">{{ step.stepNumber }}</span>
                     <span class="detail__step-lbl">Step</span>
-                    @if (chefCount > 1) {
-                      <span class="detail__chef-tag" [style.background]="chefColor(i * 2)">
-                        <img [src]="chefIcon(i * 2)" width="20" height="17" alt="" aria-hidden="true" />
-                        Chef {{ chefNumber(i * 2) }}
-                      </span>
-                    }
+                    <span class="detail__chef-tag" [style.background]="chefColor(step.stepNumber)">
+                      <img [src]="chefIcon(step.stepNumber)" width="82" height="22" [alt]="'Chef ' + chefNumber(step.stepNumber)" />
+                    </span>
                   </div>
                   <p class="detail__step-desc">{{ step.description }}</p>
                 </div>
               }
             </div>
             <div class="detail__steps-col">
-              @for (step of rightSteps; track step.stepNumber; let i = $index) {
+              @for (step of rightSteps; track step.stepNumber) {
                 <div class="detail__step">
                   <div class="detail__step-header">
                     <span class="detail__step-num">{{ step.stepNumber }}</span>
                     <span class="detail__step-lbl">Step</span>
-                    @if (chefCount > 1) {
-                      <span class="detail__chef-tag" [style.background]="chefColor(i * 2 + 1)">
-                        <img [src]="chefIcon(i * 2 + 1)" width="20" height="17" alt="" aria-hidden="true" />
-                        Chef {{ chefNumber(i * 2 + 1) }}
-                      </span>
-                    }
+                    <span class="detail__chef-tag" [style.background]="chefColor(step.stepNumber)">
+                      <img [src]="chefIcon(step.stepNumber)" width="82" height="22" [alt]="'Chef ' + chefNumber(step.stepNumber)" />
+                    </span>
                   </div>
                   <p class="detail__step-desc">{{ step.description }}</p>
                 </div>
@@ -161,8 +154,11 @@
             <p class="detail__heart-main">Just finished this meal?</p>
             <p class="detail__heart-sub">Give it a heart, so that the others know this is delicious.</p>
           </div>
-          <button type="button" class="detail__heart-btn" (click)="incrementHeart()" aria-label="Give a heart">
-            <img src="assets/images/icons/hearth.png" width="40" height="35" alt="" aria-hidden="true" />
+          <button type="button" class="detail__heart-btn" [class.liked]="isLiked" (click)="toggleHeart()" aria-label="Give a heart">
+            <img
+              [src]="isLiked ? 'assets/images/icons/heart-clicked.png' : 'assets/images/icons/heart.png'"
+              width="40" height="35" alt="" aria-hidden="true"
+            />
           </button>
         </div>
 

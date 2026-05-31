@@ -38,12 +38,14 @@ export class RecipeDetailComponent implements OnInit {
   isLoading = true;
   error = '';
   heartCount = 0;
+  isLiked = false;
 
   readonly chefColors = CHEF_COLORS;
   readonly chefIcons  = CHEF_ICONS;
 
   private servingsMultiplier = 1;
   private baseServings = 1;
+  private prefsHelpers = 1;
 
   constructor(
     private route: ActivatedRoute,
@@ -54,6 +56,11 @@ export class RecipeDetailComponent implements OnInit {
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id') ?? '';
+
+    // Read helpers count from preferences (fallback when recipe.helpers is empty)
+    this.recipeService.preferences$.subscribe(prefs => {
+      if (prefs) this.prefsHelpers = prefs.helpers;
+    });
 
     // Try in-memory first (faster), fall back to Firestore
     this.recipeService.generatedRecipes$.subscribe(recipes => {
@@ -104,7 +111,8 @@ export class RecipeDetailComponent implements OnInit {
   }
 
   get chefCount(): number {
-    return this.recipe?.helpers?.length ?? 0;
+    const fromRecipe = this.recipe?.helpers?.length ?? 0;
+    return fromRecipe > 0 ? fromRecipe : this.prefsHelpers;
   }
 
   get chefRange(): number[] {
@@ -126,24 +134,25 @@ export class RecipeDetailComponent implements OnInit {
 
   // ── Chef helpers ───────────────────────────────────────────────
 
-  chefColor(stepOriginalIndex: number): string {
+  /** Returns 0-based chef index for a given 1-based step number. */
+  private chefIndexForStep(stepNumber: number): number {
     const c = this.chefCount;
-    return c > 0 ? (CHEF_COLORS[stepOriginalIndex % c] ?? CHEF_COLORS[0]) : CHEF_COLORS[0];
+    if (c === 1) return 0;
+    if (c === 2) return stepNumber % 2 === 1 ? 0 : 1;  
+    const r = stepNumber % 3;
+    return r === 1 ? 0 : r === 2 ? 1 : 2;
   }
 
-  chefIcon(stepOriginalIndex: number): string {
-    const c = this.chefCount;
-    return c > 0 ? (CHEF_ICONS[stepOriginalIndex % c] ?? CHEF_ICONS[0]) : CHEF_ICONS[0];
-  }
-
-  chefNumber(stepOriginalIndex: number): number {
-    const c = this.chefCount;
-    return c > 0 ? (stepOriginalIndex % c) + 1 : 1;
-  }
+  chefColor(stepNumber: number): string  { return CHEF_COLORS[this.chefIndexForStep(stepNumber)]; }
+  chefIcon(stepNumber: number): string   { return CHEF_ICONS[this.chefIndexForStep(stepNumber)]; }
+  chefNumber(stepNumber: number): number { return this.chefIndexForStep(stepNumber) + 1; }
 
   // ── Actions ────────────────────────────────────────────────────
 
-  incrementHeart(): void { this.heartCount++; }
+  toggleHeart(): void {
+    this.isLiked = !this.isLiked;
+    this.heartCount += this.isLiked ? 1 : -1;
+  }
 
   goToCookbook(): void { this.router.navigate(['/cookbook']); }
 
