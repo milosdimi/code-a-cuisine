@@ -50,3 +50,4 @@ src/environments/environment.prod.ts
 .env.local
 .env.*
 !.env.example
+todo.md

@@ -502,6 +502,28 @@
   &:active { transform: translateY(0); }
 }
 
+// ===== TABLET =====
+@media (min-width: 769px) and (max-width: 1164px) {
+  .step1__content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .step1__input-card {
+    flex: none;
+    width: min(721px, 90%);
+    max-width: 721px;
+    max-height: none;
+  }
+
+  .step1__list-card {
+    flex: none;
+    width: min(721px, 90%);
+    max-width: 721px;
+    max-height: none;
+  }
+}
+
 // ===== MOBILE =====
 @include mobile {
   .step1 {
@@ -526,7 +548,10 @@
 
   .step1__input-card {
     flex: none;
-    width: 100%;
+    width: calc(100% - 32px);
+    max-width: 340px;
+    margin: 0 auto;
+    padding: 25px 16px;
   }
 
   .step1__input-inner {
@@ -534,18 +559,48 @@
     align-items: flex-start;
   }
 
-  .step1__input-card {
+  .step1__input {
     width: 100%;
+    max-width: 300px;
+    background: rgba(250, 240, 230, 0.8);
+    border-radius: 20px;
+  }
+
+  .step1__btn-add {
+    background: #396039;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 5px;
   }
 
   .step1__list-card {
     flex: none;
-    width: 100%;
+    width: calc(100% - 32px);
+    max-width: 340px;
+    margin: 0 auto;
     max-height: none;
+    padding: 24px 16px;
+    background: rgba(57, 96, 57, 0.3);
+    border-radius: 20px;
+  }
+
+  .step1__chip {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .step1__chip-info {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
   }
 
   .step1__chip-actions {
     gap: 12px;
+    min-width: 50px;
+    flex-shrink: 0;
   }
 
   .step1__chip-edit {
