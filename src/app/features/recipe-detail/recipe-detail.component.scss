@@ -394,10 +394,10 @@
 
 .detail__toggle-arrow {
   display: inline-block;
-  color: #1e5515;
+  width: 14px;
+  height: 8px;
+  vertical-align: middle;
   transition: transform 0.2s ease;
-  font-size: 14px;
-  line-height: 1;
 
   &--up {
     transform: rotate(180deg);
@@ -532,6 +532,24 @@
   }
 }
 
+// ── Classes shown only on mobile ────────────────────────────────
+.detail__section-bg-mobile {
+  display: none;
+}
+
+.detail__steps-all {
+  display: none;
+}
+
+.detail__ingredient-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 // ── TABLET (769px – 1024px) ──────────────────────────────────────
 @media (min-width: 769px) and (max-width: 1024px) {
   .detail__wrapper {
@@ -598,28 +616,55 @@
     gap: 32px;
   }
 
-  // ── Section 1: Name + Nutrition ──
+  // ── Section 1: Info Box ──
   .detail__section1 {
     flex-direction: column;
-    gap: 24px;
+    gap: 16px;
+    padding: 24px;
     width: 100%;
+    box-sizing: border-box;
   }
 
   .detail__left {
     width: 100%;
-  }
-
-  .detail__title {
-    font-size: 24px;
-    line-height: 1.2;
+    gap: 8px;
   }
 
   .detail__time-row {
     font-size: 18px;
+    color: #396039;
+  }
+
+  .detail__title {
+    font-size: 24px;
+    line-height: 30px;
+  }
+
+  .detail__persons-text {
+    display: none;
+  }
+
+  .detail__persons-row {
+    gap: 8px;
+  }
+
+  .detail__chef-label {
+    height: 27px;
+    align-items: center;
+
+    img {
+      height: 23px;
+      width: auto;
+    }
   }
 
   .detail__right {
     width: 100%;
+    flex-direction: column-reverse;
+  }
+
+  .detail__tags-row {
+    gap: 8px;
   }
 
   .detail__nutrition-cols {
@@ -632,35 +677,43 @@
     font-size: 18px;
   }
 
-  // ── Section headers: CSS background replaces <img> on mobile ──
+  .detail__nutrition-val {
+    font-size: 18px;
+  }
+
+  // ── Section headers: mobile image ──
   .detail__section-bg {
     display: none;
   }
 
-  .detail__section:not(.detail__section--directions) .detail__section-header {
-    background: url('/assets/images/icons/ingredients-bg.png') center / cover no-repeat;
+  .detail__section-bg-mobile {
+    display: block;
     width: 100%;
-    max-width: 320px;
-    height: 87px;
-    border-radius: 12px;
+    height: auto;
+  }
+
+  .detail__section-header {
+    height: auto;
+    max-width: 100%;
     overflow: hidden;
+    border-radius: 12px;
   }
 
   .detail__section--directions .detail__section-header {
-    background: url('/assets/images/icons/directions-bg.png') center / cover no-repeat;
-    width: 100%;
-    max-width: 320px;
-    height: 90px;
-    border-radius: 12px;
-    overflow: hidden;
+    height: auto;
   }
 
   .detail__section-title {
     font-size: 24px;
     color: #1e5515;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
   }
 
-  // ── Ingredients: two columns → one column ──
+  // ── Section 2: Ingredients ──
   .detail__ingredients-cols {
     flex-direction: column;
     width: 100%;
@@ -674,30 +727,47 @@
     &:last-child  { width: 100%; }
   }
 
+  .detail__ingredients-subtitle {
+    font-size: 18px;
+  }
+
+  .detail__ingredient-list {
+    display: block;
+    list-style: disc;
+    padding-left: 16px;
+    margin: 0;
+  }
+
   .detail__ingredient {
     font-size: 16px;
     line-height: 20px;
   }
 
-  // ── Directions: grid → single column ──
+  // ── Section 3: Directions ──
   .detail__steps-grid {
+    display: none;
+  }
+
+  .detail__steps-all {
     display: flex;
     flex-direction: column;
-    width: 100%;
     gap: 32px;
-    max-width: 100%;
-  }
-
-  .detail__steps-col {
     width: 100%;
   }
 
-  .detail__step-lbl {
-    font-size: 18px;
+  .detail__step-header {
+    gap: 8px;
   }
 
   .detail__chef-tag {
+    margin-left: auto;
     flex-shrink: 0;
+  }
+
+  .detail__step-lbl {
+    font-weight: 600;
+    font-size: 18px;
+    color: #10310b;
   }
 
   .detail__step-desc {
@@ -706,28 +776,43 @@
     max-width: 100%;
   }
 
+  // ── Toggle buttons ──
+  .detail__toggle-btn {
+    order: 99;
+  }
+
   // ── Heart CTA row ──
   .detail__heart-row {
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
     gap: 16px;
   }
 
   .detail__heart-main {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 600;
     font-size: 18px;
+  }
+
+  .detail__heart-sub {
+    font-size: 16px;
   }
 
   // ── Cookbook CTA box ──
   .detail__cookbook {
-    width: 100%;
+    width: calc(100% - 32px);
+    margin: 0 16px;
     padding: 16px 14px;
     gap: 16px;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
+    border-radius: 16px;
   }
 
   .detail__cookbook-text {
     font-size: 16px;
+    flex: 1;
   }
 
   .detail__cookbook-btn {
@@ -741,9 +826,18 @@
 
   // ── Generate new recipe CTA ──
   .detail__generate-cta {
-    width: 100%;
+    width: calc(100% - 32px);
+    margin: 0 16px;
+    padding: 0;
+    align-self: auto;
     display: flex;
-    justify-content: flex-end;
+  }
+
+  .detail__generate-btn {
+    width: 100%;
+    font-size: 16px;
     padding: 16px;
+    text-align: center;
+    margin: 16px;
   }
 }

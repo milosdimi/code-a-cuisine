@@ -132,6 +132,10 @@ export class RecipeDetailComponent implements OnInit {
     return this.recipe?.steps?.filter((_, i) => i % 2 === 1) ?? [];
   }
 
+  get allSteps(): CookingStep[] {
+    return this.recipe?.steps ?? [];
+  }
+
   get styleLabel():  string { return STYLE_LABELS[this.recipe?.cookingStyle ?? ''] ?? ''; }
   get timeLabel():   string { return TIME_LABELS[this.recipe?.cookingTime   ?? ''] ?? ''; }
   get timeMinutes(): string { return TIME_MINUTES[this.recipe?.cookingTime  ?? ''] ?? ''; }
