@@ -89,24 +89,31 @@
             <h2 class="detail__section-title">Ingredients</h2>
           </div>
 
-          <div class="detail__ingredients-cols">
-            <div class="detail__ingredients-col">
-              <h3 class="detail__ingredients-subtitle">Your ingredients</h3>
-              @for (ing of scaledIngredients; track ing.name) {
-                <p class="detail__ingredient">{{ ing.amount }}{{ ing.unit }} {{ ing.name }}</p>
-              }
-            </div>
-            <div class="detail__ingredients-col">
-              <h3 class="detail__ingredients-subtitle">Extra ingredients</h3>
-              @if (recipe.missingIngredients.length > 0) {
-                @for (name of recipe.missingIngredients; track name) {
-                  <p class="detail__ingredient">{{ name }}</p>
+          <button type="button" class="detail__toggle-btn" (click)="toggleIngredients()">
+            <span>{{ showIngredients ? 'Hide ingredients' : 'Show ingredients' }}</span>
+            <span class="detail__toggle-arrow" [class.detail__toggle-arrow--up]="showIngredients">▼</span>
+          </button>
+
+          @if (showIngredients) {
+            <div class="detail__ingredients-cols">
+              <div class="detail__ingredients-col">
+                <h3 class="detail__ingredients-subtitle">Your ingredients</h3>
+                @for (ing of scaledIngredients; track ing.name) {
+                  <p class="detail__ingredient">{{ ing.amount }}{{ ing.unit }} {{ ing.name }}</p>
                 }
-              } @else {
-                <p class="detail__ingredient">You have everything!</p>
-              }
+              </div>
+              <div class="detail__ingredients-col">
+                <h3 class="detail__ingredients-subtitle">Extra ingredients</h3>
+                @if (recipe.missingIngredients.length > 0) {
+                  @for (name of recipe.missingIngredients; track name) {
+                    <p class="detail__ingredient">{{ name }}</p>
+                  }
+                } @else {
+                  <p class="detail__ingredient">You have everything!</p>
+                }
+              </div>
             </div>
-          </div>
+          }
         </div>
 
         <!-- ── SECTION 3: Directions ── -->
@@ -116,36 +123,43 @@
             <h2 class="detail__section-title">Directions</h2>
           </div>
 
-          <div class="detail__steps-grid">
-            <div class="detail__steps-col">
-              @for (step of leftSteps; track step.stepNumber) {
-                <div class="detail__step">
-                  <div class="detail__step-header">
-                    <span class="detail__step-num">{{ step.stepNumber }}</span>
-                    <span class="detail__step-lbl">Step</span>
-                    <span class="detail__chef-tag" [style.background]="chefColor(step.stepNumber)">
-                      <img [src]="chefIcon(step.stepNumber)" width="82" height="22" [alt]="'Chef ' + chefNumber(step.stepNumber)" />
-                    </span>
+          <button type="button" class="detail__toggle-btn" (click)="toggleDirections()">
+            <span>{{ showDirections ? 'Hide directions' : 'Show directions' }}</span>
+            <span class="detail__toggle-arrow" [class.detail__toggle-arrow--up]="showDirections">▼</span>
+          </button>
+
+          @if (showDirections) {
+            <div class="detail__steps-grid">
+              <div class="detail__steps-col">
+                @for (step of leftSteps; track step.stepNumber) {
+                  <div class="detail__step">
+                    <div class="detail__step-header">
+                      <span class="detail__step-num">{{ step.stepNumber }}</span>
+                      <span class="detail__step-lbl">Step</span>
+                      <span class="detail__chef-tag" [style.background]="chefColor(step.stepNumber)">
+                        <img [src]="chefIcon(step.stepNumber)" width="82" height="22" [alt]="'Chef ' + chefNumber(step.stepNumber)" />
+                      </span>
+                    </div>
+                    <p class="detail__step-desc">{{ step.description }}</p>
                   </div>
-                  <p class="detail__step-desc">{{ step.description }}</p>
-                </div>
-              }
-            </div>
-            <div class="detail__steps-col">
-              @for (step of rightSteps; track step.stepNumber) {
-                <div class="detail__step">
-                  <div class="detail__step-header">
-                    <span class="detail__step-num">{{ step.stepNumber }}</span>
-                    <span class="detail__step-lbl">Step</span>
-                    <span class="detail__chef-tag" [style.background]="chefColor(step.stepNumber)">
-                      <img [src]="chefIcon(step.stepNumber)" width="82" height="22" [alt]="'Chef ' + chefNumber(step.stepNumber)" />
-                    </span>
+                }
+              </div>
+              <div class="detail__steps-col">
+                @for (step of rightSteps; track step.stepNumber) {
+                  <div class="detail__step">
+                    <div class="detail__step-header">
+                      <span class="detail__step-num">{{ step.stepNumber }}</span>
+                      <span class="detail__step-lbl">Step</span>
+                      <span class="detail__chef-tag" [style.background]="chefColor(step.stepNumber)">
+                        <img [src]="chefIcon(step.stepNumber)" width="82" height="22" [alt]="'Chef ' + chefNumber(step.stepNumber)" />
+                      </span>
+                    </div>
+                    <p class="detail__step-desc">{{ step.description }}</p>
                   </div>
-                  <p class="detail__step-desc">{{ step.description }}</p>
-                </div>
-              }
+                }
+              </div>
             </div>
-          </div>
+          }
         </div>
 
         <!-- ── HEART CTA ROW ── -->

@@ -4,16 +4,21 @@
 .detail {
   background: #ffffff;
   padding: 32px 0 80px;
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+  overflow-x: hidden;
 }
 
 .detail__wrapper {
   max-width: 1248px;
+  width: calc(100% - 0px);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 64px;
-  padding: 0 24px;
+  box-sizing: border-box;
 }
 
 // ── BACK LINK ───────────────────────────────────────────────────
@@ -63,7 +68,8 @@
 
 // ── MAIN RECIPE BOX ─────────────────────────────────────────────
 .detail__box {
-  width: 1248px;
+  width: 100%;
+  box-sizing: border-box;
   background: rgba(250, 240, 230, 0.3);
   border: 4px solid #faf0e6;
   border-radius: 20px;
@@ -223,11 +229,13 @@
 
 .detail__section-header {
   position: relative;
-  width: 1152px;
+  width: 100%;
+  max-width: 100%;
   height: 147px;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .detail__section-bg {
@@ -359,6 +367,43 @@
   margin: 0;
 }
 
+// ── SECTION TOGGLE BUTTON ────────────────────────────────────────
+.detail__toggle-btn {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px;
+  gap: 8px;
+  width: 177px;
+  height: 34px;
+  border-radius: 16px;
+  border: none;
+  background: transparent;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #396039;
+  cursor: pointer;
+  transition: border 150ms ease;
+
+  &:hover {
+    border: 1px solid rgba(57, 96, 57, 0.5);
+  }
+}
+
+.detail__toggle-arrow {
+  display: inline-block;
+  color: #1e5515;
+  transition: transform 0.2s ease;
+  font-size: 14px;
+  line-height: 1;
+
+  &--up {
+    transform: rotate(180deg);
+  }
+}
+
 // ── HEART CTA ROW ────────────────────────────────────────────────
 .detail__heart-row {
   display: flex;
@@ -427,7 +472,8 @@
 
 // ── COOKBOOK CTA BOX ─────────────────────────────────────────────
 .detail__cookbook {
-  width: 1248px;
+  width: 100%;
+  box-sizing: border-box;
   background: rgba(57, 96, 57, 0.1);
   border-radius: 20px;
   padding: 40px;
@@ -586,14 +632,32 @@
     font-size: 18px;
   }
 
-  // ── Section headers (Ingredients + Directions) ──
-  .detail__section-header {
+  // ── Section headers: CSS background replaces <img> on mobile ──
+  .detail__section-bg {
+    display: none;
+  }
+
+  .detail__section:not(.detail__section--directions) .detail__section-header {
+    background: url('/assets/images/icons/ingredients-bg.png') center / cover no-repeat;
     width: 100%;
+    max-width: 320px;
+    height: 87px;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .detail__section--directions .detail__section-header {
+    background: url('/assets/images/icons/directions-bg.png') center / cover no-repeat;
+    width: 100%;
+    max-width: 320px;
     height: 90px;
+    border-radius: 12px;
+    overflow: hidden;
   }
 
   .detail__section-title {
     font-size: 24px;
+    color: #1e5515;
   }
 
   // ── Ingredients: two columns → one column ──
@@ -680,6 +744,6 @@
     width: 100%;
     display: flex;
     justify-content: flex-end;
-    padding-right: 16px;
+    padding: 16px;
   }
 }

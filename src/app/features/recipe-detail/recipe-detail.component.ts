@@ -39,6 +39,8 @@ export class RecipeDetailComponent implements OnInit {
   error = '';
   heartCount = 0;
   isLiked = false;
+  showIngredients = true;
+  showDirections = true;
 
   readonly chefColors = CHEF_COLORS;
   readonly chefIcons  = CHEF_ICONS;
@@ -92,6 +94,7 @@ export class RecipeDetailComponent implements OnInit {
   }
 
   private setRecipe(recipe: Recipe): void {
+    recipe.steps?.sort((a, b) => a.stepNumber - b.stepNumber);
     this.recipe    = recipe;
     this.baseServings = recipe.servings;
     this.isLoading = false;
@@ -149,6 +152,9 @@ export class RecipeDetailComponent implements OnInit {
   chefNumber(stepNumber: number): number { return this.chefIndexForStep(stepNumber) + 1; }
 
   // ── Actions ────────────────────────────────────────────────────
+
+  toggleIngredients(): void { this.showIngredients = !this.showIngredients; }
+  toggleDirections(): void  { this.showDirections  = !this.showDirections;  }
 
   toggleHeart(): void {
     this.isLiked = !this.isLiked;
