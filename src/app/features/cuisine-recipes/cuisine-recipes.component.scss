@@ -20,15 +20,16 @@
 
 // ── TOP SECTION ───────────────────────────────────────────────────
 .cr__top {
-  width: 1440px;
+  width: 100%;
+  max-width: 1440px;
   display: flex;
   justify-content: center;
 }
 
-// Header image container (1143×144px, centered)
+// Header image container (max 1143px, fluid below)
 .cr__header-wrap {
-  width: 1143px;
-  //height: 157px;
+  width: calc(100% - 48px);
+  max-width: 1143px;
   position: relative;
   border-radius: 16px;
   overflow: hidden;
@@ -41,6 +42,8 @@
   object-fit: cover;
   display: block;
 }
+
+.cr__header-img--mobile { display: none; }
 
 // Title overlaid on image
 .cr__header-title {
@@ -79,7 +82,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 1143px;
+  width: calc(100% - 48px);
+  max-width: 1143px;
   margin: 0 auto;
   padding: 16px 0;
 }
@@ -142,14 +146,15 @@
 
 // ── RECIPE LIST ───────────────────────────────────────────────────
 .cr__list {
-  width: 900px;
+  width: calc(100% - 48px);
+  max-width: 900px;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
 .cr__row {
-  width: 900px;
+  width: 100%;
   height: 66px;
   display: flex;
   flex-direction: row;
@@ -174,7 +179,8 @@
   flex-direction: row;
   align-items: flex-end;
   gap: 8px;
-  width: 520px;
+  flex: 1;
+  min-width: 0;
 }
 
 .cr__num {
@@ -197,7 +203,7 @@
   display: flex;
   flex-direction: column;
   gap: 0;
-  width: 482px;
+  flex: 1;
   min-width: 0;
 }
 
@@ -298,4 +304,100 @@
   font-family: 'Quicksand', sans-serif;
   font-size: 18px;
   color: #10310b;
+}
+
+// ═══════════════════════════════════════════════════════════
+// TABLET  (769px – 1024px)
+// ═══════════════════════════════════════════════════════════
+@media (min-width: 769px) and (max-width: 1024px) {
+  .cr { gap: 24px; padding-bottom: 60px; }
+
+  .cr__header-wrap,
+  .cr__actions {
+    width: calc(100% - 32px);
+  }
+
+  .cr__list { width: calc(100% - 32px); }
+
+  .cr__row { height: auto; min-height: 66px; }
+
+  .cr__header-title { font-size: 32px; }
+
+  .cr__generate-btn { font-size: 20px; padding: 12px 20px; }
+}
+
+// ═══════════════════════════════════════════════════════════
+// MOBILE  (max-width: 768px)
+// ═══════════════════════════════════════════════════════════
+@media (max-width: 768px) {
+  .cr { gap: 16px; padding-bottom: 40px; }
+
+  // ── Header ──
+  .cr__top { padding: 0 16px; box-sizing: border-box; }
+
+  .cr__header-wrap {
+    width: 100%;
+    border-radius: 12px;
+  }
+
+  // swap to mobile image
+  .cr__header-img--desktop { display: none; }
+  .cr__header-img--mobile  { display: block; }
+
+  .cr__header-title {
+    font-size: 24px;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  // ── Actions ──
+  .cr__actions {
+    width: calc(100% - 32px);
+    padding: 8px 0;
+  }
+
+  .cr__generate-btn {
+    font-size: 15px;
+    padding: 10px 14px;
+  }
+
+  // ── Recipe list ──
+  .cr__list {
+    width: calc(100% - 32px);
+    gap: 6px;
+  }
+
+  .cr__row {
+    height: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 10px 12px;
+  }
+
+  .cr__left { width: 100%; align-items: flex-start; }
+
+  .cr__recipe-title {
+    font-size: 16px;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+  }
+
+  .cr__clock-row {
+    font-size: 13px;
+    img { width: 16px; height: 16px; }
+  }
+
+  // tags row indented past the number circle (30px + 8px gap)
+  .cr__right {
+    margin-left: 38px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .cr__time-tag { font-size: 13px; padding: 4px 8px; }
+
+  .cr__pill { font-size: 13px; padding: 4px 8px; }
 }

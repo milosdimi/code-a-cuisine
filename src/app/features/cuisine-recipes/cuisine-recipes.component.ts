@@ -8,13 +8,13 @@ import { RecipeService } from '../../core/services/recipe.service';
 import { Recipe, CookingStyle } from '../../core/models/recipe.model';
 
 // ── Static metadata ───────────────────────────────────────────────
-const CUISINE_META: Record<string, { image: string; title: string }> = {
-  italian:  { image: 'assets/images/recipes/italian-food.png',  title: 'Italian cuisine'  },
-  german:   { image: 'assets/images/recipes/german-food.png',   title: 'German cuisine'   },
-  japanese: { image: 'assets/images/recipes/japanese-food.png', title: 'Japanese cuisine' },
-  indian:   { image: 'assets/images/recipes/indian-food.png',   title: 'Indian cuisine'   },
-  gourmet:  { image: 'assets/images/recipes/gourmet-food.png',  title: 'Gourmet cuisine'  },
-  fusion:   { image: 'assets/images/recipes/fusion-food.png',   title: 'Fusion cuisine'   },
+const CUISINE_META: Record<string, { image: string; mobileImage: string; title: string }> = {
+  italian:  { image: 'assets/images/recipes/italian-food.png',  mobileImage: 'assets/images/mobile/recipe/italian-cuisine-mobile.png',  title: 'Italian cuisine'  },
+  german:   { image: 'assets/images/recipes/german-food.png',   mobileImage: 'assets/images/mobile/recipe/german-cuisine-mobile.png',   title: 'German cuisine'   },
+  japanese: { image: 'assets/images/recipes/japanese-food.png', mobileImage: 'assets/images/mobile/recipe/japanese-cuisine-mobile.png', title: 'Japanese cuisine' },
+  indian:   { image: 'assets/images/recipes/indian-food.png',   mobileImage: 'assets/images/mobile/recipe/indian-cuisine-mobile.png',   title: 'Indian cuisine'   },
+  gourmet:  { image: 'assets/images/recipes/gourmet-food.png',  mobileImage: 'assets/images/mobile/recipe/gourmet-cuisine-mobile.png',  title: 'Gourmet cuisine'  },
+  fusion:   { image: 'assets/images/recipes/fusion-food.png',   mobileImage: 'assets/images/mobile/recipe/fusion-cuisine-mobile.png',   title: 'Fusion cuisine'   },
 };
 
 const TIME_DISPLAY: Record<string, string> = {
@@ -84,8 +84,9 @@ export class CuisineRecipesComponent implements OnInit {
   }
 
   // ── Cuisine metadata ──────────────────────────────────────────
-  get cuisineTitle(): string { return CUISINE_META[this.style]?.title ?? ''; }
-  get cuisineImage(): string { return CUISINE_META[this.style]?.image ?? ''; }
+  get cuisineTitle(): string       { return CUISINE_META[this.style]?.title       ?? ''; }
+  get cuisineImage(): string       { return CUISINE_META[this.style]?.image       ?? ''; }
+  get cuisineMobileImage(): string { return CUISINE_META[this.style]?.mobileImage ?? ''; }
 
   // ── Pagination ────────────────────────────────────────────────
   get totalPages(): number {

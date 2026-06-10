@@ -16,7 +16,8 @@
   <!-- 2. HEADER IMAGE ── -->
   <div class="cr__top">
     <div class="cr__header-wrap">
-      <img [src]="cuisineImage" [alt]="cuisineTitle" class="cr__header-img" />
+      <img [src]="cuisineImage"       [alt]="cuisineTitle" class="cr__header-img cr__header-img--desktop" />
+      <img [src]="cuisineMobileImage" [alt]="cuisineTitle" class="cr__header-img cr__header-img--mobile" />
       <h1 class="cr__header-title">{{ cuisineTitle }}</h1>
     </div>
   </div>
