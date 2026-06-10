@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { RecipeService } from '../../../core/services/recipe.service';
 import { UserPreferences } from '../../../core/models/preferences.model';
 import { LoadingPopupComponent } from './loading-popup/loading-popup.component';
@@ -23,8 +24,12 @@ export class LoadingComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subs.add(
-      this.recipeService.preferences$.subscribe(prefs => {
-        if (prefs) this.startGeneration(prefs);
+      this.recipeService.preferences$.pipe(take(1)).subscribe(prefs => {
+        if (prefs) {
+          this.startGeneration(prefs);
+        } else {
+          this.router.navigate(['/preferences']);
+        }
       })
     );
   }

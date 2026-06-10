@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
@@ -50,6 +51,8 @@ export class Step2PreferencesComponent implements OnInit {
     { value: 'keto',        label: 'Keto'           }
   ];
 
+  private readonly destroyRef = inject(DestroyRef);
+
   constructor(
     private recipeService: RecipeService,
     private quotaService: QuotaService,
@@ -57,7 +60,7 @@ export class Step2PreferencesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.recipeService.preferences$.subscribe(prefs => {
+    this.recipeService.preferences$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(prefs => {
       if (prefs) {
         this.servings     = prefs.servings;
         this.cookingTime  = prefs.cookingTime;

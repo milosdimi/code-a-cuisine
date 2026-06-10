@@ -1,4 +1,5 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
@@ -41,13 +42,15 @@ export class Step1IngredientsComponent implements OnInit {
   editUnit: IngredientUnit = 'Stück';
   editNameError = false;
 
+  private readonly destroyRef = inject(DestroyRef);
+
   constructor(
     private recipeService: RecipeService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.recipeService.preferences$.subscribe(prefs => {
+    this.recipeService.preferences$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(prefs => {
       if (prefs?.ingredients?.length) {
         this.ingredients = [...prefs.ingredients];
       }

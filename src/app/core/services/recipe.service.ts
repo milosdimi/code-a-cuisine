@@ -67,13 +67,18 @@ export class RecipeService {
     return this.http
       .post<{ recipes: Recipe[] }>(this.N8N_WEBHOOK_URL, payload)
       .pipe(
-        map(response => response.recipes),
+        map(response => response.recipes.map(r => ({
+          ...r,
+          id: r.id ?? crypto.randomUUID(),
+          createdAt: r.createdAt ?? new Date()
+        }))),
         tap(recipes => {
           this._generatedRecipes$.next(recipes);
           this._isLoading$.next(false);
-          recipes.forEach(r =>
-            this.firebase.saveRecipe({ ...r, createdAt: new Date() }).subscribe()
-          );
+          recipes.forEach(r => {
+            const { id: _id, ...recipeData } = r;
+            this.firebase.saveRecipe(recipeData).subscribe();
+          });
         }),
         catchError((err: HttpErrorResponse) => {
           this._isLoading$.next(false);

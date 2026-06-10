@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
@@ -81,13 +82,15 @@ export class ResultsComponent implements OnInit {
     return TIME_MINUTES[t] ?? t;
   }
 
+  private readonly destroyRef = inject(DestroyRef);
+
   constructor(
     private recipeService: RecipeService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.recipeService.generatedRecipes$.subscribe(recipes => {
+    this.recipeService.generatedRecipes$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(recipes => {
       if (recipes.length === 0) {
         this.router.navigate(['/generate']);
       } else {
@@ -95,7 +98,7 @@ export class ResultsComponent implements OnInit {
       }
     });
 
-    this.recipeService.preferences$.subscribe(prefs => {
+    this.recipeService.preferences$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(prefs => {
       this.preferences = prefs;
     });
   }
