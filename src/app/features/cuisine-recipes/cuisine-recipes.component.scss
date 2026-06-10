@@ -45,15 +45,15 @@
 
 .cr__header-img--mobile { display: none; }
 
-// Title overlaid on image
+// Title overlaid on image — centered in both axes regardless of image scale
 .cr__header-title {
   position: absolute;
-  top: 51px;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   font-family: 'Quicksand', sans-serif;
   font-weight: 700;
-  font-size: 40px;
+  font-size: clamp(24px, 3.5vw, 40px);
   line-height: 104%;
   color: #10310b;
   white-space: nowrap;
@@ -321,8 +321,6 @@
 
   .cr__row { height: auto; min-height: 66px; }
 
-  .cr__header-title { font-size: 32px; }
-
   .cr__generate-btn { font-size: 20px; padding: 12px 20px; }
 }
 
@@ -344,11 +342,7 @@
   .cr__header-img--desktop { display: none; }
   .cr__header-img--mobile  { display: block; }
 
-  .cr__header-title {
-    font-size: 24px;
-    top: 50%;
-    transform: translate(-50%, -50%);
-  }
+  .cr__header-title { font-size: 24px; }
 
   // ── Actions ──
   .cr__actions {

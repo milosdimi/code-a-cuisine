@@ -7,8 +7,8 @@ import { ResultsComponent }           from './features/results/results.component
 import { RecipeDetailComponent }      from './features/recipe-detail/recipe-detail.component';
 import { CookbookComponent }          from './features/cookbook/cookbook.component';
 import { CuisineRecipesComponent }    from './features/cuisine-recipes/cuisine-recipes.component';
-import { ImpressumComponent }         from './shared/components/impressum/impressum.component';
-import { DatenschutzComponent }       from './shared/components/datenschutz/datenschutz.component';
+import { LegalComponent }             from './shared/components/legal/legal.component';
+import { PrivacyComponent }           from './shared/components/privacy/privacy.component';
 
 export const routes: Routes = [
   { path: '',                component: HeroComponent             },
@@ -19,7 +19,7 @@ export const routes: Routes = [
   { path: 'recipe/:id',      component: RecipeDetailComponent      },
   { path: 'cookbook',        component: CookbookComponent          },
   { path: 'cookbook/:style', component: CuisineRecipesComponent     },
-  { path: 'impressum',       component: ImpressumComponent         },
-  { path: 'datenschutz',    component: DatenschutzComponent       },
+  { path: 'legal',           component: LegalComponent             },
+  { path: 'privacy',        component: PrivacyComponent           },
   { path: '**',              redirectTo: ''                        }
 ];

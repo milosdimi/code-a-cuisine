@@ -1,7 +1,13 @@
 @use '../../../../styles/variables' as *;
 
-.datenschutz {
-  min-height: calc(100vh - 100px - 160px);
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.privacy {
+  flex: 1;
   background: $color-creme;
   padding: 60px 0;
 

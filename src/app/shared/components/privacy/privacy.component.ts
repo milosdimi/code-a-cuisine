@@ -3,10 +3,10 @@ import { NavbarComponent } from '../navbar/navbar.component';
 import { FooterComponent } from '../footer/footer.component';
 
 @Component({
-  selector: 'app-datenschutz',
+  selector: 'app-privacy',
   standalone: true,
   imports: [NavbarComponent, FooterComponent],
-  templateUrl: './datenschutz.component.html',
-  styleUrl: './datenschutz.component.scss'
+  templateUrl: './privacy.component.html',
+  styleUrl: './privacy.component.scss'
 })
-export class DatenschutzComponent {}
+export class PrivacyComponent {}

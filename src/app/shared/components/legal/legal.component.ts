@@ -3,10 +3,10 @@ import { NavbarComponent } from '../navbar/navbar.component';
 import { FooterComponent } from '../footer/footer.component';
 
 @Component({
-  selector: 'app-impressum',
+  selector: 'app-legal',
   standalone: true,
   imports: [NavbarComponent, FooterComponent],
-  templateUrl: './impressum.component.html',
-  styleUrl: './impressum.component.scss'
+  templateUrl: './legal.component.html',
+  styleUrl: './legal.component.scss'
 })
-export class ImpressumComponent {}
+export class LegalComponent {}
