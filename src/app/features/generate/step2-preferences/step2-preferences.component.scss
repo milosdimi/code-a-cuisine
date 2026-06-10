@@ -1,9 +1,15 @@
 @use '../../../../styles/variables' as *;
 @use '../../../../styles/mixins' as *;
 
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 // ===== STEP 2 =====
 .step2 {
-  min-height: calc(89vh - 136px - 88px);
+  flex: 1;
   background: $color-creme;
   padding: 40px 40px 32px;
   display: flex;

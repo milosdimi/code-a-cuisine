@@ -40,7 +40,13 @@ body {
   font-family: 'Quicksand', sans-serif;
   font-size: $font-size-base;
   color: $color-text-dark;
-  background-color: $color-creme;
+}
+
+// ===== GLOBAL CONTENT BOUNDARY =====
+app-root {
+  display: block;
+  max-width: 1440px;
+  margin: 0 auto;
 }
 
 // ===== GLOBAL BUTTON CLASSES =====
