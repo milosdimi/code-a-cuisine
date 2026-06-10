@@ -26,17 +26,21 @@
 
 // ===== GLOBAL BASE =====
 html {
-  background-color: $color-primary; 
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: $color-primary;
 }
 
 body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
   font-family: 'Quicksand', sans-serif;
   font-size: $font-size-base;
   color: $color-text-dark;
   background-color: $color-creme;
-  max-width: 1440px;
-  margin: 0 auto;
-  overflow-x: hidden;
 }
 
 // ===== GLOBAL BUTTON CLASSES =====

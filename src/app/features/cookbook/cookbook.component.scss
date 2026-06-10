@@ -1,5 +1,12 @@
 @use '../../../styles/variables' as *;
 
+// FIX 2 – sticky footer: host is the layout root
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 // ═══════════════════════════════════════════════════════════
 // SHARED PAGE SHELL
 // ═══════════════════════════════════════════════════════════
@@ -10,8 +17,11 @@
   align-items: center;
   gap: 32px;
   padding: 32px 0 80px;
-  width: 1440px;
+  width: 100%;
+  max-width: 1440px;
   margin: 0 auto;
+  box-sizing: border-box;
+  flex: 1; // FIX 2 – grow to fill space between navbar and footer
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -40,15 +50,17 @@
 
 // ── Content wrapper ──────────────────────────────────────────
 .cookbook__content {
-  width: 1330px;
+  width: calc(100% - 48px);
+  max-width: 1330px;
   display: flex;
   flex-direction: column;
   gap: 64px;
+  box-sizing: border-box;
 }
 
 // ── Upper part ───────────────────────────────────────────────
 .cookbook__upper {
-  width: 1330px;
+  width: 100%;
   height: 281px;
   background: rgba(57, 96, 57, 0.04);
   border-radius: 20px;
@@ -192,13 +204,13 @@
 // ── Cuisine grid ─────────────────────────────────────────────
 .cookbook__cuisines {
   display: grid;
-  grid-template-columns: repeat(3, 400px);
+  grid-template-columns: repeat(3, 1fr);
   column-gap: 65px;
   row-gap: 52px;
 }
 
 .cookbook__cuisine-card {
-  width: 400px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -226,8 +238,8 @@
 .cookbook__cuisine-emoji { font-size: 24px; line-height: 1; }
 
 .cookbook__cuisine-img-wrap {
-  width: 400px;
-  height: 400px;
+  width: 100%;
+  aspect-ratio: 1;
   border-radius: 16px;
   overflow: hidden;
 }
@@ -268,11 +280,13 @@
 // ── Top section ──────────────────────────────────────────────
 .cbd__top {
   position: relative;
-  width: 1440px;
+  width: 100%;
+  max-width: 1440px;
   height: 144px;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
 }
 
 .cbd__back {
@@ -541,4 +555,223 @@
   font-size: 18px;
   color: #10310b;
   padding: 0 4px;
+}
+
+// ═══════════════════════════════════════════════════════════
+// TABLET  (769px – 1024px)
+// ═══════════════════════════════════════════════════════════
+@media (min-width: 769px) and (max-width: 1024px) {
+
+  // ── Page shell ──
+  .cookbook {
+    width: 100%;
+    padding: 24px 0 60px;
+  }
+
+  .cookbook__back {
+    margin-left: 16px;
+  }
+
+  // ── Content wrapper ──
+  .cookbook__content {
+    width: 100%;
+    gap: 40px;
+  }
+
+  // ── Upper part: stack vertically ──
+  .cookbook__upper {
+    flex-direction: column;
+    align-items: flex-start;
+    width: calc(100% - 32px);
+    margin: 0 16px;
+    height: auto;
+    overflow: visible;
+  }
+
+  .cookbook__text-block {
+    width: 100%;
+  }
+
+  // FIX 3 – most liked cards scale on tablet
+  .cookbook__liked {
+    width: 100%;
+  }
+
+  .cookbook__liked-card {
+    width: calc(50% - 6px);
+    min-width: 240px;
+  }
+
+  .cookbook__liked-info {
+    width: auto;
+    flex: 1;
+    min-width: 0;
+  }
+
+  // FIX 1 – cuisine grid: 2 columns ──
+  .cookbook__cuisines {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    width: 100%;
+    padding: 0 16px;
+    box-sizing: border-box;
+  }
+
+  .cookbook__cuisine-card {
+    width: 100%;
+  }
+
+  .cookbook__cuisine-img-wrap {
+    width: 100%;
+    height: 260px;
+  }
+
+  // ── CTA ──
+  .cookbook__cta {
+    padding-right: 16px;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// MOBILE  (max-width: 768px)
+// ═══════════════════════════════════════════════════════════
+@media (max-width: 768px) {
+
+  // ── Page shell ──
+  .cookbook {
+    width: 100%;
+    padding: 0 0 40px;
+    overflow-x: hidden;
+    gap: 16px;
+  }
+
+  // ── Back link ──
+  .cookbook__back {
+    margin-left: 0;
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+
+  // ── Content wrapper ──
+  .cookbook__content {
+    width: 100%;
+    padding: 0 16px;
+    box-sizing: border-box;
+    gap: 32px;
+  }
+
+  // ── Upper part (info box) ──
+  .cookbook__upper {
+    width: 100%;
+    height: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 24px;
+    overflow: visible;
+  }
+
+  .cookbook__text-block {
+    width: 100%;
+  }
+
+  .cookbook__title {
+    font-size: 40px;
+    line-height: 50px;
+    width: 100%;
+  }
+
+  .cookbook__subtitle {
+    font-size: 18px;
+    line-height: 22px;
+    width: 100%;
+  }
+
+  // ── Most liked ──
+  .cookbook__liked {
+    width: 100%;
+  }
+
+  .cookbook__liked-headline {
+    font-size: 24px;
+    gap: 8px;
+
+    img {
+      width: 21px;
+      height: auto;
+    }
+  }
+
+  .cookbook__liked-scroll {
+    padding: 0 0 8px;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  .cookbook__liked-card {
+    width: 285px;
+    height: 106px;
+    gap: 16px;
+  }
+
+  .cookbook__liked-info {
+    width: 195px;
+  }
+
+  .cookbook__liked-clock {
+    img {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .cookbook__liked-title {
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  .cookbook__liked-pill {
+    width: 50px;
+    height: 24px;
+    padding: 2px 6px;
+    font-size: 16px;
+  }
+
+  // ── Cuisine grid → 2 columns (fits from 320px) ──
+  .cookbook__cuisines {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .cookbook__cuisine-card {
+    width: 100%;
+  }
+
+  .cookbook__cuisine-name {
+    font-size: 20px;
+  }
+
+  .cookbook__cuisine-img-wrap {
+    width: 100%;
+    height: 140px;
+    aspect-ratio: auto;
+  }
+
+  // ── Bottom CTA ──
+  .cookbook__cta {
+    padding-right: 0;
+    justify-content: flex-start;
+  }
+
+  .cookbook__cta-btn {
+    padding: 4px 16px;
+    height: 52px;
+    font-size: 18px;
+    font-weight: 500;
+    width: fit-content;
+  }
 }
