@@ -20,6 +20,6 @@ export class LoadingPopupComponent {
 
   goBack(): void {
     this.closed.emit();
-    this.router.navigate(['/generate']);
+    this.router.navigate(['/cookbook']);
   }
 }

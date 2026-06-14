@@ -6,7 +6,10 @@
       alt=""
       aria-hidden="true"
     />
-    <p class="loading__text">Generating ...</p>
+    <p class="loading__text">
+      Generating
+      <span class="loading__dot">.</span><span class="loading__dot">.</span><span class="loading__dot">.</span>
+    </p>
   </div>
 
   <app-loading-popup [show]="showPopup" (closed)="onPopupClosed()" />
