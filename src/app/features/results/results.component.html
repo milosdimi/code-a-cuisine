@@ -52,6 +52,13 @@
             [routerLink]="['/recipe', recipe.id]"
             role="button"
           >View</a>
+          <button
+            type="button"
+            class="results__card-btn results__card-btn--save"
+            [class.results__card-btn--saved]="isSaved(recipe)"
+            [disabled]="isSaved(recipe)"
+            (click)="saveToBook(recipe)"
+          >{{ isSaved(recipe) ? 'Saved ✓' : 'Add to Cookbook' }}</button>
         </div>
 
       </div>

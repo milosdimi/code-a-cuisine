@@ -30,11 +30,30 @@ export class FirebaseService {
    * @param recipe - The recipe to persist (without id).
    * @returns Observable emitting the auto-generated document id.
    */
-  saveRecipe(recipe: Omit<Recipe, 'id'>): Observable<string> {
+  saveRecipe(recipe: Omit<Recipe, 'id'> & { clientId?: string }): Observable<string> {
     const ref = collection(this.db, this.RECIPES_COLLECTION);
-    return from(addDoc(ref, { ...recipe, createdAt: Timestamp.fromDate(recipe.createdAt) })).pipe(
+    const flatHelpers = (recipe.helpers ?? []).flatMap((group, groupIdx) =>
+      (group ?? []).map(task => ({ ...task, groupIndex: groupIdx }))
+    );
+    const data = {
+      ...recipe,
+      helpers: flatHelpers,
+      createdAt: Timestamp.fromDate(recipe.createdAt)
+    };
+    return from(addDoc(ref, data)).pipe(
       map(docRef => docRef.id),
       catchError(err => throwError(() => new Error(`Rezept konnte nicht gespeichert werden: ${err.message}`)))
+    );
+  }
+
+  /** Returns the subset of clientIds that already exist as saved recipes in Firestore. */
+  getSavedClientIds(clientIds: string[]): Observable<string[]> {
+    if (clientIds.length === 0) return from(Promise.resolve([]));
+    const ref = collection(this.db, this.RECIPES_COLLECTION);
+    const q = query(ref, where('clientId', 'in', clientIds));
+    return from(getDocs(q)).pipe(
+      map(snap => snap.docs.map(d => d.data()['clientId'] as string).filter(Boolean)),
+      catchError(() => from(Promise.resolve([])))
     );
   }
 
@@ -64,14 +83,21 @@ export class FirebaseService {
     style?: CookingStyle
   ): Observable<Recipe[]> {
     const ref = collection(this.db, this.RECIPES_COLLECTION);
+    // No where() here — combining where+orderBy on different fields requires a
+    // Firestore composite index. Filter by style client-side instead.
     const constraints: any[] = [orderBy('createdAt', 'desc'), limit(pageSize)];
-    if (style) constraints.unshift(where('cookingStyle', '==', style));
     if (lastDoc) constraints.push(startAfter(lastDoc));
 
     const q = query(ref, ...constraints);
     return from(getDocs(q)).pipe(
-      map(snap => snap.docs.map(d => this.mapSnapshot(d) as Recipe)),
-      catchError(err => throwError(() => new Error(`Rezepte konnten nicht geladen werden: ${err.message}`)))
+      map(snap => {
+        const all = snap.docs.map(d => this.mapSnapshot(d) as Recipe);
+        return style ? all.filter(r => r.cookingStyle === style) : all;
+      }),
+      catchError(err => {
+        console.error('[FirebaseService] getRecipes error:', err);
+        return throwError(() => new Error(`Rezepte konnten nicht geladen werden: ${err.message}`));
+      })
     );
   }
 

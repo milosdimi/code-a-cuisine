@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
@@ -75,7 +75,8 @@ export class CookbookComponent implements OnInit {
   constructor(
     private firebase: FirebaseService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -101,8 +102,9 @@ export class CookbookComponent implements OnInit {
             .slice(0, 5) as LikedRecipe[];
           this.likedRecipes = sorted.length > 0 ? sorted : MOCK_LIKED;
         }
+        this.cdr.markForCheck();
       },
-      error: () => { this.likedRecipes = MOCK_LIKED; }
+      error: () => { this.likedRecipes = MOCK_LIKED; this.cdr.markForCheck(); }
     });
   }
 
@@ -120,10 +122,12 @@ export class CookbookComponent implements OnInit {
           ...r, heartCount: (r as any)['heartCount'] ?? 0
         })) as LikedRecipe[];
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.error = 'Could not load recipes.';
         this.isLoading = false;
+        this.cdr.markForCheck();
       }
     });
   }

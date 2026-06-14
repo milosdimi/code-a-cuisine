@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
@@ -53,7 +53,8 @@ export class RecipeDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private firebase: FirebaseService,
-    private recipeService: RecipeService
+    private recipeService: RecipeService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -85,10 +86,12 @@ export class RecipeDetailComponent implements OnInit {
           this.error = 'Recipe not found.';
           this.isLoading = false;
         }
+        this.cdr.markForCheck();
       },
       error: () => {
         this.error = 'Recipe could not be loaded.';
         this.isLoading = false;
+        this.cdr.markForCheck();
       }
     });
   }

@@ -1,7 +1,7 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, map, tap, timeout } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { Recipe } from '../models/recipe.model';
 import { UserPreferences } from '../models/preferences.model';
@@ -16,6 +16,7 @@ export class RecipeService {
   private readonly _generatedRecipes$ = new BehaviorSubject<Recipe[]>([]);
   private readonly _isLoading$ = new BehaviorSubject<boolean>(false);
   private readonly _error$ = new BehaviorSubject<string | null>(null);
+  private readonly _savedIds = new Set<string>();
 
   /** Current user preferences across the multi-step form. */
   readonly preferences$ = this._preferences$.asObservable();
@@ -67,6 +68,7 @@ export class RecipeService {
     return this.http
       .post<{ recipes: Recipe[] }>(this.N8N_WEBHOOK_URL, payload)
       .pipe(
+        timeout(180_000),
         map(response => response.recipes.map(r => ({
           ...r,
           id: r.id ?? crypto.randomUUID(),
@@ -75,10 +77,6 @@ export class RecipeService {
         tap(recipes => {
           this._generatedRecipes$.next(recipes);
           this._isLoading$.next(false);
-          recipes.forEach(r => {
-            const { id: _id, ...recipeData } = r;
-            this.firebase.saveRecipe(recipeData).subscribe();
-          });
         }),
         catchError((err: HttpErrorResponse) => {
           this._isLoading$.next(false);
@@ -89,15 +87,45 @@ export class RecipeService {
       );
   }
 
+  /** Saves a single recipe to Firestore. Optimistically marks as saved immediately. */
+  saveRecipeToBook(recipe: Recipe): Observable<string> {
+    const { id: clientId, ...recipeData } = recipe;
+    if (clientId) this._savedIds.add(clientId);
+    return this.firebase.saveRecipe({ ...recipeData, clientId }).pipe(
+      catchError(err => {
+        if (clientId) this._savedIds.delete(clientId);
+        return throwError(() => err);
+      })
+    );
+  }
+
+  /** Returns true if this recipe has been saved to Firestore in the current session. */
+  isSaved(id: string | undefined): boolean {
+    return !!id && this._savedIds.has(id);
+  }
+
+  /** Queries Firestore and pre-populates the saved-ids set. Call once on Results init. */
+  loadSavedStatus(ids: string[]): void {
+    this.firebase.getSavedClientIds(ids).subscribe({
+      next: saved => saved.forEach(id => this._savedIds.add(id))
+    });
+  }
+
+  /** Synchronous snapshot of the current generated recipes (BehaviorSubject.value). */
+  get currentRecipes(): Recipe[] {
+    return this._generatedRecipes$.value;
+  }
+
   /** Returns a mock recipe by ID (fallback when not in session or Firestore). */
   getMockRecipeById(id: string): Recipe | undefined {
     return MOCK_RECIPES.find(r => r.id === id);
   }
 
-  /** Clears generated recipes and resets the error state. */
+  /** Clears generated recipes, saved-ids and resets the error state. */
   resetState(): void {
     this._generatedRecipes$.next([]);
     this._error$.next(null);
+    this._savedIds.clear();
   }
 
   private buildPayload(prefs: UserPreferences) {

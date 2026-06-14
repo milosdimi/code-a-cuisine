@@ -1,11 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
 import { FirebaseService } from '../../core/services/firebase.service';
-import { RecipeService } from '../../core/services/recipe.service';
-import { Recipe, CookingStyle } from '../../core/models/recipe.model';
+import { CookingStyle } from '../../core/models/recipe.model';
 
 // ── Static metadata ───────────────────────────────────────────────
 const CUISINE_META: Record<string, { image: string; mobileImage: string; title: string }> = {
@@ -39,40 +38,30 @@ export class CuisineRecipesComponent implements OnInit {
   page = 1;
   readonly pageSize = 15;
 
-  private readonly mockRecipes = [
-    { id: 'r1', title: 'Pasta with spinach and cherry tomatoes', cookingStyle: 'italian', cookingTimeMinutes: 20, cookingTime: 'quick',    heartCount: 66, diet: 'vegetarian' },
-    { id: 'r2', title: 'Creamy garlic shrimp pasta',             cookingStyle: 'italian', cookingTimeMinutes: 22, cookingTime: 'quick',    heartCount: 32, diet: 'none'       },
-    { id: 'r3', title: 'Funghi salami pizza',                    cookingStyle: 'italian', cookingTimeMinutes: 16, cookingTime: 'quick',    heartCount: 42, diet: 'none'       },
-    { id: 'r4', title: 'Spaghetti Carbonara',                    cookingStyle: 'italian', cookingTimeMinutes: 25, cookingTime: 'quick',    heartCount: 88, diet: 'none'       },
-    { id: 'r5', title: 'Risotto ai funghi',                      cookingStyle: 'italian', cookingTimeMinutes: 40, cookingTime: 'medium',   heartCount: 54, diet: 'vegetarian' },
-  ];
-
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private firebase: FirebaseService,
-    private recipeService: RecipeService
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.style = this.route.snapshot.params['style'] ?? '';
-    // Show mock data immediately, then override with Firebase if available
-    this.allRecipes = this.mockRecipes.filter(r => r.cookingStyle === this.style);
     this.loadFromFirebase();
   }
 
   private loadFromFirebase(): void {
-    const style = this.style as CookingStyle;
-
-    this.firebase.getRecipes(100, undefined, style).subscribe({
+    this.isLoading = true;
+    this.firebase.getRecipes(100, undefined, this.style as CookingStyle).subscribe({
       next: recipes => {
-        if (recipes.length > 0) {
-          this.allRecipes = this.sortByDate(recipes);
-        }
-        // If empty, keep the mock data already shown
+        this.allRecipes = this.sortByDate(recipes);
+        this.isLoading = false;
+        this.cdr.markForCheck();
       },
-      error: () => {
-        // Keep mock data on error
+      error: (err) => {
+        console.error('[CuisineRecipes] load error:', err);
+        this.isLoading = false;
+        this.cdr.markForCheck();
       }
     });
   }

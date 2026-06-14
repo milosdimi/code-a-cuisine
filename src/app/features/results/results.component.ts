@@ -90,17 +90,32 @@ export class ResultsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.recipeService.generatedRecipes$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(recipes => {
-      if (recipes.length === 0) {
-        this.router.navigate(['/generate']);
-      } else {
-        this.recipes = recipes;
-      }
-    });
+    // Synchronous guard: redirect immediately if no recipes (direct URL access)
+    if (this.recipeService.currentRecipes.length === 0) {
+      this.router.navigate(['/generate']);
+      return;
+    }
 
-    this.recipeService.preferences$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(prefs => {
-      this.preferences = prefs;
-    });
+    // Live subscription for display only — no redirect logic here
+    this.recipeService.generatedRecipes$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(recipes => {
+        this.recipes = recipes;
+        this.recipeService.loadSavedStatus(recipes.map(r => r.id!).filter(Boolean));
+      });
+
+    this.recipeService.preferences$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(prefs => { this.preferences = prefs; });
+  }
+
+  saveToBook(recipe: Recipe): void {
+    if (this.recipeService.isSaved(recipe.id)) return;
+    this.recipeService.saveRecipeToBook(recipe).subscribe({ error: () => {} });
+  }
+
+  isSaved(recipe: Recipe): boolean {
+    return this.recipeService.isSaved(recipe.id);
   }
 
   /** Resets state and sends user back to the ingredient step. */
