@@ -12,6 +12,7 @@ import { SeoService } from '../../core/services/seo.service';
 export class HeroComponent implements OnInit {
   private seo = inject(SeoService);
 
+  /** Sets the SEO page title for the hero landing page. */
   ngOnInit(): void {
     this.seo.setPage({ title: 'Code à Cuisine' });
   }

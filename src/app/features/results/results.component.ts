@@ -67,18 +67,22 @@ export class ResultsComponent implements OnInit {
   recipes: Recipe[] = [];
   preferences: UserPreferences | null = null;
 
+  /** Generated recipes, or mock placeholders when no session data is available. */
   get displayRecipes(): Recipe[] {
     return this.recipes.length > 0 ? this.recipes : MOCK_RECIPES;
   }
 
+  /** Short label for the selected cooking time shown in the results header. */
   get timeTag(): string {
     return this.preferences ? (TIME_LABELS[this.preferences.cookingTime] ?? this.preferences.cookingTime) : '';
   }
 
+  /** Short label for the selected cooking style shown in the results header. */
   get styleTag(): string {
     return this.preferences ? (STYLE_LABELS[this.preferences.cookingStyle] ?? this.preferences.cookingStyle) : '';
   }
 
+  /** Returns the human-readable time range string for a cookingTime key. */
   cookingTimeLabel(t: CookingTime): string {
     return TIME_MINUTES[t] ?? t;
   }
@@ -91,6 +95,7 @@ export class ResultsComponent implements OnInit {
     private router: Router
   ) {}
 
+  /** Guards direct URL access and subscribes to generated recipes and preferences. */
   ngOnInit(): void {
     this.seo.setPage({ title: 'Your Recipes', description: 'Here are 3 personalized recipes based on your ingredients.' });
     // Synchronous guard: redirect immediately if no recipes (direct URL access)
@@ -112,11 +117,13 @@ export class ResultsComponent implements OnInit {
       .subscribe(prefs => { this.preferences = prefs; });
   }
 
+  /** Saves a recipe to Firestore; no-op if already saved in this session. */
   saveToBook(recipe: Recipe): void {
     if (this.recipeService.isSaved(recipe.id)) return;
     this.recipeService.saveRecipeToBook(recipe).subscribe({ error: () => {} });
   }
 
+  /** Returns true if the recipe has already been saved to the cookbook this session. */
   isSaved(recipe: Recipe): boolean {
     return this.recipeService.isSaved(recipe.id);
   }

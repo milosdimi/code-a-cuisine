@@ -83,6 +83,7 @@ export class CookbookComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
+  /** Determines whether to show the landing page or cuisine detail view based on the route param. */
   ngOnInit(): void {
     this.seo.setPage({ title: 'Cookbook', description: 'Browse all community recipes sorted by cuisine style.' });
     const style = this.route.snapshot.paramMap.get('style');
@@ -97,6 +98,7 @@ export class CookbookComponent implements OnInit {
 
   // ── Landing page methods ──────────────────────────────────────
 
+  /** Fetches the most-hearted recipes from Firestore for the landing page showcase. */
   private loadLikedRecipes(): void {
     this.firebase.getRecipes(20).subscribe({
       next: recipes => {
@@ -113,12 +115,15 @@ export class CookbookComponent implements OnInit {
     });
   }
 
+  /** Returns the human-readable time range label for a cookingTime key. */
   cookingTimeLabel(t: string): string { return TIME_MINUTES[t] ?? t; }
 
+  /** Navigates to the cuisine detail page for the given cooking style. */
   navigateToCuisine(style: string): void { this.router.navigate(['/cookbook', style]); }
 
   // ── Cuisine detail page methods ───────────────────────────────
 
+  /** Loads all Firestore recipes for the active cuisine style and stores them for pagination. */
   private loadCuisineRecipes(style: CookingStyle): void {
     this.isLoading = true;
     this.firebase.getRecipes(100, undefined, style).subscribe({
@@ -137,20 +142,26 @@ export class CookbookComponent implements OnInit {
     });
   }
 
+  /** Display title for the active cuisine style. */
   get cuisineTitle(): string  { return CUISINE_META[this.activeStyle]?.title ?? ''; }
+  /** Header image path for the active cuisine style. */
   get cuisineImage(): string  { return CUISINE_META[this.activeStyle]?.image ?? ''; }
 
+  /** All recipes for the active cuisine (no client-side filter currently needed). */
   get filteredRecipes(): LikedRecipe[] { return this.allRecipes; }
 
+  /** Total number of pages based on the current page size. */
   get totalPages(): number {
     return Math.max(1, Math.ceil(this.filteredRecipes.length / this.pageSize));
   }
 
+  /** Recipes slice for the currently active page. */
   get pagedRecipes(): LikedRecipe[] {
     const start = (this.page - 1) * this.pageSize;
     return this.filteredRecipes.slice(start, start + this.pageSize);
   }
 
+  /** Page numbers and ellipsis markers for the pagination UI. */
   get paginationPages(): (number | string)[] {
     const total = this.totalPages;
     if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1);
@@ -165,20 +176,31 @@ export class CookbookComponent implements OnInit {
     return pages;
   }
 
+  /** Jumps to the specified page number. */
   goToPage(p: number): void { this.page = p; }
+  /** Moves to the previous page if not already on the first. */
   prevPage(): void { if (this.page > 1) this.page--; }
+  /** Moves to the next page if not already on the last. */
   nextPage(): void { if (this.page < this.totalPages) this.page++; }
 
+  /** Returns the human-readable time range label. */
   timeLabel(t: string): string  { return TIME_MINUTES[t] ?? t; }
+  /** Returns the short time tag (e.g. "Quick"). */
   timeTag(t: string): string    { return TIME_TAGS[t] ?? t; }
+  /** Returns the display label for a cooking style. */
   styleTag(s: string): string   { return STYLE_TAGS[s] ?? s; }
+  /** Returns the heart count for a recipe (defaults to 0). */
   getHeartCount(r: LikedRecipe): number { return r.heartCount ?? 0; }
 
+  /** Navigates to the full detail view for a recipe. */
   viewRecipe(recipe: Recipe): void { this.router.navigate(['/recipe', recipe.id]); }
 
   // ── Shared ────────────────────────────────────────────────────
 
+  /** Navigates back to the cookbook landing page. */
   goToCookbook(): void  { this.router.navigate(['/cookbook']); }
+  /** Resets state and navigates to the ingredient input step. */
   startNewSearch(): void { this.router.navigate(['/generate']); }
+  /** Navigates to the previous browser history entry. */
   goBack(): void        { window.history.back(); }
 }

@@ -49,6 +49,7 @@ export class CuisineRecipesComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
+  /** Reads the cuisine style from the route and loads matching recipes from Firestore. */
   ngOnInit(): void {
     this.style = this.route.snapshot.params['style'] ?? '';
     const meta = CUISINE_META[this.style];
@@ -59,6 +60,7 @@ export class CuisineRecipesComponent implements OnInit {
     this.loadFromFirebase();
   }
 
+  /** Fetches up to 100 recipes for the active cuisine style from Firestore, sorted by date. */
   private loadFromFirebase(): void {
     this.isLoading = true;
     this.firebase.getRecipes(100, undefined, this.style as CookingStyle).subscribe({
@@ -75,6 +77,7 @@ export class CuisineRecipesComponent implements OnInit {
     });
   }
 
+  /** Sorts recipes descending by createdAt so newest appear first. */
   private sortByDate(recipes: any[]): any[] {
     return [...recipes].sort((a, b) =>
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -82,20 +85,26 @@ export class CuisineRecipesComponent implements OnInit {
   }
 
   // ── Cuisine metadata ──────────────────────────────────────────
+  /** Display title for the active cuisine (e.g. "Italian cuisine"). */
   get cuisineTitle(): string       { return CUISINE_META[this.style]?.title       ?? ''; }
+  /** Desktop header image path for the active cuisine. */
   get cuisineImage(): string       { return CUISINE_META[this.style]?.image       ?? ''; }
+  /** Mobile header image path for the active cuisine. */
   get cuisineMobileImage(): string { return CUISINE_META[this.style]?.mobileImage ?? ''; }
 
   // ── Pagination ────────────────────────────────────────────────
+  /** Total number of pages based on the recipe count and current page size. */
   get totalPages(): number {
     return Math.max(1, Math.ceil(this.allRecipes.length / this.pageSize));
   }
 
+  /** The subset of recipes for the currently active page. */
   get pagedRecipes(): any[] {
     const start = (this.page - 1) * this.pageSize;
     return this.allRecipes.slice(start, start + this.pageSize);
   }
 
+  /** Page numbers and ellipsis markers rendered by the pagination bar. */
   get paginationPages(): (number | string)[] {
     const total = this.totalPages;
     if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1);
@@ -110,20 +119,29 @@ export class CuisineRecipesComponent implements OnInit {
     return pages;
   }
 
+  /** Jumps to the specified page number. */
   goToPage(p: number): void  { this.page = p; }
+  /** Moves to the previous page if not already on the first. */
   prevPage(): void           { if (this.page > 1) this.page--; }
+  /** Moves to the next page if not already on the last. */
   nextPage(): void           { if (this.page < this.totalPages) this.page++; }
 
   // ── Display helpers ───────────────────────────────────────────
+  /** Returns the human-readable cooking time for a recipe card. */
   timeDisplay(r: any): string {
     const mins = r['cookingTimeMinutes'];
     return mins != null ? `${mins}min` : (TIME_DISPLAY[r['cookingTime']] ?? r['cookingTime']);
   }
+  /** Returns the short time tag label (e.g. "Quick"). */
   timeTag(t: string): string { return TIME_TAG[t] ?? t; }
+  /** Returns the heart count for a recipe (defaults to 0). */
   heartCount(r: any): number  { return r['heartCount'] ?? 0; }
 
   // ── Navigation ────────────────────────────────────────────────
+  /** Navigates to the full recipe detail view. */
   viewRecipe(recipe: any): void    { this.router.navigate(['/recipe', recipe.id]); }
+  /** Navigates back to the cookbook landing page. */
   goToCookbook(): void                { this.router.navigate(['/cookbook']); }
+  /** Resets state and navigates to the ingredient input step. */
   startNewSearch(): void              { this.router.navigate(['/generate']); }
 }

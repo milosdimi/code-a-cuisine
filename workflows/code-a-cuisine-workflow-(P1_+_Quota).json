@@ -14,8 +14,12 @@
       "name": "Recipe Request Receiver",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [-1104, 128],
-      "webhookId": "339bb124-66a9-477b-9883-94106c40c3fc"
+      "position": [
+        -1104,
+        128
+      ],
+      "webhookId": "339bb124-66a9-477b-9883-94106c40c3fc",
+      "notes": "Accepts POST requests from the Angular frontend. Expects JSON with ingredients and preferences. CORS is open to allow localhost and production origins."
     },
     {
       "parameters": {
@@ -25,7 +29,11 @@
       "name": "Validate & Sanitize Input",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [-880, 128]
+      "position": [
+        -880,
+        128
+      ],
+      "notes": "Validates that required fields (ingredients, preferences) are present and sanitizes string inputs to prevent injection. Returns 400 if validation fails."
     },
     {
       "parameters": {
@@ -42,7 +50,11 @@
       "name": "Check IP Quota",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [-656, 128]
+      "position": [
+        -656,
+        128
+      ],
+      "notes": "Reads the current usage counter for the hashed client IP from Firebase Realtime Database. The date-keyed path ensures automatic daily reset."
     },
     {
       "parameters": {
@@ -52,7 +64,11 @@
       "name": "Evaluate Quota",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [-448, 128]
+      "position": [
+        -448,
+        128
+      ],
+      "notes": "Parses the Firebase response and computes whether the IP limit (3/day) and system-wide limit (12/day) have been reached. Attaches quota status to the item."
     },
     {
       "parameters": {
@@ -83,7 +99,11 @@
       "name": "Quota Gate",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
-      "position": [-224, 128]
+      "position": [
+        -224,
+        128
+      ],
+      "notes": "Routes requests: allowed requests proceed to Claude generation; exceeded requests are routed to the Quota Exceeded Response node."
     },
     {
       "parameters": {
@@ -115,14 +135,18 @@
       "name": "Generate 3 Recipes (Claude)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [0, 0],
+      "position": [
+        0,
+        0
+      ],
       "onError": "continueErrorOutput",
       "credentials": {
         "anthropicApi": {
           "id": "EuhuCl3ysu4svJqx",
           "name": "Anthropic account"
         }
-      }
+      },
+      "notes": "Calls the Anthropic Claude API with a structured prompt asking for exactly 3 recipe suggestions in JSON format. On error, routes to Handle Generation Error."
     },
     {
       "parameters": {
@@ -132,8 +156,12 @@
       "name": "Parse Claude Response",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [224, 0],
-      "onError": "continueErrorOutput"
+      "position": [
+        224,
+        0
+      ],
+      "onError": "continueErrorOutput",
+      "notes": "Extracts and validates the JSON recipe array from Claude's text response. If parsing fails or content is refused, routes to Handle Generation Error."
     },
     {
       "parameters": {
@@ -148,7 +176,11 @@
       "name": "Update IP Quota",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [448, 0]
+      "position": [
+        448,
+        0
+      ],
+      "notes": "Increments the IP-specific and system-wide counters in Firebase Realtime Database after a successful generation to enforce daily limits."
     },
     {
       "parameters": {
@@ -169,7 +201,11 @@
       "name": "Return Recipes to Angular",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [672, 0]
+      "position": [
+        672,
+        0
+      ],
+      "notes": "Sends the final JSON response with the 3 recipes back to the waiting Angular frontend via the webhook response channel."
     },
     {
       "parameters": {
@@ -191,7 +227,11 @@
       "name": "Quota Exceeded Response",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [0, 288]
+      "position": [
+        0,
+        288
+      ],
+      "notes": "Returns HTTP 200 with { success: false, error: \"quota_exceeded\" } so Angular can display the daily-limit error message."
     },
     {
       "parameters": {
@@ -213,7 +253,46 @@
       "name": "Handle Generation Error",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [336, 288]
+      "position": [
+        336,
+        288
+      ],
+      "notes": "Returns HTTP 200 with { success: false, error: \"generation_failed\" } or content_refused when Claude fails or rejects the ingredient."
+    },
+    {
+      "parameters": {},
+      "id": "48d914f3-14fd-4535-a575-70d4fe5a1082",
+      "name": "Workflow Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1104,
+        400
+      ],
+      "notes": "Fires whenever this workflow terminates with an uncaught error. Connect to the Send Error Email node so the operator is notified immediately."
+    },
+    {
+      "parameters": {
+        "fromEmail": "noreply@cuisine.dimit.cc",
+        "toEmail": "dm@dimit.cc",
+        "subject": "⚠️ Code-à-Cuisine Workflow Error",
+        "text": "=The n8n workflow \"Code-à-Cuisine\" encountered an error.\n\nWorkflow: {{ .workflow.name }}\nNode: {{ .execution.lastNodeExecuted }}\nError: {{ .error.message }}\nTime: {{  }}\n\nPlease check the n8n execution log for details."
+      },
+      "id": "4fdb0d84-754a-4e64-bc59-205b8f1a21d0",
+      "name": "Send Error Email",
+      "type": "n8n-nodes-base.sendEmail",
+      "typeVersion": 2,
+      "position": [
+        -880,
+        400
+      ],
+      "credentials": {
+        "smtp": {
+          "id": "smtp-credentials",
+          "name": "SMTP Credentials"
+        }
+      },
+      "notes": "Sends an email alert to the operator when the workflow fails. Configure SMTP credentials in n8n Credentials before activating. Uses the built-in error context from the Error Trigger."
     }
   ],
   "pinData": {},
@@ -321,6 +400,17 @@
         [
           {
             "node": "Return Recipes to Angular",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send Error Email",
             "type": "main",
             "index": 0
           }

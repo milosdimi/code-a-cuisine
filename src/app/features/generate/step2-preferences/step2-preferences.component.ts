@@ -61,6 +61,7 @@ export class Step2PreferencesComponent implements OnInit {
     private router: Router
   ) {}
 
+  /** Restores previously saved preferences into the form fields. */
   ngOnInit(): void {
     this.seo.setPage({ title: 'Your Preferences', description: 'Choose your cooking style, time, and dietary preferences.' });
     this.recipeService.preferences$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(prefs => {
@@ -112,10 +113,12 @@ export class Step2PreferencesComponent implements OnInit {
     });
   }
 
+  /** Clamps the servings input to the valid range (1–12). */
   clampServings(val: number): void {
     this.servings = Math.max(1, Math.min(12, val));
   }
 
+  /** Clamps the helper count to the valid range (1–3). */
   clampHelpers(val: number): void {
     this.helpers = Math.max(1, Math.min(3, val));
   }

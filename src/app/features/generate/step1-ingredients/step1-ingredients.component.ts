@@ -51,6 +51,7 @@ export class Step1IngredientsComponent implements OnInit {
     private router: Router
   ) {}
 
+  /** Restores any previously entered ingredients from shared preferences state. */
   ngOnInit(): void {
     this.seo.setPage({ title: 'Add Ingredients', description: 'Tell us what\'s in your fridge — we\'ll create 3 personalized recipes for you.' });
     this.recipeService.preferences$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(prefs => {
@@ -110,6 +111,7 @@ export class Step1IngredientsComponent implements OnInit {
     if (this.editingIndex === index) this.editingIndex = null;
   }
 
+  /** Opens the inline edit form for an existing ingredient at the given index. */
   startEdit(index: number, ing: UserIngredient): void {
     this.editingIndex = index;
     this.editName = ing.name;
@@ -118,6 +120,7 @@ export class Step1IngredientsComponent implements OnInit {
     this.validationError = '';
   }
 
+  /** Persists the edited ingredient to the list if the name is valid. */
   saveEdit(index: number): void {
     const name = this.editName.trim();
     if (!name) {
@@ -140,23 +143,28 @@ export class Step1IngredientsComponent implements OnInit {
     this.router.navigate(['/preferences']);
   }
 
+  /** Clears the current validation error message. */
   clearError(): void {
     this.validationError = '';
   }
 
+  /** Closes the autocomplete dropdown after a short delay to allow click events to fire first. */
   hideSuggestions(): void {
     setTimeout(() => { this.showSuggestions = false; }, 150);
   }
 
+  /** Sets the selected unit and closes the unit dropdown. */
   selectUnit(unit: IngredientUnit): void {
     this.newUnit = unit;
     this.showUnitDropdown = false;
   }
 
+  /** Closes the unit dropdown after a short delay to allow click events to fire first. */
   hideUnitDropdown(): void {
     setTimeout(() => { this.showUnitDropdown = false; }, 150);
   }
 
+  /** Closes open dropdowns when a click occurs outside their container elements. */
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event): void {
     const target = event.target as HTMLElement;

@@ -56,7 +56,7 @@
             </div>
 
             <div class="detail__nutrition">
-              <p class="detail__nutrition-label">Nutritional information</p>
+              <p class="detail__nutrition-label">Nutritional values <span class="detail__nutrition-sub">per portion</span></p>
               <div class="detail__nutrition-cols">
                 <div class="detail__nutrition-col">
                   <span class="detail__nutrition-key">Energie</span>
@@ -64,15 +64,34 @@
                 </div>
                 <div class="detail__nutrition-col">
                   <span class="detail__nutrition-key">Protein</span>
-                  <span class="detail__nutrition-val">{{ recipe.nutrition.proteinG }}g</span>
+                  <span class="detail__nutrition-val">{{ recipe.nutrition.proteinG }}g <span class="detail__nutrition-pct">({{ macroPercents.protein }}%)</span></span>
                 </div>
                 <div class="detail__nutrition-col">
                   <span class="detail__nutrition-key">Fat</span>
-                  <span class="detail__nutrition-val">{{ recipe.nutrition.fatG }}g</span>
+                  <span class="detail__nutrition-val">{{ recipe.nutrition.fatG }}g <span class="detail__nutrition-pct">({{ macroPercents.fat }}%)</span></span>
                 </div>
                 <div class="detail__nutrition-col">
                   <span class="detail__nutrition-key">Carbs</span>
-                  <span class="detail__nutrition-val">{{ recipe.nutrition.carbsG }}g</span>
+                  <span class="detail__nutrition-val">{{ recipe.nutrition.carbsG }}g <span class="detail__nutrition-pct">({{ macroPercents.carbs }}%)</span></span>
+                </div>
+              </div>
+              <p class="detail__nutrition-label detail__nutrition-label--total">Total recipe <span class="detail__nutrition-sub">({{ recipe.servings }} portions)</span></p>
+              <div class="detail__nutrition-cols">
+                <div class="detail__nutrition-col">
+                  <span class="detail__nutrition-key">Energie</span>
+                  <span class="detail__nutrition-val">{{ totalNutrition.calories }} kcal</span>
+                </div>
+                <div class="detail__nutrition-col">
+                  <span class="detail__nutrition-key">Protein</span>
+                  <span class="detail__nutrition-val">{{ totalNutrition.proteinG }}g</span>
+                </div>
+                <div class="detail__nutrition-col">
+                  <span class="detail__nutrition-key">Fat</span>
+                  <span class="detail__nutrition-val">{{ totalNutrition.fatG }}g</span>
+                </div>
+                <div class="detail__nutrition-col">
+                  <span class="detail__nutrition-key">Carbs</span>
+                  <span class="detail__nutrition-val">{{ totalNutrition.carbsG }}g</span>
                 </div>
               </div>
             </div>

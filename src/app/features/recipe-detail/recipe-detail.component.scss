@@ -198,6 +198,23 @@
   font-size: 18px;
   color: #10310b;
   margin: 0;
+
+  &--total {
+    margin-top: 12px;
+  }
+}
+
+.detail__nutrition-sub {
+  font-weight: 400;
+  font-size: 14px;
+  color: #396039;
+  margin-left: 4px;
+}
+
+.detail__nutrition-pct {
+  font-size: 14px;
+  color: #396039;
+  font-weight: 400;
 }
 
 .detail__nutrition-cols {
@@ -677,15 +694,24 @@
   .detail__nutrition-cols {
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 12px 16px;
+  }
+
+  .detail__nutrition-col {
+    min-width: calc(50% - 16px);
   }
 
   .detail__nutrition-key {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .detail__nutrition-val {
-    font-size: 18px;
+    font-size: 16px;
+  }
+
+  .detail__nutrition-pct,
+  .detail__nutrition-sub {
+    font-size: 13px;
   }
 
   // ── Section headers: mobile image ──

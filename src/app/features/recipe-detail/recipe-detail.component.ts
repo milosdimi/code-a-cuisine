@@ -173,6 +173,35 @@ export class RecipeDetailComponent implements OnInit {
   get timeLabel():   string { return TIME_LABELS[this.recipe?.cookingTime   ?? ''] ?? ''; }
   get timeMinutes(): string { return TIME_MINUTES[this.recipe?.cookingTime  ?? ''] ?? ''; }
 
+  /**
+   * Percentage share of total calories for each macronutrient.
+   * Protein and carbs provide 4 kcal/g, fat provides 9 kcal/g.
+   */
+  get macroPercents(): { protein: number; carbs: number; fat: number } {
+    const n = this.recipe?.nutrition;
+    if (!n) return { protein: 0, carbs: 0, fat: 0 };
+    const total = n.proteinG * 4 + n.carbsG * 4 + n.fatG * 9;
+    if (total === 0) return { protein: 0, carbs: 0, fat: 0 };
+    return {
+      protein: Math.round(n.proteinG * 4 / total * 100),
+      carbs:   Math.round(n.carbsG   * 4 / total * 100),
+      fat:     Math.round(n.fatG     * 9 / total * 100)
+    };
+  }
+
+  /** Total nutrition values for the whole recipe (per-portion × servings). */
+  get totalNutrition(): { calories: number; proteinG: number; carbsG: number; fatG: number } {
+    const n = this.recipe?.nutrition;
+    const s = this.recipe?.servings ?? 1;
+    if (!n) return { calories: 0, proteinG: 0, carbsG: 0, fatG: 0 };
+    return {
+      calories: n.caloriesPerPortion * s,
+      proteinG: Math.round(n.proteinG * s * 10) / 10,
+      carbsG:   Math.round(n.carbsG   * s * 10) / 10,
+      fatG:     Math.round(n.fatG     * s * 10) / 10
+    };
+  }
+
   // ── Chef helpers ───────────────────────────────────────────────
 
   /** Returns 0-based chef index for a given 1-based step number. */

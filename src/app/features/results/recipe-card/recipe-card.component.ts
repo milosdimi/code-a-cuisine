@@ -28,7 +28,10 @@ const TIME_LABELS: Record<string, string> = {
 export class RecipeCardComponent {
   @Input({ required: true }) recipe!: Recipe;
 
+  /** Display label for the recipe's cooking style (e.g. "Italienische Küche"). */
   get styleLabel(): string { return STYLE_LABELS[this.recipe.cookingStyle] ?? this.recipe.cookingStyle; }
+  /** Display label for the cooking time category (e.g. "Schnell"). */
   get timeLabel():  string { return TIME_LABELS[this.recipe.cookingTime]   ?? this.recipe.cookingTime;  }
+  /** Up to 3 missing ingredients shown on the card as hints. */
   get topMissing(): string[] { return this.recipe.missingIngredients.slice(0, 3); }
 }
