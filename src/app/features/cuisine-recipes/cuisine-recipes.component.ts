@@ -3,6 +3,7 @@ import { TitleCasePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
+import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
 import { FirebaseService } from '../../core/services/firebase.service';
 import { CookingStyle } from '../../core/models/recipe.model';
 
@@ -27,7 +28,7 @@ const TIME_TAG: Record<string, string> = {
 @Component({
   selector: 'app-cuisine-recipes',
   standalone: true,
-  imports: [NavbarComponent, FooterComponent, TitleCasePipe],
+  imports: [NavbarComponent, FooterComponent, TitleCasePipe, LoadingSpinnerComponent],
   templateUrl: './cuisine-recipes.component.html',
   styleUrl: './cuisine-recipes.component.scss'
 })

@@ -94,7 +94,7 @@
     <div class="cbd__content">
 
       @if (isLoading) {
-        <p class="cbd__status">Loading recipes…</p>
+        <app-loading-spinner label="Loading recipes" />
       }
 
       @else if (error) {

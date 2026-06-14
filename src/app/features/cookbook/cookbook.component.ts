@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
+import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
 import { FirebaseService } from '../../core/services/firebase.service';
 import { Recipe, CookingStyle } from '../../core/models/recipe.model';
 
@@ -53,7 +54,7 @@ const CUISINES = [
 @Component({
   selector: 'app-cookbook',
   standalone: true,
-  imports: [RouterLink, NavbarComponent, FooterComponent],
+  imports: [RouterLink, NavbarComponent, FooterComponent, LoadingSpinnerComponent],
   templateUrl: './cookbook.component.html',
   styleUrl: './cookbook.component.scss'
 })
