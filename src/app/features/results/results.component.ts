@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
 import { RecipeService } from '../../core/services/recipe.service';
+import { SeoService } from '../../core/services/seo.service';
 import { Recipe, CookingTime, CookingStyle } from '../../core/models/recipe.model';
 import { UserPreferences } from '../../core/models/preferences.model';
 
@@ -83,6 +84,7 @@ export class ResultsComponent implements OnInit {
   }
 
   private readonly destroyRef = inject(DestroyRef);
+  private readonly seo        = inject(SeoService);
 
   constructor(
     private recipeService: RecipeService,
@@ -90,6 +92,7 @@ export class ResultsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.seo.setPage({ title: 'Your Recipes', description: 'Here are 3 personalized recipes based on your ingredients.' });
     // Synchronous guard: redirect immediately if no recipes (direct URL access)
     if (this.recipeService.currentRecipes.length === 0) {
       this.router.navigate(['/generate']);

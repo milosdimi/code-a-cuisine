@@ -42,5 +42,6 @@ export interface Recipe {
   nutrition: NutritionInfo;
   helpers: HelperTask[][];
   createdAt: Date;
+  heartCount?: number;
   ipAddress?: string;
 }

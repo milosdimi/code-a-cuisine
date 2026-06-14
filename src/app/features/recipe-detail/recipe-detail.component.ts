@@ -1,10 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
 import { FirebaseService } from '../../core/services/firebase.service';
 import { RecipeService } from '../../core/services/recipe.service';
+import { SeoService } from '../../core/services/seo.service';
 import { Recipe, RecipeIngredient, CookingStep } from '../../core/models/recipe.model';
 
 const STYLE_LABELS: Record<string, string> = {
@@ -49,6 +50,9 @@ export class RecipeDetailComponent implements OnInit {
   private servingsMultiplier = 1;
   private baseServings = 1;
   private prefsHelpers = 1;
+  private readonly LIKED_KEY = 'cac_liked_recipes';
+
+  private seo = inject(SeoService);
 
   constructor(
     private route: ActivatedRoute,
@@ -99,9 +103,34 @@ export class RecipeDetailComponent implements OnInit {
 
   private setRecipe(recipe: Recipe): void {
     recipe.steps?.sort((a, b) => a.stepNumber - b.stepNumber);
-    this.recipe    = recipe;
+    this.recipe       = recipe;
     this.baseServings = recipe.servings;
-    this.isLoading = false;
+    this.heartCount   = recipe.heartCount ?? 0;
+    if (recipe.id) this.loadLikedState(recipe.id);
+    this.isLoading    = false;
+    this.seo.setPage({ title: recipe.title });
+  }
+
+  private loadLikedState(recipeId: string): void {
+    try {
+      const liked: string[] = JSON.parse(localStorage.getItem(this.LIKED_KEY) ?? '[]');
+      this.isLiked = liked.includes(recipeId);
+    } catch {
+      this.isLiked = false;
+    }
+  }
+
+  private saveLikedState(recipeId: string, liked: boolean): void {
+    try {
+      const current: string[] = JSON.parse(localStorage.getItem(this.LIKED_KEY) ?? '[]');
+      if (liked) {
+        if (!current.includes(recipeId)) current.push(recipeId);
+      } else {
+        const idx = current.indexOf(recipeId);
+        if (idx > -1) current.splice(idx, 1);
+      }
+      localStorage.setItem(this.LIKED_KEY, JSON.stringify(current));
+    } catch { /* ignore */ }
   }
 
   // ── Computed data ──────────────────────────────────────────────
@@ -165,8 +194,23 @@ export class RecipeDetailComponent implements OnInit {
   toggleDirections(): void  { this.showDirections  = !this.showDirections;  }
 
   toggleHeart(): void {
-    this.isLiked = !this.isLiked;
-    this.heartCount += this.isLiked ? 1 : -1;
+    const id = this.recipe?.id;
+    if (!id) return;
+    const newLiked = !this.isLiked;
+    const delta: 1 | -1 = newLiked ? 1 : -1;
+
+    this.isLiked     = newLiked;
+    this.heartCount += delta;
+    this.saveLikedState(id, newLiked);
+
+    this.firebase.updateHeartCount(id, delta).subscribe({
+      error: () => {
+        this.isLiked     = !newLiked;
+        this.heartCount -= delta;
+        this.saveLikedState(id, !newLiked);
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   goToCookbook(): void { this.router.navigate(['/cookbook']); }

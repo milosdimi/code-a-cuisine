@@ -1,9 +1,10 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
 import { FirebaseService } from '../../core/services/firebase.service';
+import { SeoService } from '../../core/services/seo.service';
 import { Recipe, CookingStyle } from '../../core/models/recipe.model';
 
 interface LikedRecipe extends Recipe {
@@ -73,6 +74,8 @@ export class CookbookComponent implements OnInit {
   page = 1;
   get pageSize(): number { return window.innerWidth < 768 ? 9 : 20; }
 
+  private seo = inject(SeoService);
+
   constructor(
     private firebase: FirebaseService,
     private route: ActivatedRoute,
@@ -81,6 +84,7 @@ export class CookbookComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.seo.setPage({ title: 'Cookbook', description: 'Browse all community recipes sorted by cuisine style.' });
     const style = this.route.snapshot.paramMap.get('style');
     if (style && CUISINE_META[style]) {
       this.isDetailView = true;

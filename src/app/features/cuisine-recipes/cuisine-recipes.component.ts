@@ -1,10 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
 import { FirebaseService } from '../../core/services/firebase.service';
+import { SeoService } from '../../core/services/seo.service';
 import { CookingStyle } from '../../core/models/recipe.model';
 
 // ── Static metadata ───────────────────────────────────────────────
@@ -39,6 +40,8 @@ export class CuisineRecipesComponent implements OnInit {
   page = 1;
   get pageSize(): number { return window.innerWidth < 768 ? 9 : 15; }
 
+  private seo = inject(SeoService);
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -48,6 +51,11 @@ export class CuisineRecipesComponent implements OnInit {
 
   ngOnInit(): void {
     this.style = this.route.snapshot.params['style'] ?? '';
+    const meta = CUISINE_META[this.style];
+    this.seo.setPage({
+      title: meta ? meta.title : 'Recipes',
+      description: meta ? `Browse ${meta.title} from the Code à Cuisine community.` : undefined
+    });
     this.loadFromFirebase();
   }
 

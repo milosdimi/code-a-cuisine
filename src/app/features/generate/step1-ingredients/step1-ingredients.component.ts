@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { RecipeService } from '../../../core/services/recipe.service';
+import { SeoService } from '../../../core/services/seo.service';
 import { UserIngredient } from '../../../core/models/ingredient.model';
 import { IngredientUnit } from '../../../core/models/recipe.model';
 
@@ -43,6 +44,7 @@ export class Step1IngredientsComponent implements OnInit {
   editNameError = false;
 
   private readonly destroyRef = inject(DestroyRef);
+  private readonly seo        = inject(SeoService);
 
   constructor(
     private recipeService: RecipeService,
@@ -50,6 +52,7 @@ export class Step1IngredientsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.seo.setPage({ title: 'Add Ingredients', description: 'Tell us what\'s in your fridge — we\'ll create 3 personalized recipes for you.' });
     this.recipeService.preferences$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(prefs => {
       if (prefs?.ingredients?.length) {
         this.ingredients = [...prefs.ingredients];

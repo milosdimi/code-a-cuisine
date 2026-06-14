@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { FooterComponent } from '../footer/footer.component';
+import { SeoService } from '../../../core/services/seo.service';
 
 @Component({
   selector: 'app-privacy',
@@ -9,4 +10,10 @@ import { FooterComponent } from '../footer/footer.component';
   templateUrl: './privacy.component.html',
   styleUrl: './privacy.component.scss'
 })
-export class PrivacyComponent {}
+export class PrivacyComponent implements OnInit {
+  private seo = inject(SeoService);
+
+  ngOnInit(): void {
+    this.seo.setPage({ title: 'Privacy Policy' });
+  }
+}

@@ -9,6 +9,7 @@ import { CookbookComponent }          from './features/cookbook/cookbook.compone
 import { CuisineRecipesComponent }    from './features/cuisine-recipes/cuisine-recipes.component';
 import { LegalComponent }             from './shared/components/legal/legal.component';
 import { PrivacyComponent }           from './shared/components/privacy/privacy.component';
+import { NotFoundComponent }          from './features/not-found/not-found.component';
 
 export const routes: Routes = [
   { path: '',                component: HeroComponent             },
@@ -21,5 +22,5 @@ export const routes: Routes = [
   { path: 'cookbook/:style', component: CuisineRecipesComponent     },
   { path: 'legal',           component: LegalComponent             },
   { path: 'privacy',        component: PrivacyComponent           },
-  { path: '**',              redirectTo: ''                        }
+  { path: '**',              component: NotFoundComponent          }
 ];

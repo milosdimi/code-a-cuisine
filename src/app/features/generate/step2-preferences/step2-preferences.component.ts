@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { RecipeService } from '../../../core/services/recipe.service';
+import { SeoService } from '../../../core/services/seo.service';
 import { QuotaService } from '../../../core/services/quota.service';
 import { UserPreferences } from '../../../core/models/preferences.model';
 import { CookingStyle, CookingTime, DietType } from '../../../core/models/recipe.model';
@@ -52,6 +53,7 @@ export class Step2PreferencesComponent implements OnInit {
   ];
 
   private readonly destroyRef = inject(DestroyRef);
+  private readonly seo        = inject(SeoService);
 
   constructor(
     private recipeService: RecipeService,
@@ -60,6 +62,7 @@ export class Step2PreferencesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.seo.setPage({ title: 'Your Preferences', description: 'Choose your cooking style, time, and dietary preferences.' });
     this.recipeService.preferences$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(prefs => {
       if (prefs) {
         this.servings     = prefs.servings;

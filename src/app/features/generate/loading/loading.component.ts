@@ -1,8 +1,9 @@
-import { ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { RecipeService } from '../../../core/services/recipe.service';
+import { SeoService } from '../../../core/services/seo.service';
 import { UserPreferences } from '../../../core/models/preferences.model';
 import { LoadingPopupComponent } from './loading-popup/loading-popup.component';
 
@@ -18,6 +19,7 @@ export class LoadingComponent implements OnInit, OnDestroy {
   errorTitle  = '';
   errorMessage = '';
   private subs = new Subscription();
+  private seo  = inject(SeoService);
 
   constructor(
     private recipeService: RecipeService,
@@ -26,6 +28,7 @@ export class LoadingComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.seo.setPage({ title: 'Generating Recipes…' });
     this.subs.add(
       this.recipeService.preferences$.pipe(take(1)).subscribe(prefs => {
         if (prefs) {

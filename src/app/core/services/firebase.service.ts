@@ -6,7 +6,7 @@ import {
 } from 'firebase/app';
 import {
   getFirestore, Firestore,
-  collection, doc, addDoc, getDoc, getDocs,
+  collection, doc, addDoc, getDoc, getDocs, updateDoc, increment,
   query, where, orderBy, limit, startAfter,
   DocumentSnapshot, QueryDocumentSnapshot, Timestamp
 } from 'firebase/firestore';
@@ -98,6 +98,18 @@ export class FirebaseService {
         console.error('[FirebaseService] getRecipes error:', err);
         return throwError(() => new Error(`Rezepte konnten nicht geladen werden: ${err.message}`));
       })
+    );
+  }
+
+  /**
+   * Increments or decrements the heartCount field of a recipe document.
+   * @param id - The Firestore document id.
+   * @param delta - +1 to like, -1 to unlike.
+   */
+  updateHeartCount(id: string, delta: 1 | -1): Observable<void> {
+    const ref = doc(this.db, this.RECIPES_COLLECTION, id);
+    return from(updateDoc(ref, { heartCount: increment(delta) })).pipe(
+      catchError(err => throwError(() => new Error(`Heart update failed: ${err.message}`)))
     );
   }
 
