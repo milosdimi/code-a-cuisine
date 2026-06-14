@@ -9,12 +9,9 @@
     >
       <button type="button" class="popup-close" (click)="close()" aria-label="Close">✕</button>
 
-      <h2 class="popup-title" id="popup-title">Ups! Not quite enough...</h2>
+      <h2 class="popup-title" id="popup-title">{{ errorTitle }}</h2>
 
-      <p class="popup-body">
-        It looks like some ingredient quantities aren't sufficient
-        for your selected servings. Please add or adjust quantities and try again.
-      </p>
+      <p class="popup-body">{{ errorMessage }}</p>
 
       <button type="button" class="popup-btn" (click)="goBack()">Go to cookbook →</button>
     </div>

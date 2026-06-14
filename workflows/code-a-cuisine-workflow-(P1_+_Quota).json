@@ -1,0 +1,344 @@
+{
+  "name": "Code-à-Cuisine – Workflow (P1 + Quota)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "code-a-cuisine",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "da79886d-ae55-4722-969f-05cb67beead4",
+      "name": "Recipe Request Receiver",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-1104, 128],
+      "webhookId": "339bb124-66a9-477b-9883-94106c40c3fc"
+    },
+    {
+      "parameters": {
+        "jsCode": "// === Validate & Sanitize Input (+ IP/Quota-Key) ===\nconst input   = $input.first().json;\nconst body    = input.body ?? input;\nconst headers = input.headers ?? {};\n\nconst ingredients = body.ingredients;\nconst prefs = body.preferences ?? {};\n\n// --- Validation ---\nif (!Array.isArray(ingredients) || ingredients.length < 1) {\n  throw new Error('VALIDATION: At least one ingredient is required.');\n}\nconst servings = Number(prefs.servings);\nif (!Number.isInteger(servings) || servings < 1 || servings > 12) {\n  throw new Error('VALIDATION: servings must be an integer between 1 and 12.');\n}\nconst helpers = Number(prefs.helpers ?? 1);\nif (!Number.isInteger(helpers) || helpers < 1 || helpers > 3) {\n  throw new Error('VALIDATION: helpers must be an integer between 1 and 3.');\n}\n\n// --- Sanitizing ---\nconst clean = (s) => String(s ?? '').replace(/[<>]/g, '').trim().slice(0, 200);\nconst cleanIngredients = ingredients\n  .map(i => ({ name: clean(i.name), amount: Number(i.amount) || 0, unit: clean(i.unit) }))\n  .filter(i => i.name.length > 0);\nif (cleanIngredients.length < 1) {\n  throw new Error('VALIDATION: At least one valid ingredient with a name is required.');\n}\n\nconst allowedStyles = ['german','italian','japanese','indian','gourmet','fusion'];\nconst allowedTimes  = ['quick','medium','elaborate'];\nconst cookingStyle = allowedStyles.includes(prefs.cookingStyle) ? prefs.cookingStyle : 'fusion';\nconst cookingTime  = allowedTimes.includes(prefs.cookingTime)   ? prefs.cookingTime  : 'medium';\nconst diet = clean(prefs.diet || 'none');\n\n// --- Derive IP server-side from headers (NOT from client) ---\nconst xff = (headers['x-forwarded-for'] || headers['X-Forwarded-For'] || '').toString();\nconst rawIp = (xff.split(',')[0] || '').trim()\n  || headers['x-real-ip']\n  || '::1';\n\n// djb2 inline hash -> short key, does not store IP in plaintext\nfunction shortHash(str) {\n  let h = 5381;\n  for (let i = 0; i < str.length; i++) {\n    h = ((h << 5) + h) + str.charCodeAt(i);\n    h = h & 0xffffffff;\n  }\n  return (h >>> 0).toString(16);\n}\nconst ipHash  = shortHash(String(rawIp));\nconst dateKey = new Date().toISOString().slice(0, 10); // YYYY-MM-DD\n\n// --- Build user prompt ---\nconst userPrompt = [\n  'Available ingredients:',\n  ...cleanIngredients.map(i => `- ${i.name}: ${i.amount} ${i.unit}`.trim()),\n  '',\n  'Preferences:',\n  `- Servings: ${servings}`,\n  `- Cooking time preference: ${cookingTime}`,\n  `- Cuisine style: ${cookingStyle}`,\n  `- Dietary preference: ${diet}`,\n  `- Number of helpers: ${helpers}`,\n  '',\n  'Generate exactly 3 recipes following the rules and JSON format.'\n].join('\\n');\n\nconst systemPrompt = `You are a professional chef and nutritionist.\nYou generate exactly 3 different recipe suggestions\nbased on the given ingredients and preferences.\n\nRULES:\n- Each recipe uses at least 70% of the listed ingredients\n- Maximum 3 additional basic ingredients per recipe\n- The 3 suggestions differ in preparation method\n- All quantities are for the specified number of servings\n- Cooking steps in chronological order, mark parallel steps\n- Nutritional values are realistic estimates\n\nRESPONSE FORMAT: Valid JSON only, no Markdown code blocks:\n{\n  \"recipes\": [\n    {\n      \"title\": \"string\",\n      \"cookingStyle\": \"german|italian|japanese|indian|gourmet|fusion\",\n      \"cookingTime\": \"quick|medium|elaborate\",\n      \"cookingTimeMinutes\": number,\n      \"servings\": number,\n      \"ingredients\": [{\"name\":\"string\",\"amount\":number,\"unit\":\"string\"}],\n      \"missingIngredients\": [\"string\"],\n      \"steps\": [\n        {\n          \"stepNumber\": number,\n          \"description\": \"string\",\n          \"durationMinutes\": number,\n          \"isParallel\": boolean,\n          \"parallelWith\": [number]\n        }\n      ],\n      \"nutrition\": {\n        \"caloriesPerPortion\": number,\n        \"proteinG\": number,\n        \"carbsG\": number,\n        \"fatG\": number\n      },\n      \"helpers\": [[{\"helperIndex\":0,\"stepNumber\":number,\"description\":\"string\"}]]\n    }\n  ]\n}\n\nIMPORTANT: You MUST always respond with valid JSON only. Never write plain text.\nIf you cannot generate recipes for any reason (inappropriate ingredients, ethical concerns, safety issues), respond with exactly:\n{\"error\": \"content_refused\", \"reason\": \"brief explanation in English\"}`;\n\nreturn [{\n  json: {\n    ingredients: cleanIngredients,\n    preferences: { servings, cookingTime, cookingStyle, diet, helpers },\n    meta: { ipHash, dateKey, timestamp: new Date().toISOString() },\n    system: systemPrompt,\n    userPrompt,\n  },\n}];\n"
+      },
+      "id": "9354c22e-9049-4d55-8f48-2f8d818f1b22",
+      "name": "Validate & Sanitize Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-880, 128]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://code-a-cuisine-a14a8-default-rtdb.europe-west1.firebasedatabase.app/quota/' + $('Validate & Sanitize Input').item.json.meta.dateKey + '.json' }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "60ddd9ed-c2db-4704-ba29-1b5d19ca1c84",
+      "name": "Check IP Quota",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-656, 128]
+    },
+    {
+      "parameters": {
+        "jsCode": "// === Evaluate Quota ===\nlet day = $input.first().json;\nif (day && day.data !== undefined && day.body === undefined) day = day.data;\nconst data = (day && typeof day === 'object') ? day : {};\n\nconst meta = $('Validate & Sanitize Input').first().json.meta;\nconst ipHash  = meta.ipHash;\nconst dateKey = meta.dateKey;\n\nconst IP_LIMIT     = 3;\nconst SYSTEM_LIMIT = 12;\n\nconst ipCount     = Number(data[ipHash] || 0);\nconst systemCount = Number(data['_system'] || 0);\nconst allowed = ipCount < IP_LIMIT && systemCount < SYSTEM_LIMIT;\n\nreturn [{\n  json: { allowed, ipCount, systemCount, ipHash, dateKey, IP_LIMIT, SYSTEM_LIMIT }\n}];\n"
+      },
+      "id": "f06a9554-8468-443f-a728-2dc316734a5b",
+      "name": "Evaluate Quota",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-448, 128]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond-allowed",
+              "leftValue": "={{ $json.allowed }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "2ee8ed80-8b01-415f-bcf1-525af07b492e",
+      "name": "Quota Gate",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-224, 128]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "anthropicApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-6\",\n  \"max_tokens\": 8000,\n  \"system\": {{ JSON.stringify($('Validate & Sanitize Input').item.json.system) }},\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": {{ JSON.stringify($('Validate & Sanitize Input').item.json.userPrompt) }}\n    }\n  ]\n}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "9ee5b4fc-320c-428a-8023-1d1c62570c68",
+      "name": "Generate 3 Recipes (Claude)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [0, 0],
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "anthropicApi": {
+          "id": "EuhuCl3ysu4svJqx",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// === Parse Claude Response ===\nconst res = $input.first().json;\n\nif (res.error) {\n  throw new Error('CLAUDE_API_ERROR: ' + (res.error.message || JSON.stringify(res.error)));\n}\nconst textBlock = (res.content || []).find(b => b.type === 'text');\nif (!textBlock || !textBlock.text) {\n  throw new Error('PARSE: No text content in Claude response.');\n}\nlet raw = textBlock.text.trim();\nraw = raw.replace(/^```(?:json)?\\s*/i, '').replace(/\\s*```$/i, '').trim();\n\nlet parsed;\ntry {\n  parsed = JSON.parse(raw);\n} catch (e) {\n  throw new Error('PARSE: Claude did not return valid JSON. stop_reason=' +\n    res.stop_reason + ' | first 200 chars: ' + raw.slice(0, 200));\n}\nconst recipes = parsed.recipes;\nif (parsed.error === 'content_refused') {\n  throw new Error('CONTENT_REFUSED: ' + (parsed.reason || 'This ingredient cannot be used in recipes.'));\n}\nif (!Array.isArray(recipes) || recipes.length === 0) {\n  throw new Error('PARSE: Expected a non-empty \"recipes\" array.');\n}\nrecipes.forEach((r, idx) => {\n  if (!r.title || !Array.isArray(r.ingredients) || !Array.isArray(r.steps)) {\n    throw new Error(`PARSE: Recipe #${idx + 1} is missing required fields (title/ingredients/steps).`);\n  }\n});\n\nreturn [{ json: { success: true, count: recipes.length, recipes, usage: res.usage ?? null } }];\n"
+      },
+      "id": "2df50dc4-8158-438c-a6ae-f61f59ee17c5",
+      "name": "Parse Claude Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [224, 0],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ 'https://code-a-cuisine-a14a8-default-rtdb.europe-west1.firebasedatabase.app/quota/' + $('Evaluate Quota').item.json.dateKey + '.json' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ [$('Evaluate Quota').item.json.ipHash]: ($('Evaluate Quota').item.json.ipCount + 1), \"_system\": ($('Evaluate Quota').item.json.systemCount + 1) }) }}",
+        "options": {}
+      },
+      "id": "a5a98634-7520-4e7a-b144-a8cf8d9475aa",
+      "name": "Update IP Quota",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [448, 0]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($('Parse Claude Response').item.json) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "1ef3cb2c-e296-43fc-a929-a0b5fb02bbfb",
+      "name": "Return Recipes to Angular",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [672, 0]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: false, error: 'quota_exceeded', message: 'Daily limit reached. Please try again tomorrow.', ipCount: $json.ipCount, systemCount: $json.systemCount }) }}",
+        "options": {
+          "responseCode": 429,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "dce7101e-5d5b-4eea-b953-3c78f65bfb0a",
+      "name": "Quota Exceeded Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [0, 288]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ (() => { const msg = String($json.error?.message ?? ''); const isRefused = msg.startsWith('CONTENT_REFUSED:'); return JSON.stringify({ success: false, error: isRefused ? 'content_refused' : 'generation_failed', message: isRefused ? msg.replace('CONTENT_REFUSED: ', '') : 'Recipe generation failed. Please try again.' }); })() }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "c4e5f6a7-b8c9-4d0e-1f23-456789abcdef",
+      "name": "Handle Generation Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [336, 288]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Recipe Request Receiver": {
+      "main": [
+        [
+          {
+            "node": "Validate & Sanitize Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate & Sanitize Input": {
+      "main": [
+        [
+          {
+            "node": "Check IP Quota",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check IP Quota": {
+      "main": [
+        [
+          {
+            "node": "Evaluate Quota",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluate Quota": {
+      "main": [
+        [
+          {
+            "node": "Quota Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quota Gate": {
+      "main": [
+        [
+          {
+            "node": "Generate 3 Recipes (Claude)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Quota Exceeded Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate 3 Recipes (Claude)": {
+      "main": [
+        [
+          {
+            "node": "Parse Claude Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Handle Generation Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Claude Response": {
+      "main": [
+        [
+          {
+            "node": "Update IP Quota",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Handle Generation Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update IP Quota": {
+      "main": [
+        [
+          {
+            "node": "Return Recipes to Angular",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "e7f8a9b0-c1d2-4e3f-5a6b-7c8d9e0f1a2b",
+  "meta": {
+    "instanceId": "0e86a87d2ac8ecca8a93b53b1b0cec020a60f9404daa1401c1b9b17e2139c6dd"
+  },
+  "nodeGroups": [],
+  "id": "9pnOCNSoKdeLyNre",
+  "tags": []
+}

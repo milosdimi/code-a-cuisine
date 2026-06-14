@@ -69,20 +69,55 @@ export class RecipeService {
       .post<{ recipes: Recipe[] }>(this.N8N_WEBHOOK_URL, payload)
       .pipe(
         timeout(180_000),
-        map(response => response.recipes.map(r => ({
-          ...r,
-          id: r.id ?? crypto.randomUUID(),
-          createdAt: r.createdAt ?? new Date()
-        }))),
+        map(response => {
+          const body = response as any;
+          // quota fallback: if n8n sends 200 instead of true 429
+          if (body.error === 'quota_exceeded') {
+            const e: any = new Error('quota_exceeded');
+            e.httpStatus = 429;
+            throw e;
+          }
+          // content refused by Claude (inappropriate ingredient etc.)
+          if (body.error === 'content_refused') {
+            const e: any = new Error(body.message || 'This ingredient cannot be used in recipes.');
+            e.httpStatus = -2;
+            throw e;
+          }
+          // generation error: n8n returned { success: false, error: 'generation_failed' }
+          if (body.success === false) {
+            const e: any = new Error(body.error ?? 'generation_failed');
+            e.httpStatus = -1;
+            throw e;
+          }
+          return (response.recipes ?? []).map(r => ({
+            ...r,
+            id: r.id ?? crypto.randomUUID(),
+            createdAt: r.createdAt ?? new Date()
+          }));
+        }),
         tap(recipes => {
           this._generatedRecipes$.next(recipes);
           this._isLoading$.next(false);
         }),
-        catchError((err: HttpErrorResponse) => {
+        catchError((err: any) => {
           this._isLoading$.next(false);
-          const message = this.mapError(err);
+          // Already tagged with httpStatus (thrown from map above, or a true HttpErrorResponse)
+          if (err.httpStatus !== undefined) {
+            const message = err.httpStatus === 429
+              ? 'Daily limit reached. Please try again tomorrow.'
+              : 'Recipe generation failed. Please try again.';
+            this._error$.next(message);
+            const error: any = new Error(message);
+            error.httpStatus = err.httpStatus;
+            return throwError(() => error);
+          }
+          // True HttpErrorResponse (network error, real 429, etc.)
+          const httpErr = err as HttpErrorResponse;
+          const message = this.mapError(httpErr);
           this._error$.next(message);
-          return throwError(() => new Error(message));
+          const error: any = new Error(message);
+          error.httpStatus = httpErr.status ?? -1;
+          return throwError(() => error);
         })
       );
   }
@@ -142,9 +177,9 @@ export class RecipeService {
   }
 
   private mapError(err: HttpErrorResponse): string {
-    if (err.status === 429) return 'Tageslimit erreicht. Bitte morgen wieder versuchen.';
-    if (err.status === 0)   return 'Keine Verbindung. Bitte Internetverbindung prüfen.';
-    return 'Die Rezeptgenerierung ist fehlgeschlagen. Bitte erneut versuchen.';
+    if (err.status === 429) return 'Daily limit reached. Please try again tomorrow.';
+    if (err.status === 0)   return 'No connection. Please check your internet connection.';
+    return 'Recipe generation failed. Please try again.';
   }
 }
 

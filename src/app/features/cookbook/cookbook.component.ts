@@ -71,7 +71,7 @@ export class CookbookComponent implements OnInit {
   isLoading = false;
   error = '';
   page = 1;
-  readonly pageSize = 20;
+  get pageSize(): number { return window.innerWidth < 768 ? 9 : 20; }
 
   constructor(
     private firebase: FirebaseService,

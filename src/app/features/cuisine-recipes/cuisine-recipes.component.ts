@@ -37,7 +37,7 @@ export class CuisineRecipesComponent implements OnInit {
   allRecipes: any[] = [];
   isLoading = false;
   page = 1;
-  readonly pageSize = 15;
+  get pageSize(): number { return window.innerWidth < 768 ? 9 : 15; }
 
   constructor(
     private route: ActivatedRoute,

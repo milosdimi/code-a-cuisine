@@ -12,5 +12,10 @@
     </p>
   </div>
 
-  <app-loading-popup [show]="showPopup" (closed)="onPopupClosed()" />
+  <app-loading-popup
+    [show]="showPopup"
+    [errorTitle]="errorTitle"
+    [errorMessage]="errorMessage"
+    (closed)="onPopupClosed()"
+  />
 </main>

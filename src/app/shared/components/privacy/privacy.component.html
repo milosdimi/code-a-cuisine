@@ -12,7 +12,7 @@
     <section class="privacy__section">
       <h2 class="privacy__h2">2. Data Collected</h2>
       <p>Code à Cuisine does not collect any personal data as defined by the GDPR. The ingredients and preferences you enter are used solely for recipe generation and are not permanently linked to your identity.</p>
-      <p>To manage the daily usage quota, an anonymized, hashed IP address is stored temporarily. It is automatically deleted every day at midnight.</p>
+      <p>To manage the daily usage quota, an anonymized, hashed IP address is stored in Firebase Realtime Database under a date-based key (YYYY-MM-DD). After midnight, a new key is used and previous quota data becomes inactive.</p>
     </section>
 
     <section class="privacy__section">
