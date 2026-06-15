@@ -433,6 +433,18 @@
   display: flex;
   justify-content: center;
   gap: 24px;
+
+  &--hint {
+    opacity: 0.6;
+  }
+}
+
+.detail__heart-disabled {
+  opacity: 0.35;
+  width: 40px;
+  height: 35px;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 .detail__heart-texts {

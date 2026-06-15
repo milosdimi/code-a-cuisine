@@ -17,6 +17,8 @@ export class RecipeService {
   private readonly _isLoading$ = new BehaviorSubject<boolean>(false);
   private readonly _error$ = new BehaviorSubject<string | null>(null);
   private readonly _savedIds = new Set<string>();
+  /** Maps client UUID → Firestore document ID after a recipe is saved. */
+  private readonly _firestoreIds = new Map<string, string>();
 
   /** Current user preferences across the multi-step form. */
   readonly preferences$ = this._preferences$.asObservable();
@@ -83,10 +85,13 @@ export class RecipeService {
             e.httpStatus = -2;
             throw e;
           }
-          // generation error: n8n returned { success: false, error: 'generation_failed' }
+          // generation error: n8n returned { success: false, error: '...' }
           if (body.success === false) {
-            const e: any = new Error(body.error ?? 'generation_failed');
-            e.httpStatus = -1;
+            const errorMsg: string = body.error ?? 'generation_failed';
+            const e: any = new Error(errorMsg);
+            // If Claude returned an actual explanation (not just the generic key),
+            // use -2 so the loading screen shows the message instead of the generic fallback
+            e.httpStatus = errorMsg === 'generation_failed' ? -1 : -2;
             throw e;
           }
           return (response.recipes ?? []).map(r => ({
@@ -127,11 +132,19 @@ export class RecipeService {
     const { id: clientId, ...recipeData } = recipe;
     if (clientId) this._savedIds.add(clientId);
     return this.firebase.saveRecipe({ ...recipeData, clientId }).pipe(
+      tap(firestoreId => {
+        if (clientId) this._firestoreIds.set(clientId, firestoreId);
+      }),
       catchError(err => {
         if (clientId) this._savedIds.delete(clientId);
         return throwError(() => err);
       })
     );
+  }
+
+  /** Returns the Firestore document ID for a saved recipe, or undefined if not yet saved. */
+  getFirestoreId(clientId: string | undefined): string | undefined {
+    return clientId ? this._firestoreIds.get(clientId) : undefined;
   }
 
   /** Returns true if this recipe has been saved to Firestore in the current session. */

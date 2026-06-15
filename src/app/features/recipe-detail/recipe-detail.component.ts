@@ -43,6 +43,8 @@ export class RecipeDetailComponent implements OnInit {
   isLiked = false;
   showIngredients = true;
   showDirections = true;
+  /** True when the recipe came from the generated session (no Firestore document yet). */
+  isSessionRecipe = false;
 
   readonly chefColors = CHEF_COLORS;
   readonly chefIcons  = CHEF_ICONS;
@@ -75,7 +77,14 @@ export class RecipeDetailComponent implements OnInit {
       const found = recipes.find(r => r.id === id)
                  ?? this.recipeService.getMockRecipeById(id);
       if (found) {
-        this.setRecipe(found);
+        const firestoreId = this.recipeService.getFirestoreId(id);
+        if (firestoreId) {
+          // Recipe was saved to Cookbook — load the real Firestore version so the heart works
+          this.loadFromFirestore(firestoreId);
+        } else {
+          this.isSessionRecipe = true;
+          this.setRecipe(found);
+        }
       } else {
         this.loadFromFirestore(id);
       }

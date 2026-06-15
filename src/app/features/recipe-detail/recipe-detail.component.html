@@ -200,18 +200,28 @@
         </div>
 
         <!-- ── HEART CTA ROW ── -->
-        <div class="detail__heart-row">
-          <div class="detail__heart-texts">
-            <p class="detail__heart-main">Just finished this meal?</p>
-            <p class="detail__heart-sub">Give it a heart, so that the others know this is delicious.</p>
+        @if (isSessionRecipe) {
+          <div class="detail__heart-row detail__heart-row--hint">
+            <div class="detail__heart-texts">
+              <p class="detail__heart-main">Just finished this meal?</p>
+              <p class="detail__heart-sub">Add it to your Cookbook first — then you can give it a heart!</p>
+            </div>
+            <img src="assets/images/icons/heart.png" width="40" height="35" alt="" aria-hidden="true" class="detail__heart-disabled" />
           </div>
-          <button type="button" class="detail__heart-btn" [class.liked]="isLiked" (click)="toggleHeart()" aria-label="Give a heart">
-            <img
-              [src]="isLiked ? 'assets/images/icons/heart-clicked.png' : 'assets/images/icons/heart.png'"
-              width="40" height="35" alt="" aria-hidden="true"
-            />
-          </button>
-        </div>
+        } @else {
+          <div class="detail__heart-row">
+            <div class="detail__heart-texts">
+              <p class="detail__heart-main">Just finished this meal?</p>
+              <p class="detail__heart-sub">Give it a heart, so that the others know this is delicious.</p>
+            </div>
+            <button type="button" class="detail__heart-btn" [class.liked]="isLiked" (click)="toggleHeart()" aria-label="Give a heart">
+              <img
+                [src]="isLiked ? 'assets/images/icons/heart-clicked.png' : 'assets/images/icons/heart.png'"
+                width="40" height="35" alt="" aria-hidden="true"
+              />
+            </button>
+          </div>
+        }
 
       </div><!-- /.detail__box -->
 
