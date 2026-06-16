@@ -16,4 +16,7 @@ export class PrivacyComponent implements OnInit {
   ngOnInit(): void {
     this.seo.setPage({ title: 'Privacy Policy' });
   }
+
+  /** Navigates to the previous browser history entry. */
+  goBack(): void { window.history.back(); }
 }

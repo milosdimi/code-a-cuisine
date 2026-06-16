@@ -16,4 +16,7 @@ export class LegalComponent implements OnInit {
   ngOnInit(): void {
     this.seo.setPage({ title: 'Legal Notice' });
   }
+
+  /** Navigates to the previous browser history entry. */
+  goBack(): void { window.history.back(); }
 }
