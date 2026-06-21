@@ -11,7 +11,7 @@
   flex-direction: column;
   align-items: center;
   gap: 32px;
-  width: 429px;
+  width: min(429px, calc(100vw - 32px));
 }
 
 .loading__spinner {
@@ -26,10 +26,10 @@
 .loading__text {
   font-family: 'Ubuntu', sans-serif;
   font-weight: 700;
-  font-size: 48px;
+  font-size: clamp(28px, 10vw, 48px);
   color: #faf0e6;
   text-align: center;
-  width: 429px;
+  width: min(429px, calc(100vw - 32px));
   margin: 0;
 }
 

@@ -1,5 +1,8 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { combineLatest, EMPTY } from 'rxjs';
+import { switchMap, take } from 'rxjs/operators';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
@@ -7,22 +10,10 @@ import { FirebaseService } from '../../core/services/firebase.service';
 import { RecipeService } from '../../core/services/recipe.service';
 import { SeoService } from '../../core/services/seo.service';
 import { Recipe, RecipeIngredient, CookingStep } from '../../core/models/recipe.model';
+import { STYLE_LABELS, TIME_LABELS, TIME_MINUTES } from '../../core/constants/recipe-labels';
 
-const STYLE_LABELS: Record<string, string> = {
-  german: 'German',   italian: 'Italian',  japanese: 'Japanese',
-  indian: 'Indian',   gourmet: 'Gourmet',  fusion:   'Fusion'
-};
-
-const TIME_LABELS: Record<string, string> = {
-  quick: 'Quick', medium: 'Medium', elaborate: 'Complex'
-};
-
-const TIME_MINUTES: Record<string, string> = {
-  quick: 'up to 20min', medium: '25-40min', elaborate: '45+ min'
-};
-
-const CHEF_COLORS  = ['#D7DFD7', '#FFD9B3', '#B3D9FF'];
-const CHEF_ICONS   = [
+const CHEF_COLORS = ['#D7DFD7', '#FFD9B3', '#B3D9FF'];
+const CHEF_ICONS = [
   'assets/images/icons/cook-01.png',
   'assets/images/icons/cook-02.png',
   'assets/images/icons/cook-03.png'
@@ -45,16 +36,18 @@ export class RecipeDetailComponent implements OnInit {
   showDirections = true;
   /** True when the recipe came from the generated session (no Firestore document yet). */
   isSessionRecipe = false;
+  isSaving = false;
 
   readonly chefColors = CHEF_COLORS;
-  readonly chefIcons  = CHEF_ICONS;
+  readonly chefIcons = CHEF_ICONS;
 
   private servingsMultiplier = 1;
   private baseServings = 1;
   private prefsHelpers = 1;
   private readonly LIKED_KEY = 'cac_liked_recipes';
 
-  private seo = inject(SeoService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly seo = inject(SeoService);
 
   constructor(
     private route: ActivatedRoute,
@@ -67,32 +60,30 @@ export class RecipeDetailComponent implements OnInit {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id') ?? '';
 
-    // Read helpers count from preferences (fallback when recipe.helpers is empty)
-    this.recipeService.preferences$.subscribe(prefs => {
-      if (prefs) this.prefsHelpers = prefs.helpers;
-    });
+    combineLatest([
+      this.recipeService.generatedRecipes$.pipe(take(1)),
+      this.recipeService.preferences$.pipe(take(1)),
+    ]).pipe(
+      switchMap(([recipes, prefs]) => {
+        if (prefs) this.prefsHelpers = prefs.helpers;
 
-    // Try in-memory first, then mock fallback, then Firestore
-    this.recipeService.generatedRecipes$.subscribe(recipes => {
-      const found = recipes.find(r => r.id === id)
-                 ?? this.recipeService.getMockRecipeById(id);
-      if (found) {
-        const firestoreId = this.recipeService.getFirestoreId(id);
-        if (firestoreId) {
-          // Recipe was saved to Cookbook — load the real Firestore version so the heart works
-          this.loadFromFirestore(firestoreId);
-        } else {
+        const found = recipes.find(r => r.id === id)
+          ?? this.recipeService.getMockRecipeById(id);
+
+        if (found) {
+          const firestoreId = this.recipeService.getFirestoreId(id);
+          if (firestoreId) {
+            return this.firebase.getRecipeById(firestoreId);
+          }
           this.isSessionRecipe = true;
           this.setRecipe(found);
+          return EMPTY;
         }
-      } else {
-        this.loadFromFirestore(id);
-      }
-    });
-  }
 
-  private loadFromFirestore(id: string): void {
-    this.firebase.getRecipeById(id).subscribe({
+        return this.firebase.getRecipeById(id);
+      }),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
       next: recipe => {
         if (recipe) {
           this.setRecipe(recipe);
@@ -106,17 +97,17 @@ export class RecipeDetailComponent implements OnInit {
         this.error = 'Recipe could not be loaded.';
         this.isLoading = false;
         this.cdr.markForCheck();
-      }
+      },
     });
   }
 
   private setRecipe(recipe: Recipe): void {
     recipe.steps?.sort((a, b) => a.stepNumber - b.stepNumber);
-    this.recipe       = recipe;
+    this.recipe = recipe;
     this.baseServings = recipe.servings;
-    this.heartCount   = recipe.heartCount ?? 0;
+    this.heartCount = recipe.heartCount ?? 0;
     if (recipe.id) this.loadLikedState(recipe.id);
-    this.isLoading    = false;
+    this.isLoading = false;
     this.seo.setPage({ title: recipe.title });
   }
 
@@ -142,8 +133,6 @@ export class RecipeDetailComponent implements OnInit {
     } catch { /* ignore */ }
   }
 
-  // ── Computed data ──────────────────────────────────────────────
-
   get scaledIngredients(): RecipeIngredient[] {
     if (!this.recipe) return [];
     return this.recipe.ingredients.map(ing => ({
@@ -165,7 +154,6 @@ export class RecipeDetailComponent implements OnInit {
     return Array.from({ length: this.chefCount }, (_, i) => i);
   }
 
-  // Steps split into left (odd positions) and right (even positions)
   get leftSteps(): CookingStep[] {
     return this.recipe?.steps?.filter((_, i) => i % 2 === 0) ?? [];
   }
@@ -178,14 +166,21 @@ export class RecipeDetailComponent implements OnInit {
     return this.recipe?.steps ?? [];
   }
 
-  get styleLabel():  string { return STYLE_LABELS[this.recipe?.cookingStyle ?? ''] ?? ''; }
-  get timeLabel():   string { return TIME_LABELS[this.recipe?.cookingTime   ?? ''] ?? ''; }
-  get timeMinutes(): string { return TIME_MINUTES[this.recipe?.cookingTime  ?? ''] ?? ''; }
+  get styleLabel(): string {
+    const style = this.recipe?.cookingStyle;
+    return style ? (STYLE_LABELS[style] ?? '') : '';
+  }
 
-  /**
-   * Percentage share of total calories for each macronutrient.
-   * Protein and carbs provide 4 kcal/g, fat provides 9 kcal/g.
-   */
+  get timeLabel(): string {
+    const time = this.recipe?.cookingTime;
+    return time ? (TIME_LABELS[time] ?? '') : '';
+  }
+
+  get timeMinutes(): string {
+    const time = this.recipe?.cookingTime;
+    return time ? (TIME_MINUTES[time] ?? '') : '';
+  }
+
   get macroPercents(): { protein: number; carbs: number; fat: number } {
     const n = this.recipe?.nutrition;
     if (!n) return { protein: 0, carbs: 0, fat: 0 };
@@ -193,12 +188,11 @@ export class RecipeDetailComponent implements OnInit {
     if (total === 0) return { protein: 0, carbs: 0, fat: 0 };
     return {
       protein: Math.round(n.proteinG * 4 / total * 100),
-      carbs:   Math.round(n.carbsG   * 4 / total * 100),
-      fat:     Math.round(n.fatG     * 9 / total * 100)
+      carbs: Math.round(n.carbsG * 4 / total * 100),
+      fat: Math.round(n.fatG * 9 / total * 100)
     };
   }
 
-  /** Total nutrition values for the whole recipe (per-portion × servings). */
   get totalNutrition(): { calories: number; proteinG: number; carbsG: number; fatG: number } {
     const n = this.recipe?.nutrition;
     const s = this.recipe?.servings ?? 1;
@@ -206,30 +200,46 @@ export class RecipeDetailComponent implements OnInit {
     return {
       calories: n.caloriesPerPortion * s,
       proteinG: Math.round(n.proteinG * s * 10) / 10,
-      carbsG:   Math.round(n.carbsG   * s * 10) / 10,
-      fatG:     Math.round(n.fatG     * s * 10) / 10
+      carbsG: Math.round(n.carbsG * s * 10) / 10,
+      fatG: Math.round(n.fatG * s * 10) / 10
     };
   }
 
-  // ── Chef helpers ───────────────────────────────────────────────
-
-  /** Returns 0-based chef index for a given 1-based step number. */
   private chefIndexForStep(stepNumber: number): number {
     const c = this.chefCount;
     if (c === 1) return 0;
-    if (c === 2) return stepNumber % 2 === 1 ? 0 : 1;  
+    if (c === 2) return stepNumber % 2 === 1 ? 0 : 1;
     const r = stepNumber % 3;
     return r === 1 ? 0 : r === 2 ? 1 : 2;
   }
 
-  chefColor(stepNumber: number): string  { return CHEF_COLORS[this.chefIndexForStep(stepNumber)]; }
-  chefIcon(stepNumber: number): string   { return CHEF_ICONS[this.chefIndexForStep(stepNumber)]; }
+  chefColor(stepNumber: number): string { return CHEF_COLORS[this.chefIndexForStep(stepNumber)]; }
+  chefIcon(stepNumber: number): string { return CHEF_ICONS[this.chefIndexForStep(stepNumber)]; }
   chefNumber(stepNumber: number): number { return this.chefIndexForStep(stepNumber) + 1; }
 
-  // ── Actions ────────────────────────────────────────────────────
-
   toggleIngredients(): void { this.showIngredients = !this.showIngredients; }
-  toggleDirections(): void  { this.showDirections  = !this.showDirections;  }
+  toggleDirections(): void { this.showDirections = !this.showDirections; }
+
+  saveAndHeart(): void {
+    if (!this.recipe || this.isSaving) return;
+    this.isSaving = true;
+    this.cdr.markForCheck();
+    this.recipeService.saveRecipeToBook(this.recipe)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: firestoreId => {
+          this.recipe = { ...this.recipe!, id: firestoreId };
+          this.isSessionRecipe = false;
+          this.isSaving = false;
+          this.cdr.markForCheck();
+          this.toggleHeart();
+        },
+        error: () => {
+          this.isSaving = false;
+          this.cdr.markForCheck();
+        }
+      });
+  }
 
   toggleHeart(): void {
     const id = this.recipe?.id;
@@ -237,18 +247,20 @@ export class RecipeDetailComponent implements OnInit {
     const newLiked = !this.isLiked;
     const delta: 1 | -1 = newLiked ? 1 : -1;
 
-    this.isLiked     = newLiked;
+    this.isLiked = newLiked;
     this.heartCount += delta;
     this.saveLikedState(id, newLiked);
 
-    this.firebase.updateHeartCount(id, delta).subscribe({
-      error: () => {
-        this.isLiked     = !newLiked;
-        this.heartCount -= delta;
-        this.saveLikedState(id, !newLiked);
-        this.cdr.markForCheck();
-      }
-    });
+    this.firebase.updateHeartCount(id, delta)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        error: () => {
+          this.isLiked = !newLiked;
+          this.heartCount -= delta;
+          this.saveLikedState(id, !newLiked);
+          this.cdr.markForCheck();
+        }
+      });
   }
 
   goToCookbook(): void { this.router.navigate(['/cookbook']); }

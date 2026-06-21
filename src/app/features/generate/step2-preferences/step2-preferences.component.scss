@@ -252,7 +252,20 @@
 // ===== MOBILE =====
 @include mobile {
   .step2 {
-    padding: 24px 20px 24px;
+    padding: 16px 12px 24px;
+  }
+
+  .step2__form-box {
+    padding: 16px 12px;
+  }
+
+  .step2__field {
+    padding: 16px 12px;
+  }
+
+  .step2__tag-pill {
+    font-size: 14px;
+    padding: 5px 10px;
   }
 
   .step2__counters-row {

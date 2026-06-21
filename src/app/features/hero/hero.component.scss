@@ -1,314 +1,368 @@
 @use '../../../styles/variables' as *;
 @use '../../../styles/mixins' as *;
 
-// ===== HERO =====
-.hero {
-  position: relative;
+// ===== SHELL — always 100vh, no scroll =====
+:host {
+  display: block;
   height: 100vh;
   height: 100svh;
-  background-color: $color-primary;
+  max-height: 100svh;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  background-color: $color-primary;
+}
+
+.hero {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: $color-primary;
+}
+
+.hero__canvas {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
 // ===== HEADER =====
 .hero__header {
-  flex-shrink: 0;
-  padding: clamp(24px, 3.9vh, 50px) 0 0 clamp(40px, 4.7vw, 80px);
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 2;
+  padding: 12px 16px 8px;
 }
 
 .hero__logo-link {
   display: inline-block;
-  img {
-    display: block;
-    width: clamp(100px, 9.9vw, 142px);
-    height: clamp(34px, 4.7vh, 48px);
-    object-fit: contain;
+}
+
+.hero__logo {
+  display: block;
+  width: 95px;
+  height: 32px;
+  object-fit: contain;
+}
+
+// ===== MAIN CONTENT =====
+.hero__main {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
   }
 }
 
-// ===== MAIN =====
-.hero__main {
-  flex: 1;
-}
-
-// ===== PRIMARY CTA =====
 .hero__cta {
   position: absolute;
-  top: clamp(150px, 29.3vh, 360px);
-  left: clamp(40px, 4.5vw, 80px);
-  z-index: 2;
+  top: 11.82vh;
+  left: 4.27vw;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: clamp(16px, 2.7vh, 32px);
-  animation: fadeInUp 0.8s ease 0.1s both;
+  gap: 4.93vh;
+  max-width: 64vw;
+}
+
+.hero__cta-text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .hero__subtitle {
+  margin: 0;
   font-family: 'Quicksand', sans-serif;
   font-weight: 600;
-  font-size: clamp(20px, 3.3vw, 48px);
+  font-size: 24px;
+  line-height: 30px;
   color: $color-beige;
-  white-space: nowrap;
-  line-height: 1.2;
 }
 
 .hero__title {
+  margin: 0;
   font-family: 'Ubuntu', sans-serif;
   font-weight: 700;
-  font-size: clamp(40px, 7.2vw, 104px);
+  font-size: 64px;
+  line-height: 72px;
   color: $color-creme;
-  white-space: nowrap;
-  line-height: 1;
 }
 
-// ===== GET STARTED BUTTON =====
 .hero__btn-start {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  height: 52px;
+  padding: 4px 16px;
   background: $color-creme;
   color: $color-primary-btn;
   font-family: 'Quicksand', sans-serif;
   font-weight: 600;
-  font-size: $font-size-btn;
-  padding: clamp(12px, 1.6vh, 18px) clamp(20px, 2.2vw, 32px);
+  font-size: 16px;
+  line-height: 20px;
   border-radius: 5px;
   text-decoration: none;
-  position: relative;
-  overflow: hidden;
-  transition: transform 300ms ease, box-shadow 300ms ease, color 300ms ease;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -120%;
-    width: 60%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
-    transform: skewX(-20deg);
-    transition: left 550ms ease;
-  }
+  box-sizing: border-box;
+  transition: transform 300ms ease, box-shadow 300ms ease;
 
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.3);
-    color: $color-primary;
-    &::before { left: 160%; }
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
   }
-
-  &:active { transform: translateY(-1px); }
 }
 
-// ===== SECONDARY CTA =====
 .hero__secondary {
   position: absolute;
-  bottom: clamp(40px, 7vh, 90px);
-  left: clamp(40px, 4.7vw, 80px);
-  z-index: 2;
+  top: 80.54vh;
+  left: 4.27vw;
   display: flex;
-  align-items: center;
-  gap: clamp(20px, 2.8vw, 40px);
-  animation: fadeInUp 0.7s ease 1.1s both;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  max-width: 52.5vw;
 }
 
 .hero__inspiration {
+  margin: 0;
   font-family: 'Ubuntu', sans-serif;
   font-weight: 500;
-  font-size: $font-size-h3;
+  font-size: 24px;
+  line-height: 120%;
   color: $color-creme;
-  white-space: nowrap;
 }
 
-// ===== GO TO COOKBOOK =====
 .hero__btn-cookbook {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: 10px;
+  height: 52px;
+  padding: 4px 16px;
   background: transparent;
   border: none;
-  padding: 0;
+  border-radius: 5px;
   color: $color-creme;
   font-family: 'Quicksand', sans-serif;
-  font-weight: 600;
-  font-size: $font-size-btn-sm;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 22px;
   text-decoration: none;
   white-space: nowrap;
   transition: opacity 300ms ease;
 
   &:hover {
-    opacity: 0.75;
-    .hero__arrow { transform: translateX(6px); }
+    opacity: 0.8;
+
+    .hero__arrow::after {
+      transform: translateX(4px);
+    }
   }
 }
 
 .hero__arrow {
+  position: relative;
   display: inline-block;
-  font-size: 1.1em;
-  transition: transform 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  width: 20px;
+  height: 2px;
+  background: $color-creme;
+  flex-shrink: 0;
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-top: 2px solid $color-creme;
+    border-right: 2px solid $color-creme;
+    transform: translateY(-50%) rotate(45deg);
+    transition: transform 350ms ease;
+  }
 }
 
-// ===== CIRCLES =====
-.hero__right {
+// ===== BOWL STACK — auto-fits 3 bowls into viewport, any resolution =====
+// --bowl-size: fixed display size; --overlap (0–0.85): share of bowl-size each step overlaps
+// Note: CSS decimals use a dot (0.6), not a comma (0,6)
+.hero__bowls {
+  --bowl-size: min(58vmin, 48svh);
+  --overlap: 0.35;
+
   position: absolute;
-  top: -24px;
-  right: clamp(0px, 1.7vw, 24px);
-  width: clamp(240px, 33.3vw, 520px);
+  top: 0;
+  right: -2vw;
+  bottom: 0;
+  width: 55%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 1;
   pointer-events: none;
+  overflow: visible;
 }
 
-.hero__circle {
+.hero__bowls-stack {
+  position: relative;
+  width: var(--bowl-size);
+  height: calc(var(--bowl-size) * (3 - 2 * var(--overlap)));
+}
+
+.hero__bowl {
+  position: absolute;
+  left: 50%;
   display: block;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  border-radius: 50%;
-  overflow: hidden;
-  pointer-events: all;
-  transition: transform 400ms ease;
+  width: var(--bowl-size);
+  height: var(--bowl-size);
+  object-fit: contain;
+  filter: drop-shadow(-4px 2px 6px rgba(0, 0, 0, 0.22));
 
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+  &--blue {
+    top: 0;
+    z-index: 1;
+    transform: translateX(-50%);
   }
 
-  &--1 {
-    box-shadow: 6px -2px 4px 0px rgba(0, 0, 0, 0.25);
-    animation: rollInFromRight 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
-    &:hover { transform: scale(1.04); }
+  &--black {
+    top: calc(var(--bowl-size) * (1 - var(--overlap)));
+    z-index: 2;
+    transform: translateX(-50%) rotate(8deg);
   }
 
-  &--2 {
-    margin-top: -20%;
-    animation: rollInFromLeft 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
-    &:hover { transform: scale(1.04); }
-  }
-
-  &--3 {
-    aspect-ratio: 480 / 505;
-    margin-top: -26%;
-    transform: rotate(-18.91deg);
-    animation: rollInFromRightRotated 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.65s both;
-    &:hover { transform: rotate(-18.91deg) scale(1.04); }
+  &--white {
+    top: calc(var(--bowl-size) * (2 - 2 * var(--overlap)));
+    z-index: 3;
+    transform: translateX(-50%) rotate(-6deg);
   }
 }
 
-// ===== ANIMATIONS =====
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(40px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes rollInFromRight {
-  from { opacity: 0; transform: translateX(120px) rotate(18deg) scale(0.88); }
-  to   { opacity: 1; transform: translateX(0) rotate(0deg) scale(1); }
-}
-
-@keyframes rollInFromLeft {
-  from { opacity: 0; transform: translateX(-120px) rotate(-18deg) scale(0.88); }
-  to   { opacity: 1; transform: translateX(0) rotate(0deg) scale(1); }
-}
-
-@keyframes rollInFromRightRotated {
-  from { opacity: 0; transform: translateX(120px) rotate(0deg) scale(0.88); }
-  to   { opacity: 1; transform: translateX(0) rotate(-18.91deg) scale(1); }
-}
-
-// ===== MOBILE =====
-@include mobile {
+// ===== DESKTOP =====
+@media (min-width: 769px) {
   .hero {
-    height: 100svh;
-    overflow: hidden;
+    max-width: 1440px;
+    margin: 0 auto;
   }
 
   .hero__header {
-    padding: 12px 16px 8px;
+    padding: 3.9vh 2.8vw 0 4.7vw;
+  }
+
+  .hero__logo {
+    width: 142px;
+    height: 48px;
   }
 
   .hero__cta {
-    top: clamp(80px, 11.8vh, 110px);
-    left: 16px;
-    gap: 20px;
-    max-width: calc(62% - 20px);
+    top: 23.44vh;
+    left: 4.51vw;
+    gap: 6.25vh;
+    max-width: 52vw;
+  }
+
+  .hero__cta-text {
+    gap: 0;
   }
 
   .hero__subtitle {
-    font-size: clamp(14px, 4.5vw, 20px);
-    white-space: normal;
+    font-size: clamp(28px, 4.69vh, 48px);
+    line-height: 1.25;
   }
 
   .hero__title {
-    font-size: clamp(28px, 11vw, 48px);
-    white-space: normal;
-    line-height: 1.05;
+    font-size: clamp(48px, 10.16vh, 104px);
+    line-height: 1.14;
   }
 
   .hero__btn-start {
-    font-size: 16px;
-    padding: 12px 20px;
+    min-width: 183px;
+    height: 60px;
+    padding: 16px 26px;
+    font-size: clamp(18px, 2.34vh, 24px);
+    line-height: 1.25;
   }
 
+  .hero__secondary {
+    top: 82.62vh;
+    max-width: none;
+  }
+
+  .hero__inspiration {
+    font-size: clamp(20px, 3.13vh, 32px);
+    line-height: 104%;
+  }
+
+  .hero__btn-cookbook {
+    height: 52px;
+    padding: 16px 26px;
+    font-size: clamp(16px, 1.95vh, 20px);
+    line-height: 1;
+  }
+
+  .hero__arrow {
+    width: 24px;
+  }
+
+  .hero__bowls {
+    right: clamp(0px, 2vw, 0px);
+    width: 40%;
+  }
+
+  .hero__bowl {
+    filter: drop-shadow(6px -2px 6px rgba(0, 0, 0, 0.22));
+  }
+}
+
+// ===== DESKTOP WIDE — 1001px+ (row secondary, full bowl size) =====
+@media (min-width: 1001px) {
+  .hero__secondary {
+    flex-direction: row;
+    align-items: center;
+    gap: 1.1vw;
+  }
+
+  .hero__inspiration {
+    white-space: nowrap;
+  }
+}
+
+// ===== TABLET — 769–1000px (text collision zone) =====
+// Secondary stacks vertically; bowls shrink + shift up/right to clear copy
+@media (min-width: 769px) and (max-width: 1000px) {
   .hero__secondary {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
-    left: 16px;
-    bottom: clamp(28px, 4.7vh, 50px);
+    max-width: 46vw;
   }
 
   .hero__inspiration {
-    font-size: clamp(14px, 4.5vw, 20px);
     white-space: normal;
   }
 
-  .hero__right {
-    top: 23px;
-    left: 63.5%;
-    right: auto;
-    bottom: auto;
-    width: 99vw;
-    height: auto;
+  .hero__bowls {
+    --bowl-size: min(52vmin, 44svh);
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 44%;
   }
+}
 
-  .hero__circle {
-    position: absolute;
-    margin-top: 0;
-    aspect-ratio: unset;
+// ===== MOBILE — 320–768px (Figma: ~50% of bowls visible, clipped at right edge) =====
+// --bowl-visible: share of each bowl shown (0.5 = half); scales with --bowl-size, no extra breakpoints
+@media (max-width: 768px) {
+  .hero__bowls {
+    --bowl-visible: 0.5;
 
-    &--1 {
-      width: clamp(190px, 78.7vw, 295px);
-      height: clamp(190px, 78.7vw, 295px);
-      top: 0;
-      left: 1.6%;
-      transform: none;
-      box-shadow: 6px -2px 4px 0px rgba(0, 0, 0, 0.25);
-      animation: rollInFromRight 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
-    }
-
-    &--2 {
-      width: clamp(195px, 80.8vw, 303px);
-      height: clamp(195px, 80.8vw, 303px);
-      top: 203px;
-      left: -15.5%;
-      transform: rotate(-135deg);
-      animation: none;
-    }
-
-    &--3 {
-      width: clamp(190px, 80.3vw, 301px);
-      height: clamp(200px, 84.3vw, 316px);
-      top: 434px;
-
-      transform: rotate(-39.46deg);
-
-      animation: none;
-      &:hover { transform: rotate(-39.46deg) scale(1.04); }
-    }
+    top: 3vh;
+    right: 0;
+    bottom: auto;
+    width: calc(var(--bowl-size) * var(--bowl-visible));
+    height: calc(var(--bowl-size) * (3 - 2 * var(--overlap)));
+    overflow: hidden;
+    align-items: flex-start;
+    justify-content: flex-start;
   }
 }

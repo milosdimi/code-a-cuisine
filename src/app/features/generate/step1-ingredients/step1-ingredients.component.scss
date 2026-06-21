@@ -334,6 +334,9 @@
   &--editing {
     background: $color-creme;
     overflow: visible;
+    outline: 2px solid #396039;
+    outline-offset: 1px;
+    box-shadow: 0 2px 8px rgba(57, 96, 57, 0.2);
   }
 }
 
@@ -380,8 +383,8 @@
   min-width: 90px;
   padding: 6px 30px 6px 12px;
   border-radius: 48px;
-  background: $color-creme;
-  border: none;
+  background: #fff;
+  border: 1px solid #396039;
   font-family: 'Quicksand', sans-serif;
   font-weight: 500;
   font-size: 16px;

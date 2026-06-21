@@ -44,4 +44,5 @@ export interface Recipe {
   createdAt: Date;
   heartCount?: number;
   ipAddress?: string;
+  diet?: DietType;
 }

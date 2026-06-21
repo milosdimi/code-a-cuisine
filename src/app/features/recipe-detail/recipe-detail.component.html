@@ -201,12 +201,18 @@
 
         <!-- ── HEART CTA ROW ── -->
         @if (isSessionRecipe) {
-          <div class="detail__heart-row detail__heart-row--hint">
+          <div class="detail__heart-row">
             <div class="detail__heart-texts">
               <p class="detail__heart-main">Just finished this meal?</p>
-              <p class="detail__heart-sub">Add it to your Cookbook first — then you can give it a heart!</p>
+              <p class="detail__heart-sub">Save it to your Cookbook and give it a heart!</p>
             </div>
-            <img src="assets/images/icons/heart.png" width="40" height="35" alt="" aria-hidden="true" class="detail__heart-disabled" />
+            <button type="button" class="detail__save-btn" (click)="saveAndHeart()" [disabled]="isSaving" aria-label="Save to Cookbook and give a heart">
+              @if (isSaving) {
+                <span>Saving…</span>
+              } @else {
+                <img src="assets/images/icons/heart.png" width="40" height="35" alt="" aria-hidden="true" />
+              }
+            </button>
           </div>
         } @else {
           <div class="detail__heart-row">

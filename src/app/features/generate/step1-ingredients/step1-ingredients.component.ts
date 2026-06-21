@@ -98,6 +98,7 @@ export class Step1IngredientsComponent implements OnInit {
     }
     const amount = Math.min(Math.max(0.1, this.newAmount), 9999);
     this.ingredients.push({ name, amount, unit: this.newUnit });
+    this.recipeService.updatePreferences({ ingredients: this.ingredients });
     this.searchTerm = '';
     this.newAmount = 1;
     this.newUnit = 'Stück';
@@ -109,6 +110,7 @@ export class Step1IngredientsComponent implements OnInit {
   removeIngredient(index: number): void {
     this.ingredients.splice(index, 1);
     if (this.editingIndex === index) this.editingIndex = null;
+    this.recipeService.updatePreferences({ ingredients: this.ingredients });
   }
 
   /** Opens the inline edit form for an existing ingredient at the given index. */
@@ -129,6 +131,7 @@ export class Step1IngredientsComponent implements OnInit {
     }
     const amount = Math.min(Math.max(0.1, this.editAmount), 9999);
     this.ingredients[index] = { name, amount, unit: this.editUnit };
+    this.recipeService.updatePreferences({ ingredients: this.ingredients });
     this.editingIndex = null;
     this.editNameError = false;
   }

@@ -1,46 +1,39 @@
 <div class="hero">
+  <div class="hero__canvas">
 
-  <!-- Header: nur Logo -->
-  <header class="hero__header">
-    <a routerLink="/" class="hero__logo-link" aria-label="Code à Cuisine – Startseite">
-      <img src="assets/images/logo-cuisine.png" alt="Code à Cuisine" class="hero__logo" />
-    </a>
-  </header>
-
-  <!-- Linker Content-Bereich -->
-  <main class="hero__main">
-
-    <!-- Primärer CTA -->
-    <div class="hero__cta">
-      <p class="hero__subtitle">AI-Powered recipe generator</p>
-      <h1 class="hero__title">Code à Cuisine</h1>
-      <a routerLink="/generate" class="hero__btn-start">
-        <span>Get started</span>
+    <header class="hero__header">
+      <a routerLink="/" class="hero__logo-link" aria-label="Code à Cuisine – Startseite">
+        <img src="assets/images/logo-cuisine.png" alt="Code à Cuisine" class="hero__logo" width="142" height="48" />
       </a>
-    </div>
+    </header>
 
-    <!-- Sekundärer CTA: Text + Button in einer Reihe -->
-    <div class="hero__secondary">
-      <p class="hero__inspiration">Hungry for inspiration?</p>
-      <a routerLink="/cookbook" class="hero__btn-cookbook">
-        <span>Go to cookbook</span>
-        <span class="hero__arrow" aria-hidden="true">→</span>
-      </a>
-    </div>
+    <main class="hero__main">
+      <div class="hero__cta">
+        <div class="hero__cta-text">
+          <p class="hero__subtitle">AI-Powered recipe generator</p>
+          <h1 class="hero__title">Code à Cuisine</h1>
+        </div>
+        <a routerLink="/generate" class="hero__btn-start">
+          <span>Get started</span>
+        </a>
+      </div>
 
-  </main>
+      <div class="hero__secondary">
+        <p class="hero__inspiration">Hungry for inspiration?</p>
+        <a routerLink="/cookbook" class="hero__btn-cookbook">
+          <span>Go to cookbook</span>
+          <span class="hero__arrow" aria-hidden="true"></span>
+        </a>
+      </div>
+    </main>
 
-  <!-- Rechte Seite: 3 Kreise vertikal überlappend (absolut positioniert) -->
-  <aside class="hero__right" aria-hidden="true">
-    <div class="hero__circle hero__circle--1">
-      <img src="assets/images/hero/visual03.png" alt="" />
-    </div>
-    <div class="hero__circle hero__circle--2">
-      <img src="assets/images/hero/visual02.png" alt="" />
-    </div>
-    <div class="hero__circle hero__circle--3">
-      <img src="assets/images/hero/visual01.png" alt="" />
-    </div>
-  </aside>
+    <aside class="hero__bowls" aria-hidden="true">
+      <div class="hero__bowls-stack">
+        <img class="hero__bowl hero__bowl--blue"  src="assets/images/hero/visual03.png" alt="" />
+        <img class="hero__bowl hero__bowl--black" src="assets/images/hero/visual02.png" alt="" />
+        <img class="hero__bowl hero__bowl--white" src="assets/images/hero/visual01.png" alt="" />
+      </div>
+    </aside>
 
+  </div>
 </div>
