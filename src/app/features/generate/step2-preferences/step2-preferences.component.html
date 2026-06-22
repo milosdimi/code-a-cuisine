@@ -12,18 +12,56 @@
       <div class="step2__counter">
         <p class="step2__counter-label">How many portions?</p>
         <div class="step2__stepper">
-          <button type="button" class="step2__stepper-btn" (click)="clampServings(servings - 1)" aria-label="Fewer portions">−</button>
-          <input type="number" class="step2__stepper-input" [(ngModel)]="servings" min="1" max="12" (change)="clampServings(servings)" />
-          <button type="button" class="step2__stepper-btn" (click)="clampServings(servings + 1)" aria-label="More portions">+</button>
+          <button
+            type="button"
+            class="step2__stepper-btn"
+            (click)="clampServings(servings - 1)"
+            [disabled]="servings <= minServings"
+            aria-label="Fewer portions"
+          >−</button>
+          <input
+            type="number"
+            class="step2__stepper-input"
+            [(ngModel)]="servings"
+            [min]="minServings"
+            [max]="maxServings"
+            (change)="clampServings(servings)"
+          />
+          <button
+            type="button"
+            class="step2__stepper-btn"
+            (click)="clampServings(servings + 1)"
+            [disabled]="servings >= maxServings"
+            aria-label="More portions"
+          >+</button>
         </div>
       </div>
 
       <div class="step2__counter">
         <p class="step2__counter-label">How many are cooking?</p>
         <div class="step2__stepper">
-          <button type="button" class="step2__stepper-btn" (click)="clampHelpers(helpers - 1)" aria-label="Fewer helpers">−</button>
-          <input type="number" class="step2__stepper-input" [(ngModel)]="helpers" min="1" max="3" (change)="clampHelpers(helpers)" />
-          <button type="button" class="step2__stepper-btn" (click)="clampHelpers(helpers + 1)" aria-label="More helpers">+</button>
+          <button
+            type="button"
+            class="step2__stepper-btn"
+            (click)="clampHelpers(helpers - 1)"
+            [disabled]="helpers <= minHelpers"
+            aria-label="Fewer helpers"
+          >−</button>
+          <input
+            type="number"
+            class="step2__stepper-input"
+            [(ngModel)]="helpers"
+            [min]="minHelpers"
+            [max]="maxHelpers"
+            (change)="clampHelpers(helpers)"
+          />
+          <button
+            type="button"
+            class="step2__stepper-btn"
+            (click)="clampHelpers(helpers + 1)"
+            [disabled]="helpers >= maxHelpers"
+            aria-label="More helpers"
+          >+</button>
         </div>
       </div>
     </div>
@@ -43,7 +81,14 @@
               class="step2__time-tag"
               [class.step2__time-tag--active]="cookingTime === opt.value"
             >
-              <input type="radio" name="cookingTime" [value]="opt.value" [(ngModel)]="cookingTime" class="visually-hidden" />
+              <input
+                type="radio"
+                name="cookingTime"
+                [value]="opt.value"
+                [(ngModel)]="cookingTime"
+                (ngModelChange)="onPreferenceChange()"
+                class="visually-hidden"
+              />
               <span class="step2__tag-pill">{{ opt.label }}</span>
               <span class="step2__tag-sub">{{ opt.subtitle }}</span>
             </label>
@@ -59,14 +104,21 @@
         </legend>
         <div class="step2__tags-group">
           @for (opt of styleOptions; track opt.value) {
-            <button
-              type="button"
+            <label
               class="step2__tag-pill"
               [class.step2__tag-pill--active]="cookingStyle === opt.value"
-              (click)="cookingStyle = opt.value"
             >
+              <input
+                type="radio"
+                name="cookingStyle"
+                [value]="opt.value"
+                [(ngModel)]="cookingStyle"
+                (ngModelChange)="onPreferenceChange()"
+                class="visually-hidden"
+              />
+              <span class="step2__tag-emoji" aria-hidden="true">{{ opt.emoji }}</span>
               {{ opt.label }}
-            </button>
+            </label>
           }
         </div>
       </fieldset>
@@ -83,7 +135,14 @@
               class="step2__tag-pill"
               [class.step2__tag-pill--active]="diet === opt.value"
             >
-              <input type="radio" name="diet" [value]="opt.value" [(ngModel)]="diet" class="visually-hidden" />
+              <input
+                type="radio"
+                name="diet"
+                [value]="opt.value"
+                [(ngModel)]="diet"
+                (ngModelChange)="onPreferenceChange()"
+                class="visually-hidden"
+              />
               {{ opt.label }}
             </label>
           }
@@ -91,6 +150,12 @@
       </fieldset>
 
     </div>
+
+    @if (quotaLoaded && quotaRemaining !== null && quotaRemaining > 0) {
+      <p class="step2__quota-info">
+        {{ quotaRemaining }} of {{ maxGenerationsPerDay }} generations left today
+      </p>
+    }
 
     @if (quotaError) {
       <p class="step2__quota-error" role="alert">{{ quotaError }}</p>

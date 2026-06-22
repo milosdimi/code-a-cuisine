@@ -11,9 +11,9 @@ export interface QuotaStatus {
 }
 
 const QUOTA_MESSAGES = {
-  IP_EXCEEDED:    'Du hast heute bereits 3 Rezepte generiert. Morgen kannst du wieder 3 neue Rezepte entdecken!',
-  SYSTEM_LIMIT:   'Der Tages-Limit der App ist erreicht. Bitte versuche es morgen wieder.',
-  SHARED_NETWORK: 'Das Tageslimit für dein Netzwerk wurde erreicht. Bitte versuche es morgen wieder.'
+  IP_EXCEEDED:    "You've used all 3 free recipe generations for today. Come back tomorrow for 3 more!",
+  SYSTEM_LIMIT:   'The app has reached its daily limit. Please try again tomorrow.',
+  SHARED_NETWORK: 'The daily limit for your network has been reached. Please try again tomorrow.'
 } as const;
 
 /**
