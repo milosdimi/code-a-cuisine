@@ -4,9 +4,11 @@
   <section class="step1__container">
 
     <h1 class="step1__title">Generate recipe</h1>
-    <p class="step1__desc">Got random stuff in your kitchen? Pop it in—we've got the perfect recipe waiting.</p>
 
-    <div class="step1__content">
+    <div class="step1__intro">
+      <p class="step1__desc">Got random stuff in your kitchen? Pop it in—we've got the perfect recipe waiting.</p>
+
+      <div class="step1__content">
 
       <!-- Input card -->
       <div class="step1__input-card">
@@ -51,11 +53,11 @@
                   aria-label="Amount"
                 />
               </div>
-              <div class="step1__unit-wrap">
+              <div class="step1__unit-wrap" data-unit-dropdown="add">
                 <button
                   type="button"
                   class="step1__unit-pill"
-                  (click)="showUnitDropdown = !showUnitDropdown"
+                  (click)="showUnitDropdown = !showUnitDropdown; closeEditUnitDropdown()"
                   (blur)="hideUnitDropdown()"
                   aria-label="Select unit"
                 >
@@ -85,7 +87,7 @@
       <div class="step1__list-card">
         <p class="step1__list-title">List of your Ingredients</p>
 
-        <div class="step1__list-body">
+        <div class="step1__list-body" (scroll)="onListScroll()">
           @if (ingredients.length === 0) {
             <p class="step1__list-empty">No ingredients added yet.</p>
           } @else {
@@ -95,40 +97,55 @@
 
                   @if (editingIndex === i) {
                     <div class="step1__chip-edit">
-                      <div class="step1__chip-edit-name-wrap">
-                        <input
-                          type="text"
-                          class="step1__input"
-                          [class.step1__input--error]="editNameError"
-                          [(ngModel)]="editName"
-                          maxlength="50"
-                          (focus)="editNameError = false"
-                          (keydown.enter)="saveEdit(i)"
-                          (keydown.escape)="editingIndex = null"
-                        />
-                      </div>
-                      <div class="step1__chip-edit-controls">
-                        <div class="step1__amount-pill">
+                      <div class="step1__chip-edit-form">
+
+                        <div class="step1__field-group step1__field-group--chip">
+                          <label [attr.for]="'edit-ingredient-' + i" class="step1__label">Ingredient</label>
                           <input
-                            type="number"
-                            [(ngModel)]="editAmount"
-                            min="0.1"
-                            max="9999"
-                            step="0.1"
-                            aria-label="Amount"
+                            [id]="'edit-ingredient-' + i"
+                            type="text"
+                            class="step1__input"
+                            [class.step1__input--error]="editNameError"
+                            [(ngModel)]="editName"
+                            maxlength="50"
+                            (focus)="editNameError = false"
+                            (keydown.enter)="saveEdit(i)"
+                            (keydown.escape)="editingIndex = null; closeEditUnitDropdown()"
+                            autocomplete="off"
                           />
                         </div>
-                        <div class="step1__chip-edit-unit-wrap">
-                          <select class="step1__chip-edit-unit" [(ngModel)]="editUnit">
-                            @for (u of units; track u) {
-                              <option [value]="u">{{ u }}</option>
-                            }
-                          </select>
+
+                        <div class="step1__serving-group step1__serving-group--chip">
+                          <span class="step1__label">Serving size</span>
+                          <div class="step1__controls">
+                            <div class="step1__amount-pill">
+                              <input
+                                type="number"
+                                [(ngModel)]="editAmount"
+                                min="0.1"
+                                max="9999"
+                                step="0.1"
+                                aria-label="Amount"
+                              />
+                            </div>
+                            <div class="step1__unit-wrap" data-unit-dropdown="edit">
+                              <button
+                                type="button"
+                                class="step1__unit-pill"
+                                (click)="toggleEditUnitDropdown($event)"
+                                aria-label="Select unit"
+                              >
+                                <span>{{ editUnit }}</span>
+                                <span class="step1__unit-arrow" [class.step1__unit-arrow--open]="showEditUnitDropdown"></span>
+                              </button>
+                            </div>
+                            <button type="button" class="step1__chip-btn step1__chip-btn--save" (click)="saveEdit(i)" aria-label="Save">✓</button>
+                            <button type="button" class="step1__chip-btn" (click)="removeIngredient(i)" [attr.aria-label]="'Delete: ' + ing.name">
+                              <img src="assets/images/icons/delete.png" alt="" />
+                            </button>
+                          </div>
                         </div>
-                        <button type="button" class="step1__chip-btn step1__chip-btn--save" (click)="saveEdit(i)" aria-label="Save">✓</button>
-                        <button type="button" class="step1__chip-btn" (click)="removeIngredient(i)" [attr.aria-label]="'Delete: ' + ing.name">
-                          <img src="assets/images/icons/delete.png" alt="" />
-                        </button>
+
                       </div>
                     </div>
                   } @else {
@@ -154,9 +171,26 @@
         </div>
       </div>
 
+      </div>
     </div>
 
   </section>
+
+  @if (showEditUnitDropdown) {
+    <ul
+      class="step1__unit-list step1__unit-list--fixed"
+      data-unit-dropdown="edit"
+      role="listbox"
+      [class.step1__unit-list--up]="editUnitDropdownPos.openUp"
+      [style.top.px]="editUnitDropdownPos.top"
+      [style.left.px]="editUnitDropdownPos.left"
+      [style.minWidth.px]="editUnitDropdownPos.width"
+    >
+      @for (u of units; track u) {
+        <li class="step1__unit-option" role="option" (mousedown)="selectEditUnit(u)">{{ u }}</li>
+      }
+    </ul>
+  }
 
   <!-- Footer: direkt in <main>, unabhängig von Card-Höhe -->
   <div class="step1__footer">

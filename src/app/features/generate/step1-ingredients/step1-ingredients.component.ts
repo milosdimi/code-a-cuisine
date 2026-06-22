@@ -18,6 +18,7 @@ const INGREDIENT_SUGGESTIONS = [
 ];
 
 const UNITS: IngredientUnit[] = ['g', 'kg', 'ml', 'l', 'Stück', 'TL', 'EL'];
+const MAX_INGREDIENTS = 14;
 
 @Component({
   selector: 'app-step1-ingredients',
@@ -32,6 +33,7 @@ export class Step1IngredientsComponent implements OnInit {
   suggestions: string[] = [];
   showSuggestions = false;
   showUnitDropdown = false;
+  showEditUnitDropdown = false;
   newAmount = 1;
   newUnit: IngredientUnit = 'Stück';
   units = UNITS;
@@ -42,7 +44,9 @@ export class Step1IngredientsComponent implements OnInit {
   editAmount = 1;
   editUnit: IngredientUnit = 'Stück';
   editNameError = false;
+  editUnitDropdownPos = { top: 0, left: 0, width: 0, openUp: false };
 
+  private editUnitButton: HTMLElement | null = null;
   private readonly destroyRef = inject(DestroyRef);
   private readonly seo        = inject(SeoService);
 
@@ -96,6 +100,10 @@ export class Step1IngredientsComponent implements OnInit {
       this.validationError = 'This ingredient has already been added.';
       return;
     }
+    if (this.ingredients.length >= MAX_INGREDIENTS) {
+      this.validationError = `You can add up to ${MAX_INGREDIENTS} ingredients.`;
+      return;
+    }
     const amount = Math.min(Math.max(0.1, this.newAmount), 9999);
     this.ingredients.push({ name, amount, unit: this.newUnit });
     this.recipeService.updatePreferences({ ingredients: this.ingredients });
@@ -119,7 +127,13 @@ export class Step1IngredientsComponent implements OnInit {
     this.editName = ing.name;
     this.editAmount = ing.amount;
     this.editUnit = ing.unit;
+    this.showUnitDropdown = false;
+    this.closeEditUnitDropdown();
     this.validationError = '';
+
+    setTimeout(() => {
+      document.querySelector('.step1__chip--editing')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    });
   }
 
   /** Persists the edited ingredient to the list if the name is valid. */
@@ -134,6 +148,7 @@ export class Step1IngredientsComponent implements OnInit {
     this.recipeService.updatePreferences({ ingredients: this.ingredients });
     this.editingIndex = null;
     this.editNameError = false;
+    this.closeEditUnitDropdown();
   }
 
   /** Validates the form and navigates to the preferences step. */
@@ -162,6 +177,60 @@ export class Step1IngredientsComponent implements OnInit {
     this.showUnitDropdown = false;
   }
 
+  /** Toggles the edit-unit dropdown and anchors it with fixed positioning. */
+  toggleEditUnitDropdown(event: MouseEvent): void {
+    event.stopPropagation();
+
+    if (this.showEditUnitDropdown) {
+      this.closeEditUnitDropdown();
+      return;
+    }
+
+    this.showUnitDropdown = false;
+    this.editUnitButton = event.currentTarget as HTMLElement;
+    this.showEditUnitDropdown = true;
+    this.updateEditUnitDropdownPosition();
+  }
+
+  /** Repositions the edit dropdown to stay attached to its trigger button. */
+  updateEditUnitDropdownPosition(): void {
+    if (!this.editUnitButton || !this.showEditUnitDropdown) return;
+
+    const rect = this.editUnitButton.getBoundingClientRect();
+    if (rect.bottom < 0 || rect.top > window.innerHeight) {
+      this.closeEditUnitDropdown();
+      return;
+    }
+
+    const listHeight = this.units.length * 40 + 12;
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const openUp = spaceBelow < listHeight && rect.top > listHeight;
+
+    this.editUnitDropdownPos = {
+      top: openUp ? rect.top - 4 : rect.bottom + 4,
+      left: rect.left,
+      width: rect.width,
+      openUp
+    };
+  }
+
+  /** Closes the edit-unit dropdown and clears its anchor button. */
+  closeEditUnitDropdown(): void {
+    this.showEditUnitDropdown = false;
+    this.editUnitButton = null;
+  }
+
+  /** Sets the unit while editing an existing ingredient. */
+  selectEditUnit(unit: IngredientUnit): void {
+    this.editUnit = unit;
+    this.closeEditUnitDropdown();
+  }
+
+  /** Keeps the edit dropdown aligned while the ingredient list scrolls. */
+  onListScroll(): void {
+    this.updateEditUnitDropdownPosition();
+  }
+
   /** Closes the unit dropdown after a short delay to allow click events to fire first. */
   hideUnitDropdown(): void {
     setTimeout(() => { this.showUnitDropdown = false; }, 150);
@@ -174,8 +243,18 @@ export class Step1IngredientsComponent implements OnInit {
     if (!target.closest('.step1__search-wrap')) {
       this.showSuggestions = false;
     }
-    if (!target.closest('.step1__unit-wrap')) {
+    if (!target.closest('[data-unit-dropdown="add"]')) {
       this.showUnitDropdown = false;
     }
+    if (!target.closest('[data-unit-dropdown="edit"]')) {
+      this.closeEditUnitDropdown();
+    }
+  }
+
+  /** Re-anchors the edit dropdown on page scroll or resize. */
+  @HostListener('window:scroll')
+  @HostListener('window:resize')
+  onViewportChange(): void {
+    this.updateEditUnitDropdownPosition();
   }
 }
