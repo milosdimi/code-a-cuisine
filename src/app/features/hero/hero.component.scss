@@ -36,6 +36,13 @@
 
 .hero__logo-link {
   display: inline-block;
+  animation: heroFadeDown 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition: transform 400ms ease, opacity 300ms ease;
+
+  &:hover {
+    transform: scale(1.04);
+    opacity: 0.9;
+  }
 }
 
 .hero__logo {
@@ -81,6 +88,7 @@
   font-size: 24px;
   line-height: 30px;
   color: $color-beige;
+  animation: heroFadeUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
 }
 
 .hero__title {
@@ -90,6 +98,7 @@
   font-size: 64px;
   line-height: 72px;
   color: $color-creme;
+  animation: heroFadeUp 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.28s both;
 }
 
 .hero__btn-start {
@@ -107,11 +116,21 @@
   border-radius: 5px;
   text-decoration: none;
   box-sizing: border-box;
-  transition: transform 300ms ease, box-shadow 300ms ease;
+  animation: heroFadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.42s both;
+  transition:
+    transform 350ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 350ms ease,
+    background-color 350ms ease;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+    background-color: #fffdf8;
+  }
+
+  &:active {
+    transform: translateY(-1px) scale(1.01);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
   }
 }
 
@@ -133,6 +152,7 @@
   font-size: 24px;
   line-height: 120%;
   color: $color-creme;
+  animation: heroFadeUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.62s both;
 }
 
 .hero__btn-cookbook {
@@ -152,13 +172,42 @@
   line-height: 22px;
   text-decoration: none;
   white-space: nowrap;
-  transition: opacity 300ms ease;
+  position: relative;
+  animation: heroFadeUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.75s both;
+  transition:
+    opacity 300ms ease,
+    transform 400ms cubic-bezier(0.22, 1, 0.36, 1),
+    gap 400ms cubic-bezier(0.22, 1, 0.36, 1);
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 10px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
 
   &:hover {
-    opacity: 0.8;
+    opacity: 1;
+    transform: translateX(6px);
+    gap: 14px;
+
+    &::after {
+      transform: scaleX(1);
+    }
+
+    .hero__arrow {
+      animation: none;
+      transform: translateX(4px);
+    }
 
     .hero__arrow::after {
-      transform: translateX(4px);
+      transform: translateY(-50%) rotate(45deg) translateX(2px);
     }
   }
 }
@@ -170,6 +219,8 @@
   height: 2px;
   background: $color-creme;
   flex-shrink: 0;
+  animation: heroArrowNudge 2.4s ease-in-out 2s infinite;
+  transition: transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
 
   &::after {
     content: '';
@@ -219,23 +270,155 @@
   height: var(--bowl-size);
   object-fit: contain;
   filter: drop-shadow(-4px 2px 6px rgba(0, 0, 0, 0.22));
+  opacity: 0;
+  translate: 0 0;
+  will-change: transform, top, translate;
 
   &--blue {
     top: 0;
     z-index: 1;
-    transform: translateX(-50%);
+    transform: translateX(-50%) rotate(0deg);
+    animation:
+      heroBowlRollBlue 1.15s cubic-bezier(0.34, 1.3, 0.64, 1) 0.3s both,
+      heroBowlDrift 6s cubic-bezier(0.45, 0.05, 0.55, 0.95) 1.6s infinite;
   }
 
   &--black {
     top: calc(var(--bowl-size) * (1 - var(--overlap)));
     z-index: 2;
     transform: translateX(-50%) rotate(8deg);
+    animation:
+      heroBowlRollBlack 1.3s cubic-bezier(0.34, 1.3, 0.64, 1) 0.62s both,
+      heroBowlDrift 6.8s cubic-bezier(0.45, 0.05, 0.55, 0.95) 2s infinite;
   }
 
   &--white {
     top: calc(var(--bowl-size) * (2 - 2 * var(--overlap)));
     z-index: 3;
     transform: translateX(-50%) rotate(-6deg);
+    animation:
+      heroBowlRollWhite 1.35s cubic-bezier(0.34, 1.3, 0.64, 1) 0.95s both,
+      heroBowlDrift 7.4s cubic-bezier(0.45, 0.05, 0.55, 0.95) 2.4s infinite;
+  }
+}
+
+// ===== ANIMATIONS =====
+@keyframes heroFadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Bowls roll in from off-screen right, stack with a small bounce, then idle bob
+@keyframes heroBowlRollBlue {
+  0% {
+    opacity: 0;
+    transform: translateX(calc(-50% + 52vw)) rotate(220deg) scale(0.62);
+  }
+
+  58% {
+    opacity: 1;
+    transform: translateX(calc(-50% - 7px)) rotate(-14deg) scale(1.05);
+  }
+
+  78% {
+    transform: translateX(calc(-50% + 3px)) rotate(5deg) scale(0.98);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes heroBowlRollBlack {
+  0% {
+    opacity: 0;
+    top: calc(var(--bowl-size) * (1 - var(--overlap)) - 18vh);
+    transform: translateX(calc(-50% + 58vw)) rotate(300deg) scale(0.58);
+  }
+
+  52% {
+    opacity: 1;
+    top: calc(var(--bowl-size) * (1 - var(--overlap)) + 14px);
+    transform: translateX(calc(-50% + 10px)) rotate(32deg) scale(1.07);
+  }
+
+  74% {
+    top: calc(var(--bowl-size) * (1 - var(--overlap)) - 6px);
+    transform: translateX(calc(-50% - 4px)) rotate(2deg) scale(0.97);
+  }
+
+  100% {
+    opacity: 1;
+    top: calc(var(--bowl-size) * (1 - var(--overlap)));
+    transform: translateX(-50%) rotate(8deg) scale(1);
+  }
+}
+
+@keyframes heroBowlRollWhite {
+  0% {
+    opacity: 0;
+    top: calc(var(--bowl-size) * (2 - 2 * var(--overlap)) - 14vh);
+    transform: translateX(calc(-50% + 62vw)) rotate(380deg) scale(0.52);
+  }
+
+  50% {
+    opacity: 1;
+    top: calc(var(--bowl-size) * (2 - 2 * var(--overlap)) + 16px);
+    transform: translateX(calc(-50% + 12px)) rotate(-34deg) scale(1.08);
+  }
+
+  72% {
+    top: calc(var(--bowl-size) * (2 - 2 * var(--overlap)) - 5px);
+    transform: translateX(calc(-50% - 5px)) rotate(-14deg) scale(0.97);
+  }
+
+  100% {
+    opacity: 1;
+    top: calc(var(--bowl-size) * (2 - 2 * var(--overlap)));
+    transform: translateX(-50%) rotate(-6deg) scale(1);
+  }
+}
+
+// Y-only float — uses `translate`, separate from roll `transform` → GPU-smooth, no layout jitter
+@keyframes heroBowlDrift {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+
+  50% {
+    translate: 0 -7px;
+  }
+}
+
+@keyframes heroArrowNudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(5px);
   }
 }
 
@@ -350,19 +533,54 @@
   }
 }
 
-// ===== MOBILE — 320–768px (Figma: ~50% of bowls visible, clipped at right edge) =====
-// --bowl-visible: share of each bowl shown (0.5 = half); scales with --bowl-size, no extra breakpoints
+// ===== MOBILE — 320–768px (Figma: ~50% of bowls visible) =====
+// Push stack past right edge; .hero overflow:hidden clips it (same effect as right:-140px at 375px)
+// Tune: --bowl-shift (0.45 = more visible, 0.55 = less) · --bowl-size for scale
 @media (max-width: 768px) {
   .hero__bowls {
-    --bowl-visible: 0.5;
+    --bowl-size: min(100vmin, 50svh);
+    --bowl-shift: 0.4;
 
-    top: 3vh;
-    right: 0;
-    bottom: auto;
-    width: calc(var(--bowl-size) * var(--bowl-visible));
-    height: calc(var(--bowl-size) * (3 - 2 * var(--overlap)));
-    overflow: hidden;
-    align-items: flex-start;
-    justify-content: flex-start;
+    top: 0;
+    right: calc(var(--bowl-size) * var(--bowl-shift) * -1);
+    bottom: 0;
+    width: 72%;
+    overflow: visible;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+// ===== ACCESSIBILITY =====
+@media (prefers-reduced-motion: reduce) {
+  .hero__logo-link,
+  .hero__subtitle,
+  .hero__title,
+  .hero__btn-start,
+  .hero__inspiration,
+  .hero__btn-cookbook,
+  .hero__arrow,
+  .hero__bowls-stack,
+  .hero__bowl {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .hero__bowl {
+    opacity: 1 !important;
+    translate: 0 0 !important;
+    will-change: auto;
+  }
+
+  .hero__bowl--blue {
+    transform: translateX(-50%) rotate(0deg);
+  }
+
+  .hero__bowl--black {
+    transform: translateX(-50%) rotate(8deg);
+  }
+
+  .hero__bowl--white {
+    transform: translateX(-50%) rotate(-6deg);
   }
 }
