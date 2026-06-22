@@ -44,6 +44,7 @@ export class Step1IngredientsComponent implements OnInit {
   editAmount = 1;
   editUnit: IngredientUnit = 'Stück';
   editNameError = false;
+  editError = '';
   editUnitDropdownPos = { top: 0, left: 0, width: 0, openUp: false };
 
   private editUnitButton: HTMLElement | null = null;
@@ -130,6 +131,7 @@ export class Step1IngredientsComponent implements OnInit {
     this.showUnitDropdown = false;
     this.closeEditUnitDropdown();
     this.validationError = '';
+    this.editError = '';
 
     setTimeout(() => {
       document.querySelector('.step1__chip--editing')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
@@ -141,6 +143,15 @@ export class Step1IngredientsComponent implements OnInit {
     const name = this.editName.trim();
     if (!name) {
       this.editNameError = true;
+      this.editError = 'Please enter an ingredient name.';
+      return;
+    }
+    const isDuplicate = this.ingredients.some(
+      (ing, i) => i !== index && ing.name.toLowerCase() === name.toLowerCase()
+    );
+    if (isDuplicate) {
+      this.editNameError = true;
+      this.editError = 'This ingredient has already been added.';
       return;
     }
     const amount = Math.min(Math.max(0.1, this.editAmount), 9999);
@@ -148,6 +159,7 @@ export class Step1IngredientsComponent implements OnInit {
     this.recipeService.updatePreferences({ ingredients: this.ingredients });
     this.editingIndex = null;
     this.editNameError = false;
+    this.editError = '';
     this.closeEditUnitDropdown();
   }
 

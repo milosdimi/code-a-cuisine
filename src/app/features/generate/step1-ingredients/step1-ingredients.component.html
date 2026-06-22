@@ -108,11 +108,14 @@
                             [class.step1__input--error]="editNameError"
                             [(ngModel)]="editName"
                             maxlength="50"
-                            (focus)="editNameError = false"
+                            (focus)="editNameError = false; editError = ''"
                             (keydown.enter)="saveEdit(i)"
                             (keydown.escape)="editingIndex = null; closeEditUnitDropdown()"
                             autocomplete="off"
                           />
+                          @if (editError) {
+                            <p class="step1__error step1__error--chip" role="alert">{{ editError }}</p>
+                          }
                         </div>
 
                         <div class="step1__serving-group step1__serving-group--chip">
