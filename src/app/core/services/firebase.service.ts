@@ -11,7 +11,7 @@ import {
   DocumentSnapshot, QueryDocumentSnapshot, Timestamp
 } from 'firebase/firestore';
 import { environment } from '../../../environments/environment';
-import { Recipe, CookingStyle } from '../models/recipe.model';
+import { Recipe, CookingStyle, HelperTask } from '../models/recipe.model';
 
 /** Initializes Firebase once and exposes Firestore CRUD operations. */
 @Injectable({ providedIn: 'root' })
@@ -121,9 +121,33 @@ export class FirebaseService {
     return {
       ...data,
       id: snap.id,
+      helpers: this.normalizeHelpers(data['helpers']),
       createdAt: data['createdAt'] instanceof Timestamp
         ? data['createdAt'].toDate()
         : new Date(data['createdAt'])
     } as Recipe;
+  }
+
+  /** Re-groups flat helper tasks loaded from Firestore back into per-chef arrays. */
+  private normalizeHelpers(raw: unknown): HelperTask[][] {
+    if (!Array.isArray(raw) || raw.length === 0) return [];
+
+    if (Array.isArray(raw[0])) {
+      return raw as HelperTask[][];
+    }
+
+    const tasks = raw as (HelperTask & { groupIndex?: number })[];
+    if (tasks[0]?.helperIndex == null) return [];
+
+    const groups = new Map<number, HelperTask[]>();
+    for (const task of tasks) {
+      const idx = task.groupIndex ?? task.helperIndex;
+      if (!groups.has(idx)) groups.set(idx, []);
+      groups.get(idx)!.push(task);
+    }
+
+    return [...groups.entries()]
+      .sort(([a], [b]) => a - b)
+      .map(([, group]) => group);
   }
 }

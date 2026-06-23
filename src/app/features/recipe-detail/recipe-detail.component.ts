@@ -9,7 +9,7 @@ import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner
 import { FirebaseService } from '../../core/services/firebase.service';
 import { RecipeService } from '../../core/services/recipe.service';
 import { SeoService } from '../../core/services/seo.service';
-import { Recipe, RecipeIngredient, CookingStep } from '../../core/models/recipe.model';
+import { Recipe, RecipeIngredient, CookingStep, HelperTask } from '../../core/models/recipe.model';
 import { STYLE_LABELS, TIME_LABELS, TIME_MINUTES } from '../../core/constants/recipe-labels';
 
 const CHEF_COLORS = ['#D7DFD7', '#FFD9B3', '#B3D9FF'];
@@ -146,8 +146,28 @@ export class RecipeDetailComponent implements OnInit {
   }
 
   get chefCount(): number {
-    const fromRecipe = this.recipe?.helpers?.length ?? 0;
-    return fromRecipe > 0 ? fromRecipe : this.prefsHelpers;
+    return this.resolveChefCount(this.recipe?.helpers, this.prefsHelpers);
+  }
+
+  /**
+   * Counts cooking helpers from nested or flat Firestore helper tasks (1–3).
+   * Firestore stores a flattened task list; length alone would over-count.
+   */
+  private resolveChefCount(helpers: Recipe['helpers'] | undefined, fallback: number): number {
+    if (!helpers?.length) return fallback;
+
+    const first = helpers[0];
+    if (Array.isArray(first)) {
+      return Math.min(3, Math.max(1, helpers.length));
+    }
+
+    const tasks = helpers as unknown as HelperTask[];
+    if (tasks[0]?.helperIndex != null) {
+      const chefs = new Set(tasks.map(t => t.helperIndex)).size;
+      return Math.min(3, Math.max(1, chefs || fallback));
+    }
+
+    return fallback;
   }
 
   get chefRange(): number[] {
