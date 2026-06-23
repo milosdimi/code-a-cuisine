@@ -1,0 +1,8 @@
+{
+  "rules": {
+    "quota": {
+      ".read": true,
+      ".write": true
+    }
+  }
+}

@@ -1,9 +1,17 @@
+:host {
+  display: block;
+  overflow-x: hidden;
+}
+
 .loading {
   min-height: 100vh;
   background: #396039;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow-x: hidden;
+  padding: 16px;
+  box-sizing: border-box;
 }
 
 .loading__content {
@@ -15,8 +23,9 @@
 }
 
 .loading__spinner {
-  width: 253px;
-  height: 309px;
+  width: min(253px, 100%);
+  height: auto;
+  max-height: 309px;
   background: #c4d0c4;
   border-radius: 20px;
   display: block;

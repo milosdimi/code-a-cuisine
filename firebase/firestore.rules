@@ -1,0 +1,15 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Public recipe library — no auth in this app.
+    match /recipes/{recipeId} {
+      allow read: if true;
+      allow create: if true;
+      // Only heartCount may be updated client-side (like / unlike).
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['heartCount']);
+      allow delete: if false;
+    }
+  }
+}
