@@ -19,6 +19,9 @@
 - 🔒 **Daily quota** — 3 free generations per IP per day (Firebase RTDB)
 - 📱 **Fully responsive** — mobile-first design matching Figma prototype
 - ⚡ **Zoneless Angular** — no Zone.js, pure signal-ready architecture
+- 🚀 **Lazy-loaded routes** — feature components load on demand via `loadComponent()`
+- 🖼 **WebP images** — `<picture>` elements with PNG fallback for hero, cookbook, and cuisine assets
+- 🔍 **SEO & Open Graph** — per-page titles, descriptions, and Twitter/OG meta via `SeoService`
 
 ---
 
@@ -156,6 +159,13 @@ Daily generation limits are enforced server-side in n8n using Firebase Realtime 
 ng build
 # Output: dist/code-a-cuisine/
 ```
+
+### Performance notes
+
+- **Route lazy loading** — all feature routes use `loadComponent()` in `app.routes.ts`
+- **WebP assets** — run `npm run webp` to regenerate `.webp` files from key PNGs (`scripts/convert-webp.mjs`)
+- **Image lazy loading** — below-fold decorative images use `loading="lazy"` and `decoding="async"`
+- **SCSS budgets** — component style warning threshold is 12 kB (hero, step1, recipe-detail)
 
 ---
 

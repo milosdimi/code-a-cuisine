@@ -51,7 +51,10 @@
             <span class="cookbook__cuisine-emoji" aria-hidden="true">{{ c.emoji }}</span>
           </div>
           <div class="cookbook__cuisine-img-wrap">
-            <img [src]="c.image" [alt]="c.label + ' cuisine'" class="cookbook__cuisine-img" />
+            <picture>
+              <source type="image/webp" [srcset]="webpSrc(c.image)" />
+              <img [src]="c.image" [alt]="c.label + ' cuisine'" class="cookbook__cuisine-img" loading="lazy" decoding="async" />
+            </picture>
           </div>
         </div>
       }

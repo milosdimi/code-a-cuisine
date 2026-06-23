@@ -4,7 +4,10 @@
     <!-- Brand -->
     <div class="footer__brand">
       <a routerLink="/" class="footer__logo-link" aria-label="Home">
-        <img src="assets/images/logo-cuisine.png" alt="Code à Cuisine" class="footer__logo" />
+        <picture>
+          <source type="image/webp" srcset="assets/images/logo-cuisine.webp" />
+          <img src="assets/images/logo-cuisine.png" alt="Code à Cuisine" class="footer__logo" loading="lazy" decoding="async" />
+        </picture>
       </a>
       <p class="footer__tagline">AI-powered recipe generation</p>
     </div>

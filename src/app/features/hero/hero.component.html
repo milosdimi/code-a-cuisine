@@ -3,7 +3,10 @@
 
     <header class="hero__header">
       <a routerLink="/" class="hero__logo-link" aria-label="Code à Cuisine – Startseite">
-        <img src="assets/images/logo-cuisine.png" alt="Code à Cuisine" class="hero__logo" width="142" height="48" />
+        <picture>
+          <source type="image/webp" srcset="assets/images/logo-cuisine.webp" />
+          <img src="assets/images/logo-cuisine.png" alt="Code à Cuisine" class="hero__logo" width="142" height="48" />
+        </picture>
       </a>
     </header>
 
@@ -29,9 +32,18 @@
 
     <aside class="hero__bowls" aria-hidden="true">
       <div class="hero__bowls-stack">
-        <img class="hero__bowl hero__bowl--blue"  src="assets/images/hero/visual03.png" alt="" />
-        <img class="hero__bowl hero__bowl--black" src="assets/images/hero/visual02.png" alt="" />
-        <img class="hero__bowl hero__bowl--white" src="assets/images/hero/visual01.png" alt="" />
+        <picture>
+          <source type="image/webp" srcset="assets/images/hero/visual03.webp" />
+          <img class="hero__bowl hero__bowl--blue" src="assets/images/hero/visual03.png" alt="" loading="lazy" decoding="async" />
+        </picture>
+        <picture>
+          <source type="image/webp" srcset="assets/images/hero/visual02.webp" />
+          <img class="hero__bowl hero__bowl--black" src="assets/images/hero/visual02.png" alt="" loading="lazy" decoding="async" />
+        </picture>
+        <picture>
+          <source type="image/webp" srcset="assets/images/hero/visual01.webp" />
+          <img class="hero__bowl hero__bowl--white" src="assets/images/hero/visual01.png" alt="" loading="lazy" decoding="async" />
+        </picture>
       </div>
     </aside>
 

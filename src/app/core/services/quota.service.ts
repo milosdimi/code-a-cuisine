@@ -58,11 +58,13 @@ export class QuotaService {
       );
   }
 
+  /** Builds an allowed QuotaStatus from current IP and system counters. */
   private buildStatus(ipCount: number, total: number, resetTime: Date): QuotaStatus {
     const remaining = Math.min(this.MAX_PER_IP - ipCount, this.MAX_SYSTEM - total);
     return { allowed: true, remaining, resetTime };
   }
 
+  /** Returns today's UTC date key used as the Firebase quota path segment. */
   private todayKey(): string {
     return new Date().toISOString().slice(0, 10);
   }
@@ -72,6 +74,7 @@ export class QuotaService {
     return 'client';
   }
 
+  /** Returns the next local midnight — used as the quota reset time shown in the UI. */
   private midnight(): Date {
     const d = new Date();
     d.setHours(24, 0, 0, 0);

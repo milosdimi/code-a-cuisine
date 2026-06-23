@@ -18,12 +18,17 @@
       }
     </div>
 
-    <img
-      src="assets/images/img/result-img.png"
-      alt=""
-      class="results__hero-img"
-      aria-hidden="true"
-    />
+    <picture>
+      <source type="image/webp" srcset="assets/images/img/result-img.webp" />
+      <img
+        src="assets/images/img/result-img.png"
+        alt=""
+        class="results__hero-img"
+        aria-hidden="true"
+        loading="lazy"
+        decoding="async"
+      />
+    </picture>
   </div>
 
   <!-- 3 RECIPE CARDS -->

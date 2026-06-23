@@ -16,8 +16,14 @@
   <!-- 2. HEADER IMAGE ── -->
   <div class="cr__top">
     <div class="cr__header-wrap">
-      <img [src]="cuisineImage"       [alt]="cuisineTitle" class="cr__header-img cr__header-img--desktop" />
-      <img [src]="cuisineMobileImage" [alt]="cuisineTitle" class="cr__header-img cr__header-img--mobile" />
+      <picture>
+        <source type="image/webp" [srcset]="webpSrc(cuisineImage)" />
+        <img [src]="cuisineImage" [alt]="cuisineTitle" class="cr__header-img cr__header-img--desktop" loading="lazy" decoding="async" />
+      </picture>
+      <picture>
+        <source type="image/webp" [srcset]="webpSrc(cuisineMobileImage)" />
+        <img [src]="cuisineMobileImage" [alt]="cuisineTitle" class="cr__header-img cr__header-img--mobile" loading="lazy" decoding="async" />
+      </picture>
       <h1 class="cr__header-title">{{ cuisineTitle }}</h1>
     </div>
   </div>

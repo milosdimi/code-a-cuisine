@@ -10,6 +10,7 @@ import { SeoService } from '../../core/services/seo.service';
 import { CookingStyle, CookingTime, Recipe } from '../../core/models/recipe.model';
 import { TIME_LABELS, TIME_MINUTES } from '../../core/constants/recipe-labels';
 import { CUISINE_META } from '../../core/constants/cuisine-meta';
+import { webpSrc } from '../../core/utils/image.util';
 
 @Component({
   selector: 'app-cuisine-recipes',
@@ -23,6 +24,9 @@ export class CuisineRecipesComponent implements OnInit {
   allRecipes: Recipe[] = [];
   isLoading = false;
   page = 1;
+  readonly webpSrc = webpSrc;
+
+  /** Recipes shown per page — fewer on mobile to match the grid layout. */
   get pageSize(): number { return window.innerWidth < 768 ? 9 : 15; }
 
   private readonly destroyRef = inject(DestroyRef);

@@ -8,6 +8,7 @@ import { SeoService } from '../../core/services/seo.service';
 import { Recipe, CookingTime } from '../../core/models/recipe.model';
 import { TIME_MINUTES } from '../../core/constants/recipe-labels';
 import { COOKBOOK_CUISINES } from '../../core/constants/cuisine-meta';
+import { webpSrc } from '../../core/utils/image.util';
 
 interface LikedRecipe extends Recipe {
   heartCount: number;
@@ -68,6 +69,10 @@ export class CookbookComponent implements OnInit {
       });
   }
 
+  /** Returns the WebP variant of a cuisine card PNG asset. */
+  webpSrc = webpSrc;
+
+  /** Maps a cooking-time enum to its human-readable minute range. */
   cookingTimeLabel(t: CookingTime): string {
     return TIME_MINUTES[t] ?? t;
   }

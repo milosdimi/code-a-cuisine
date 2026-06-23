@@ -176,6 +176,7 @@ export class RecipeService {
     this._savedIds.clear();
   }
 
+  /** Shapes the n8n webhook request body from wizard preferences. */
   private buildPayload(prefs: UserPreferences) {
     return {
       ingredients: prefs.ingredients,
@@ -189,6 +190,7 @@ export class RecipeService {
     };
   }
 
+  /** Maps HTTP status codes to user-facing error messages. */
   private mapError(err: HttpErrorResponse): string {
     if (err.status === 429) return 'Daily limit reached. Please try again tomorrow.';
     if (err.status === 0)   return 'No connection. Please check your internet connection.';

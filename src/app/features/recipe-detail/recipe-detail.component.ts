@@ -19,6 +19,7 @@ const CHEF_ICONS = [
   'assets/images/icons/cook-03.png'
 ];
 
+/** Full recipe view with servings scaling, helper assignment, and like/save actions. */
 @Component({
   selector: 'app-recipe-detail',
   standalone: true,
@@ -27,15 +28,23 @@ const CHEF_ICONS = [
   styleUrl: './recipe-detail.component.scss'
 })
 export class RecipeDetailComponent implements OnInit {
+  /** Loaded recipe or null while fetching / on error. */
   recipe: Recipe | null = null;
+  /** True until the recipe is resolved from session, mock, or Firestore. */
   isLoading = true;
+  /** User-facing error when the recipe cannot be loaded. */
   error = '';
+  /** Current heart count from Firestore (optimistically updated on toggle). */
   heartCount = 0;
+  /** Whether the current user has liked this recipe (persisted in localStorage). */
   isLiked = false;
+  /** Collapsible ingredients section — expanded by default. */
   showIngredients = true;
+  /** Collapsible directions section — expanded by default. */
   showDirections = true;
   /** True when the recipe came from the generated session (no Firestore document yet). */
   isSessionRecipe = false;
+  /** True while `saveAndHeart()` is persisting a session recipe to Firestore. */
   isSaving = false;
 
   readonly chefColors = CHEF_COLORS;
@@ -57,6 +66,7 @@ export class RecipeDetailComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
+  /** Resolves the recipe from route id via session cache, mock data, or Firestore. */
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id') ?? '';
 
@@ -101,6 +111,164 @@ export class RecipeDetailComponent implements OnInit {
     });
   }
 
+  /** Ingredients scaled to the current servings multiplier. */
+  get scaledIngredients(): RecipeIngredient[] {
+    if (!this.recipe) return [];
+    return this.recipe.ingredients.map(ing => ({
+      ...ing,
+      amount: Math.round(ing.amount * this.servingsMultiplier * 10) / 10
+    }));
+  }
+
+  /** Servings count after applying the multiplier slider. */
+  get currentServings(): number {
+    return Math.round(this.baseServings * this.servingsMultiplier);
+  }
+
+  /** Number of cooking helpers (1–3), derived from recipe or user preferences. */
+  get chefCount(): number {
+    return this.resolveChefCount(this.recipe?.helpers, this.prefsHelpers);
+  }
+
+  /** Zero-based indices for rendering helper avatars. */
+  get chefRange(): number[] {
+    return Array.from({ length: this.chefCount }, (_, i) => i);
+  }
+
+  /** Cooking steps for the left column on desktop (even indices). */
+  get leftSteps(): CookingStep[] {
+    return this.recipe?.steps?.filter((_, i) => i % 2 === 0) ?? [];
+  }
+
+  /** Cooking steps for the right column on desktop (odd indices). */
+  get rightSteps(): CookingStep[] {
+    return this.recipe?.steps?.filter((_, i) => i % 2 === 1) ?? [];
+  }
+
+  /** All steps in order — used on mobile single-column layout. */
+  get allSteps(): CookingStep[] {
+    return this.recipe?.steps ?? [];
+  }
+
+  /** Human-readable cooking style label (e.g. "Italian"). */
+  get styleLabel(): string {
+    const style = this.recipe?.cookingStyle;
+    return style ? (STYLE_LABELS[style] ?? '') : '';
+  }
+
+  /** Human-readable cooking time tag (e.g. "Quick"). */
+  get timeLabel(): string {
+    const time = this.recipe?.cookingTime;
+    return time ? (TIME_LABELS[time] ?? '') : '';
+  }
+
+  /** Minute range for the cooking time tag (e.g. "15–30 min"). */
+  get timeMinutes(): string {
+    const time = this.recipe?.cookingTime;
+    return time ? (TIME_MINUTES[time] ?? '') : '';
+  }
+
+  /** Macro nutrient split as percentages for the nutrition ring chart. */
+  get macroPercents(): { protein: number; carbs: number; fat: number } {
+    const n = this.recipe?.nutrition;
+    if (!n) return { protein: 0, carbs: 0, fat: 0 };
+    const total = n.proteinG * 4 + n.carbsG * 4 + n.fatG * 9;
+    if (total === 0) return { protein: 0, carbs: 0, fat: 0 };
+    return {
+      protein: Math.round(n.proteinG * 4 / total * 100),
+      carbs: Math.round(n.carbsG * 4 / total * 100),
+      fat: Math.round(n.fatG * 9 / total * 100)
+    };
+  }
+
+  /** Total nutrition values scaled to the full recipe (all servings). */
+  get totalNutrition(): { calories: number; proteinG: number; carbsG: number; fatG: number } {
+    const n = this.recipe?.nutrition;
+    const s = this.recipe?.servings ?? 1;
+    if (!n) return { calories: 0, proteinG: 0, carbsG: 0, fatG: 0 };
+    return {
+      calories: n.caloriesPerPortion * s,
+      proteinG: Math.round(n.proteinG * s * 10) / 10,
+      carbsG: Math.round(n.carbsG * s * 10) / 10,
+      fatG: Math.round(n.fatG * s * 10) / 10
+    };
+  }
+
+  /** Background colour for a step's assigned helper avatar. */
+  chefColor(stepNumber: number): string { return CHEF_COLORS[this.chefIndexForStep(stepNumber)]; }
+
+  /** Icon asset path for a step's assigned helper avatar. */
+  chefIcon(stepNumber: number): string { return CHEF_ICONS[this.chefIndexForStep(stepNumber)]; }
+
+  /** Display number (1-based) for a step's assigned helper. */
+  chefNumber(stepNumber: number): number { return this.chefIndexForStep(stepNumber) + 1; }
+
+  /** Toggles the ingredients accordion section. */
+  toggleIngredients(): void { this.showIngredients = !this.showIngredients; }
+
+  /** Toggles the directions accordion section. */
+  toggleDirections(): void { this.showDirections = !this.showDirections; }
+
+  /**
+   * Persists a session recipe to Firestore, then likes it.
+   * Used when the user hearts a recipe that was just generated and not yet saved.
+   */
+  saveAndHeart(): void {
+    if (!this.recipe || this.isSaving) return;
+    this.isSaving = true;
+    this.cdr.markForCheck();
+    this.recipeService.saveRecipeToBook(this.recipe)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: firestoreId => {
+          this.recipe = { ...this.recipe!, id: firestoreId };
+          this.isSessionRecipe = false;
+          this.isSaving = false;
+          this.cdr.markForCheck();
+          this.toggleHeart();
+        },
+        error: () => {
+          this.isSaving = false;
+          this.cdr.markForCheck();
+        }
+      });
+  }
+
+  /**
+   * Toggles the like state and syncs heartCount to Firestore.
+   * Rolls back optimistically on network failure.
+   */
+  toggleHeart(): void {
+    const id = this.recipe?.id;
+    if (!id) return;
+    const newLiked = !this.isLiked;
+    const delta: 1 | -1 = newLiked ? 1 : -1;
+
+    this.isLiked = newLiked;
+    this.heartCount += delta;
+    this.saveLikedState(id, newLiked);
+
+    this.firebase.updateHeartCount(id, delta)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        error: () => {
+          this.isLiked = !newLiked;
+          this.heartCount -= delta;
+          this.saveLikedState(id, !newLiked);
+          this.cdr.markForCheck();
+        }
+      });
+  }
+
+  /** Navigates to the cookbook landing page. */
+  goToCookbook(): void { this.router.navigate(['/cookbook']); }
+
+  /** Clears generation state and starts a new recipe search. */
+  startNewSearch(): void {
+    this.recipeService.resetState();
+    this.router.navigate(['/generate']);
+  }
+
   private setRecipe(recipe: Recipe): void {
     recipe.steps?.sort((a, b) => a.stepNumber - b.stepNumber);
     this.recipe = recipe;
@@ -133,22 +301,6 @@ export class RecipeDetailComponent implements OnInit {
     } catch { /* ignore */ }
   }
 
-  get scaledIngredients(): RecipeIngredient[] {
-    if (!this.recipe) return [];
-    return this.recipe.ingredients.map(ing => ({
-      ...ing,
-      amount: Math.round(ing.amount * this.servingsMultiplier * 10) / 10
-    }));
-  }
-
-  get currentServings(): number {
-    return Math.round(this.baseServings * this.servingsMultiplier);
-  }
-
-  get chefCount(): number {
-    return this.resolveChefCount(this.recipe?.helpers, this.prefsHelpers);
-  }
-
   /**
    * Counts cooking helpers from nested or flat Firestore helper tasks (1–3).
    * Firestore stores a flattened task list; length alone would over-count.
@@ -170,123 +322,12 @@ export class RecipeDetailComponent implements OnInit {
     return fallback;
   }
 
-  get chefRange(): number[] {
-    return Array.from({ length: this.chefCount }, (_, i) => i);
-  }
-
-  get leftSteps(): CookingStep[] {
-    return this.recipe?.steps?.filter((_, i) => i % 2 === 0) ?? [];
-  }
-
-  get rightSteps(): CookingStep[] {
-    return this.recipe?.steps?.filter((_, i) => i % 2 === 1) ?? [];
-  }
-
-  get allSteps(): CookingStep[] {
-    return this.recipe?.steps ?? [];
-  }
-
-  get styleLabel(): string {
-    const style = this.recipe?.cookingStyle;
-    return style ? (STYLE_LABELS[style] ?? '') : '';
-  }
-
-  get timeLabel(): string {
-    const time = this.recipe?.cookingTime;
-    return time ? (TIME_LABELS[time] ?? '') : '';
-  }
-
-  get timeMinutes(): string {
-    const time = this.recipe?.cookingTime;
-    return time ? (TIME_MINUTES[time] ?? '') : '';
-  }
-
-  get macroPercents(): { protein: number; carbs: number; fat: number } {
-    const n = this.recipe?.nutrition;
-    if (!n) return { protein: 0, carbs: 0, fat: 0 };
-    const total = n.proteinG * 4 + n.carbsG * 4 + n.fatG * 9;
-    if (total === 0) return { protein: 0, carbs: 0, fat: 0 };
-    return {
-      protein: Math.round(n.proteinG * 4 / total * 100),
-      carbs: Math.round(n.carbsG * 4 / total * 100),
-      fat: Math.round(n.fatG * 9 / total * 100)
-    };
-  }
-
-  get totalNutrition(): { calories: number; proteinG: number; carbsG: number; fatG: number } {
-    const n = this.recipe?.nutrition;
-    const s = this.recipe?.servings ?? 1;
-    if (!n) return { calories: 0, proteinG: 0, carbsG: 0, fatG: 0 };
-    return {
-      calories: n.caloriesPerPortion * s,
-      proteinG: Math.round(n.proteinG * s * 10) / 10,
-      carbsG: Math.round(n.carbsG * s * 10) / 10,
-      fatG: Math.round(n.fatG * s * 10) / 10
-    };
-  }
-
+  /** Maps a step number to a helper index based on the active chef count. */
   private chefIndexForStep(stepNumber: number): number {
     const c = this.chefCount;
     if (c === 1) return 0;
     if (c === 2) return stepNumber % 2 === 1 ? 0 : 1;
     const r = stepNumber % 3;
     return r === 1 ? 0 : r === 2 ? 1 : 2;
-  }
-
-  chefColor(stepNumber: number): string { return CHEF_COLORS[this.chefIndexForStep(stepNumber)]; }
-  chefIcon(stepNumber: number): string { return CHEF_ICONS[this.chefIndexForStep(stepNumber)]; }
-  chefNumber(stepNumber: number): number { return this.chefIndexForStep(stepNumber) + 1; }
-
-  toggleIngredients(): void { this.showIngredients = !this.showIngredients; }
-  toggleDirections(): void { this.showDirections = !this.showDirections; }
-
-  saveAndHeart(): void {
-    if (!this.recipe || this.isSaving) return;
-    this.isSaving = true;
-    this.cdr.markForCheck();
-    this.recipeService.saveRecipeToBook(this.recipe)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: firestoreId => {
-          this.recipe = { ...this.recipe!, id: firestoreId };
-          this.isSessionRecipe = false;
-          this.isSaving = false;
-          this.cdr.markForCheck();
-          this.toggleHeart();
-        },
-        error: () => {
-          this.isSaving = false;
-          this.cdr.markForCheck();
-        }
-      });
-  }
-
-  toggleHeart(): void {
-    const id = this.recipe?.id;
-    if (!id) return;
-    const newLiked = !this.isLiked;
-    const delta: 1 | -1 = newLiked ? 1 : -1;
-
-    this.isLiked = newLiked;
-    this.heartCount += delta;
-    this.saveLikedState(id, newLiked);
-
-    this.firebase.updateHeartCount(id, delta)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        error: () => {
-          this.isLiked = !newLiked;
-          this.heartCount -= delta;
-          this.saveLikedState(id, !newLiked);
-          this.cdr.markForCheck();
-        }
-      });
-  }
-
-  goToCookbook(): void { this.router.navigate(['/cookbook']); }
-
-  startNewSearch(): void {
-    this.recipeService.resetState();
-    this.router.navigate(['/generate']);
   }
 }
