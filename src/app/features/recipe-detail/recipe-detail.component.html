@@ -118,17 +118,17 @@
               <div class="detail__ingredients-col">
                 <h3 class="detail__ingredients-subtitle">Your ingredients</h3>
                 <ul class="detail__ingredient-list">
-                  @for (ing of scaledIngredients; track ing.name) {
+                  @for (ing of yourIngredients; track ing.name) {
                     <li class="detail__ingredient">{{ ing.amount }}{{ ing.unit }} {{ ing.name }}</li>
                   }
                 </ul>
               </div>
-              @if (recipe.missingIngredients.length > 0) {
+              @if (extraIngredients.length > 0) {
                 <div class="detail__ingredients-col">
                   <h3 class="detail__ingredients-subtitle">Extra ingredients</h3>
                   <ul class="detail__ingredient-list">
-                    @for (name of recipe.missingIngredients; track name) {
-                      <li class="detail__ingredient">{{ name }}</li>
+                    @for (ing of extraIngredients; track ing.name) {
+                      <li class="detail__ingredient">{{ ing.amount }}{{ ing.unit }} {{ ing.name }}</li>
                     }
                   </ul>
                 </div>

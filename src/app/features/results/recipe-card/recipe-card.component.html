@@ -11,17 +11,17 @@
   <section class="card__ingredients">
     <h3 class="card__section-title">Verwendete Zutaten</h3>
     <ul class="card__ingredient-list">
-      <li *ngFor="let ing of recipe.ingredients.slice(0, 5)" class="card__ingredient card__ingredient--available">
-        ✓ {{ ing.name }}
+      <li *ngFor="let ing of topYourIngredients" class="card__ingredient card__ingredient--available">
+        ✓ {{ ing.amount }}{{ ing.unit }} {{ ing.name }}
       </li>
     </ul>
   </section>
 
-  <section class="card__missing" *ngIf="topMissing.length > 0">
-    <h3 class="card__section-title">Fehlende Zutaten</h3>
+  <section class="card__missing" *ngIf="topExtraIngredients.length > 0">
+    <h3 class="card__section-title">Extra Zutaten</h3>
     <ul class="card__ingredient-list">
-      <li *ngFor="let name of topMissing" class="card__ingredient card__ingredient--missing">
-        + {{ name }}
+      <li *ngFor="let ing of topExtraIngredients" class="card__ingredient card__ingredient--missing">
+        + {{ ing.amount }}{{ ing.unit }} {{ ing.name }}
       </li>
     </ul>
   </section>

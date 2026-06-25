@@ -37,6 +37,7 @@ export interface Recipe {
   cookingTime: CookingTime;
   servings: number;
   ingredients: RecipeIngredient[];
+  /** Names of AI-added ingredients not in the user's Step 1 list (amounts live in `ingredients`). */
   missingIngredients: string[];
   steps: CookingStep[];
   nutrition: NutritionInfo;

@@ -10,7 +10,9 @@ import { FirebaseService } from '../../core/services/firebase.service';
 import { RecipeService } from '../../core/services/recipe.service';
 import { SeoService } from '../../core/services/seo.service';
 import { Recipe, RecipeIngredient, CookingStep, HelperTask } from '../../core/models/recipe.model';
+import { UserIngredient } from '../../core/models/ingredient.model';
 import { STYLE_LABELS, TIME_LABELS, TIME_MINUTES } from '../../core/constants/recipe-labels';
+import { splitRecipeIngredients } from '../../core/utils/ingredient.util';
 
 const CHEF_COLORS = ['#D7DFD7', '#FFD9B3', '#B3D9FF'];
 const CHEF_ICONS = [
@@ -53,6 +55,7 @@ export class RecipeDetailComponent implements OnInit {
   private servingsMultiplier = 1;
   private baseServings = 1;
   private prefsHelpers = 1;
+  private userIngredients: UserIngredient[] = [];
   private readonly LIKED_KEY = 'cac_liked_recipes';
 
   private readonly destroyRef = inject(DestroyRef);
@@ -75,7 +78,10 @@ export class RecipeDetailComponent implements OnInit {
       this.recipeService.preferences$.pipe(take(1)),
     ]).pipe(
       switchMap(([recipes, prefs]) => {
-        if (prefs) this.prefsHelpers = prefs.helpers;
+        if (prefs) {
+          this.prefsHelpers = prefs.helpers;
+          this.userIngredients = prefs.ingredients ?? [];
+        }
 
         const found = recipes.find(r => r.id === id)
           ?? this.recipeService.getMockRecipeById(id);
@@ -111,13 +117,30 @@ export class RecipeDetailComponent implements OnInit {
     });
   }
 
-  /** Ingredients scaled to the current servings multiplier. */
+  /** All recipe ingredients scaled to the current servings multiplier. */
   get scaledIngredients(): RecipeIngredient[] {
     if (!this.recipe) return [];
-    return this.recipe.ingredients.map(ing => ({
-      ...ing,
-      amount: Math.round(ing.amount * this.servingsMultiplier * 10) / 10
-    }));
+    return this.scaleIngredients(this.recipe.ingredients);
+  }
+
+  /** User-provided ingredients used in this recipe (recipe-portion amounts). */
+  get yourIngredients(): RecipeIngredient[] {
+    if (!this.recipe) return [];
+    return splitRecipeIngredients(
+      this.scaledIngredients,
+      this.userIngredients,
+      this.recipe.missingIngredients
+    ).your;
+  }
+
+  /** AI-added ingredients not in the Step 1 list (with amounts). */
+  get extraIngredients(): RecipeIngredient[] {
+    if (!this.recipe) return [];
+    return splitRecipeIngredients(
+      this.scaledIngredients,
+      this.userIngredients,
+      this.recipe.missingIngredients
+    ).extra;
   }
 
   /** Servings count after applying the multiplier slider. */
@@ -267,6 +290,13 @@ export class RecipeDetailComponent implements OnInit {
   startNewSearch(): void {
     this.recipeService.resetState();
     this.router.navigate(['/generate']);
+  }
+
+  private scaleIngredients(ingredients: RecipeIngredient[]): RecipeIngredient[] {
+    return ingredients.map(ing => ({
+      ...ing,
+      amount: Math.round(ing.amount * this.servingsMultiplier * 10) / 10
+    }));
   }
 
   private setRecipe(recipe: Recipe): void {
